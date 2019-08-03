@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>FaceSwap</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Course materials and notes for University of Maryland's class CMSC733: Computer Vision.">
+    <link rel="canonical" href="http://cmsc733.github.io/2019/proj/p2/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+    <!-- Google tracking -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46895817-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap title-wrap">
+    <a class="site-title" href="/">CMSC733 Computer Vision</a>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>FaceSwap</h1>
+  </header>
+
+  <article class="post-content">
+  <p>Table of Contents:<br />
+- <a href="#due">1. Deadline</a><br />
+- <a href="#intro">2. Introduction</a><br />
+- <a href="#data">3. Data Collection</a><br />
+- <a href="#ph1">4. Phase 1: Traditional Approach</a><br />
+    - <a href="#landmarks">4.1. Facial Landmarks detection</a><br />
+    - <a href="#tri">4.2. Face Warping using Triangulation</a><br />
+    - <a href="#tps">4.3. Face Warping using Thin Plate Spline</a><br />
+    - <a href="#replace">4.4. Replace Face</a><br />
+    - <a href="#blending">4.5. Blending</a><br />
+    - <a href="#motfilt">4.6. Motion Filtering</a><br />
+- <a href="#ph2">5. Phase 2: Deep Learning Approach</a><br />
+- <a href="#testset">6. Notes about Test Set</a><br />
+  - <a href="#files">6.1. File tree and naming</a><br />
+  - <a href="#report">6.2. Report</a><br />
+- <a href="#sub">7. Submission Guidelines</a><br />
+- <a href="#debug">8. Debugging Tips</a><br />
+- <a href="#allowed">9. Allowed and Disallowed functions</a><br />
+- <a href="#coll">10. Collaboration Policy</a><br />
+- <a href="#ack">11. Acknowledgements</a></p>
+
+<p><a name="due"></a><br />
+## 1. Deadline <br />
+<strong>11:59PM, Sunday, March 17, 2019.</strong></p>
+
+<p><a name="intro"></a><br />
+## 2. Introduction<br />
+The aim of this project is to implement an end-to-end pipeline to swap faces in a<br />
+video just like <a href="https://www.snapchat.com/">Snapchat’s face swap filter</a> or <a href="http://faceswaplive.com/">this face swap website</a>. It’s a fairly complicated procedure and variants of the approach you’ll implement have<br />
+been used in many movies.</p>
+
+<p>One of the most popular example of using such a method<br />
+is replacing Paul Walker’s brother’s face by Paul Walker’s face in the Fast and Furious 7 movie<br />
+after his sudden death in a car crash during shooting. Now that I have conviced you that this is not just for fun but is useful too. In the next few sections, let us see how this can be done.</p>
+
+<p>Note that, you’ll need to be aware of ethical issues while replacing faces. Similar methods are used by people for the creation of fake videos of celibrities called Deep Fakes.</p>
+
+<p><a name="data"></a><br />
+## 3. Data Collection<br />
+Record two videos. One of yourself with just your face and the other with<br />
+your face and your friend’s face in all the frames. Convert them to <code class="highlighter-rouge">.avi</code> or <code class="highlighter-rouge">.mp4</code> format.<br />
+Save them to the <code class="highlighter-rouge">Data</code> folder. Feel free to play around with more videos. In the first video,<br />
+we’ll replace your face with some celebrity’s face or your favorite relative’s face. In the<br />
+second video we’ll swap the two faces. If there are more than two faces in the video, swap<br />
+the two largest faces.</p>
+
+<p><a name="ph1"></a><br />
+## 4. Phase 1: Traditional Approach<br />
+<!---
+    Dlib tutorial for facial landmarks detection
+https://www.pyimagesearch.com/2017/04/03/facial-landmarks-dlib-opencv-python/)
+--><br />
+The overview of the system for face replacement is shown below.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p2/Overview.png" width="100%" />
+  <div class="figcaption">
+    Fig 1: Overview of the face replacement pipeline.
+  </div>
+</div>
+
+<p><a name="landmarks"></a><br />
+### 4.1. Facial Landmarks detection<br />
+The first step in the traditional approach is to find facial landmarks (important points on the face) so that we have one-to-one correspondence between the facial landmakrs. This is analogous to the detection of corners in the panorama project. One of the major reasons to use facial landmarks instead of using all the points on the face is to reduce computational complexity. Remember that better results can be obtained using all the points (dense flow) or using a meshgrid. For detecting facial landmarks we’ll use <code class="highlighter-rouge">dlib</code> library built into OpenCV and python. A sample output of Dlib is shown below.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p2/dlib.jpg" width="80%" />
+  <div class="figcaption">
+    Fig 2: Output of dlib for facial landmarks detection. Green landmarks are overlayed on the input image.
+  </div>
+</div>
+
+<p><a name="tri"></a><br />
+### 4.2. Face Warping using Triangulation<br />
+Like we discussed before, we have now obtained facial landmarks, but what do we do with them? We need to ideally warp the faces in 3D, however we don’t have 3D information. Hence can we make some assumption about the 2D image to approximate 3D information of the face. One simple way is to triangulate using the facial landmarks as corners and then make the assumption that in each triangle the content is planar (forms a plane in 3D) and hence the warping between the the triangles in two images is affine. Triangulating or forming a triangular mesh over the 2D image is simple but we want to trinagulate such that it’s fast and has an “efficient” triangulation. One such method is obtained by drawing the dual of the Voronoi diagram, i.e., connecting each two neighboring sites in the Voronoi diagram. This is called the <strong>Delaunay Triangulation</strong> and can be constructed in \(\mathcal{O}(n\log{}n)\) time. We want the triangulation to be consistent with the image boundary such that texture regions won’t fade into the background while warping. <i>Delaunay Triangulation tries the maximize the smallest angle in each triangle</i>.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p2/DT.PNG" width="100%" />
+  <div class="figcaption">
+    Fig 3: Triangulation on two faces we want to swap (a cat and a baby). 
+  </div>
+</div>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p2/DTAsDualOfVoronoi.PNG" width="70%" />
+  <div class="figcaption">
+    Fig 4: Delaunay Triangulation is the dual of the Voronoi diagram. Black lines show the Voinoi diagram and colored lines show the Delaunay triangulation.
+  </div>
+</div>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p2/GoodAndBadTriangulation.PNG" width="100%" />
+  <div class="figcaption">
+    Fig 5: Comparison of good and bad triangulation depending on choice of landmarks. 
+  </div>
+</div>
+
+<p>Since, Delaunay Triangulation tries the maximize the smallest angle in each triangle, we will obtain the same triangulation in both the images, i.e., cat and baby’s face. Hence, if we have correspondences between the facial landmarks we also have correspondences between the triangles (this is awesome! and makes life simple). Because we are using <code class="highlighter-rouge">dlib</code> to obtain the facial landmarks (or click points manually if you want to warp a cat to a kid), we have correspondences between facial landmarks and hence correspondences between the triangles, i.e., we have the same mesh in both images. Use the <code class="highlighter-rouge">getTriangleList()</code> function in <code class="highlighter-rouge">cv2.Subdiv2D</code> class of OpenCV to implement Delaunay Triangulation. Refer to <a href="https://www.learnopencv.com/delaunay-triangulation-and-voronoi-diagram-using-opencv-c-python/">this tutorial</a> for an easy start. Now, we need to warp the destination face to the source face (we are using inverse warping so that we don’t have any holes in the image, <a href="https://www.cs.unc.edu/~lazebnik/research/fall08/lec08_faces.pdf">read up why inverse warping is better than forward warping</a>) or to a mean face (obtained by averaging the triangulations (corners of triangles) of two faces). Implement the following steps to warp one face (<script type="math/tex">\mathcal{A}</script> or source) to another (<script type="math/tex">\mathcal{B}</script> or destination).</p>
+
+<ul>
+  <li><strong>Step 1:</strong> For each triangle in the target/destination face <script type="math/tex">\mathcal{B}</script>, compute the Barycentric coordinate.</li>
+</ul>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{bmatrix}
+ \mathcal{B}_{a,x} & \mathcal{B}_{b,x} & \mathcal{B}_{c,x}\\
+ \mathcal{B}_{a,y} & \mathcal{B}_{b,y} & \mathcal{B}_{c,y}\\
+ 1 & 1 & 1\\
+ \end{bmatrix} \begin{bmatrix} \alpha \\ \beta \\ \gamma \\ \end{bmatrix} = \begin{bmatrix} x \\ y \\ 1\\ \end{bmatrix} %]]></script>
+
+<p>Here, the Barycentric coordinate is given by <script type="math/tex">% <![CDATA[
+\begin{bmatrix} \alpha & \beta & \gamma \end{bmatrix}^T %]]></script>. Note that, the matrix on the left hand size and it’s inverse need to be computed only once per triangle. In this matrix, <script type="math/tex">a, b, c</script> represent the corners of the triangle and <script type="math/tex">x,y</script> represent the <script type="math/tex">x</script> and <script type="math/tex">y</script> coordinates of the particular triangle corner respectively.</p>
+
+<p>Now, given the values of the matrix on the left hand size we will call <script type="math/tex">\mathcal{B}_{\Delta}</script> and the value of <script type="math/tex">% <![CDATA[
+\begin{bmatrix} x & y & 1 \end{bmatrix}^T %]]></script> we can compute the value of <script type="math/tex">% <![CDATA[
+\begin{bmatrix} \alpha & \beta & \gamma \end{bmatrix}^T %]]></script> as follows:</p>
+
+<p><script type="math/tex">\begin{bmatrix} \alpha \\ \beta \\ \gamma \\ \end{bmatrix} = \mathcal{B}_{\Delta}^{-1} \begin{bmatrix} x \\ y \\ 1\\ \end{bmatrix}</script><br />
+Now, given the values of <script type="math/tex">\alpha, \beta, \gamma</script> we can say that a point <script type="math/tex">x</script> lies inside the triangle if <script type="math/tex">\alpha \in [0, 1]</script>, <script type="math/tex">\beta \in [0, 1]</script> and <script type="math/tex">\alpha + \beta + \gamma \in [0,1]</script>. <strong>DO NOT USE any built-in function for this part</strong>.</p>
+
+<ul>
+  <li><strong>Step 2:</strong> Compute the corresponding pixel position in the source image <script type="math/tex">\mathcal{A}</script> using the barycentric equation shown in the last step but with a different triangle coordinates. This is computed as follows:</li>
+</ul>
+
+<script type="math/tex; mode=display">\begin{bmatrix} x_{\mathcal{A}} \\ y_{\mathcal{A}} \\ z_{\mathcal{A}} \\ \end{bmatrix} = \mathcal{A}_{\Delta} \begin{bmatrix} \alpha \\ \beta \\ \gamma\\ \end{bmatrix}</script>
+
+<p>Here, <script type="math/tex">\mathcal{A}_{\Delta}</script> is given as follows:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\mathcal{A}_{\Delta} = \begin{bmatrix}
+ \mathcal{A}_{a,x} & \mathcal{A}_{b,x} & \mathcal{A}_{c,x}\\
+ \mathcal{A}_{a,y} & \mathcal{A}_{b,y} & \mathcal{A}_{c,y}\\
+ 1 & 1 & 1\\
+ \end{bmatrix} %]]></script>
+
+<p>Note that, after we obtain  <script type="math/tex">% <![CDATA[
+\begin{bmatrix} x_{\mathcal{A}} & y_{\mathcal{A}} & z_{\mathcal{A}} \end{bmatrix}^T %]]></script>, we need to convert the values to homogeneous coordinates as follows:</p>
+
+<script type="math/tex; mode=display">x_{\mathcal{A}} = \frac{x_{\mathcal{A}}}{z_{\mathcal{A}}} \text{ and } y_{\mathcal{A}} = \frac{y_{\mathcal{A}}}{z_{\mathcal{A}}}</script>
+
+<ul>
+  <li><strong>Step 3:</strong> Now, copy back the value of the pixel at <script type="math/tex">(x_{\mathcal{A}}, y_{\mathcal{A}} )</script> to the target location. Use <code class="highlighter-rouge">scipy.interpolate.interp2d</code> to perform this operation.</li>
+</ul>
+
+<p>The warped images are shown below.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p2/WarpOutput.png" width="70%" />
+  <div class="figcaption">
+    Fig 6: Top row: Original images, Bottom row (left to right): Cat warped to baby and baby warped to cat. 
+  </div>
+</div>
+
+<p><a name="tps"></a><br />
+### 4.3. Face Warping using Thin Plate Spline<br />
+As we discussed before, triangulation assumes that we are doing affine transformation on each triangle. This might not be the best way to do warping since the human face has a very complex and smooth shape. A better way to do the transformation is by using Thin Plate Splines (TPS) which can model arbitrarily complex shapes. Now, we want to compute a TPS that maps from the feature points in <script type="math/tex">\mathcal{B}</script> to the corresponding feature<br />
+points in <script type="math/tex">\mathcal{A}</script> . Note that we need two splines, one for the <script type="math/tex">x</script> coordinate and one for the <script type="math/tex">y</script>. Imagine a TPS to mathematically model beating a metal plate with a hammer. A thin<br />
+plate spline has the following form:</p>
+
+<script type="math/tex; mode=display">f(x,y) = a_1 + (a_x)x + (a_y)y + \sum_{i=1}^p{w_i U\left( \vert \vert (x_i,y_i) - (x,y)\vert \vert_1\right)}</script>
+
+<p>Here, <script type="math/tex">U(r) = r^2\log (r^2 )</script>.</p>
+
+<p>Note that, again in this case we are performing inverse warping, i.e., finding parameters of a Thin Plate Spline which will map from <script type="math/tex">\mathcal{B}</script> to <script type="math/tex">\mathcal{A}</script>. Warping using a TPS is performed in two steps. Let’s look at the steps below.</p>
+
+<ul>
+  <li><strong>Step 1:</strong> In the first step, we will estimate the parameters of the TPS. The solution of the TPS model requires solving the following equation:</li>
+</ul>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{bmatrix} K & P\\ P^T & 0\\ \end{bmatrix} 
+  \begin{bmatrix} w_1 \\ w_2 \\ \vdots \\ w_p \\ a_x \\ a_y \\ a_1  \end{bmatrix}  =
+  \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_p \\ 0 \\ 0 \\ 0 \end{bmatrix} %]]></script>
+
+<p>where \( K_{ij} = U\left( \vert \vert (x_i,y_i)-(x_j,y_j) \vert \vert_1 \right)\). <script type="math/tex">v_i = f(x_i,y_i)</script> and the i<sup>th</sup> row of <script type="math/tex">P</script> is <script type="math/tex">(x_i, y_i, 1)</script>. <script type="math/tex">K</script> is a matrix of size size <script type="math/tex">p \times p</script>, and <script type="math/tex">P</script> is a matrix of size <script type="math/tex">p \times 3</script>. In order to have a stable solution you need to compute the solution by:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{bmatrix} w_1 \\ w_2 \\ \vdots \\ w_p \\ a_x \\ a_y \\ a_1  \end{bmatrix}  = 
+  \left(\begin{bmatrix} K & P\\ P^T & 0\\ \end{bmatrix}  + \lambda I(p+3, p+3)\right)^{-1}
+ \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_p \\ 0 \\ 0 \\ 0 \end{bmatrix} %]]></script>
+
+<p>where <script type="math/tex">I(p+3,p+3)</script> is a <script type="math/tex">p+3 \times p+3</script> identity matrix. <script type="math/tex">\lambda \ge 0</script> but is generally very close to zero. Think about why we need this. Note that you need to do this step twice, once for <script type="math/tex">x</script> co-ordinates and once for <script type="math/tex">y</script> co-ordinates.</p>
+
+<ul>
+  <li><strong>Step 2:</strong> In the second step, use the estimated parameters of the TPS models (both <script type="math/tex">x</script> and <script type="math/tex">y</script> directions), transform all pixels in image <script type="math/tex">\mathcal{B}</script> by the TPS model. Now, read back the pixel value from image <script type="math/tex">\mathcal{A}</script> directly. The position of the pixels in image <script type="math/tex">\mathcal{A}</script> is generated by the TPS equation (first equation in this section).</li>
+</ul>
+
+<p><strong>Note that, both warping methods solve the same problem but with different formulations, you are required to implement both and compare the results.</strong></p>
+
+<p><a name="replace"></a><br />
+### 4.4. Replace Face<br />
+This part is very simple, you have to take all the pixels from face <script type="math/tex">\mathcal{A}</script>, warp them to fit face <script type="math/tex">\mathcal{B}</script> and replace the pixels. Note that simply replacing pixels will not look natural as the lighing and edges look different. A sample output of face replacement is shown below.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p2/FaceReplacement.png" width="70%" />
+  <div class="figcaption">
+    Fig 7: Output of sample face replacement. Notice the difference in color and edges. The output is not a seamless blend. 
+  </div>
+</div>
+
+<p><a name="blending"></a><br />
+### 4.5. Blending<br />
+We will follow a method called Poisson Blending to blend the warped face onto the target face. More details about this method can be found in <a href="http://www.irisa.fr/vista/Papers/2003_siggraph_perez.pdf">this paper</a>. Note that, you <strong>DO NOT</strong> have to implement this part from scratch, feel free to use any open-source implementation and cite your source in your report and your code. Your task in this part is to blend the face as seamlessly as possible. Feel free to reuse concepts you learnt from panorama stitching project’s last part here. A good blending output is shown below.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p2/FaceSwap.png" width="70%" />
+  <div class="figcaption">
+    Fig 8: Output of sample face replacement after blending.
+  </div>
+</div>
+
+<p><a name="motfilt"></a><br />
+### 4.6. Motion Filtering<br />
+After you have detected, warped and blended the face your algorithm works really well for individual frames. But when you want to do this for a video, you’ll see flickering. Come up with your own solution to reduce the amount of flickering. You can use a low-pass filter or a fancy Kalman Filter to do this. <strong>Feel free to use any third party or built-in code to do this.</strong> If you use third party code, please do not forget to cite them. Look at this holy grail video of face replacement where Jimmy Fallon interviews his cousin.</p>
+
+<iframe src="https://player.vimeo.com/video/257360045" width="640" height="360" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
+<p><a href="https://vimeo.com/257360045">Jimmy Fallon interview his twin!</a> from <a href="https://vimeo.com/user16478660">ZeroCool22</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
+
+<p><a name="ph2"></a><br />
+## 5. Phase 2: Deep Learning Approach<br />
+For this phase, we’ll run an off-the-shelf model to obtain face fiducials using deep learning. We think that implementing this part is fairly trivial and is left as a fun exercise if you want some programming practice (you are not graded for the implementation of the network). We’ll use the code from <a href="https://arxiv.org/abs/1803.07835">this paper</a>, which implements a supervised encoder-decoder model to obtain the full 3D mesh of the face. We recommend you to read the paper for more details. The code from the paper can be found <a href="https://github.com/YadiraF/PRNet">here</a>. Your task is to setup the code and run to obtain face fiducials/full 3D mesh. Use this output to perform face replacement as before. Feel free to use as much code as you want from last part/phase. Present a detailed comparison of both the traditional methods (triangulation and TPS) along with the deep learning method.</p>
+
+<p><a name="testset"></a><br />
+## 6. Notes about Test Set<br />
+One day (24 hours) before the deadline, a test set will be released with details of what faces to replace. We’ll grade on the completion of the project and visually appealing results.</p>
+
+<p><a name="sub"></a><br />
+## 7. Submission Guidelines</p>
+
+<p><b> If your submission does not comply with the following guidelines, you’ll be given ZERO credit </b></p>
+
+<p><a name="files"></a><br />
+### 7.1. File tree and naming</p>
+
+<p>Your submission on ELMS/Canvas must be a <code class="highlighter-rouge">zip</code> file, following the naming convention <code class="highlighter-rouge">YourDirectoryID_p2.zip</code>. If you email ID is <code class="highlighter-rouge">abc@umd.edu</code> or <code class="highlighter-rouge">abc@terpmail.umd.edu</code>, then your <code class="highlighter-rouge">DirectoryID</code> is <code class="highlighter-rouge">abc</code>. For our example, the submission file should be named <code class="highlighter-rouge">abc_p1.zip</code>. The file <strong>must have the following directory structure</strong> because we’ll be autograding assignments. The file to run for your project should be called <code class="highlighter-rouge">Wrapper.py</code>. You can have any helper functions in sub-folders as you wish, be sure to index them using relative paths and if you have command line arguments for your Wrapper codes, make sure to have default values too. Please provide detailed instructions on how to run your code in <code class="highlighter-rouge">README.md</code> file. Please <strong>DO NOT</strong> include data in your submission.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>YourDirectoryID_p2.zip
+│   README.md
+|   Your Code files 
+|   ├── Any subfolders you want along with files
+|   Wrapper.py 
+|   Data
+|   ├── Data1.mp4
+|   ├── Data2.mp4
+|   ├── Data1OutputTri.mp4
+|   ├── Data1OutputTPS.mp4
+|   ├── Data1OutputPRNet.mp4
+|   ├── Data2OutputTri.mp4
+|   ├── Data2OutputTPS.mp4
+|   ├── Data2OutputPRNet.mp4
+└── Report.pdf
+</code></pre>
+</div>
+<p><a name="report"></a><br />
+### 7.2. Report</p>
+
+<p>For each section of the project, explain briefly what you did, and describe any interesting problems you encountered and/or solutions you implemented.  You <strong>MUST</strong> include the following details in your writeup:</p>
+
+<ul>
+  <li>Your report <strong>MUST</strong> be typeset in LaTeX in the IEEE Tran format provided to you in the <code class="highlighter-rouge">Draft</code> folder (Use the same draft folder from P1) and should of a conference quality paper.</li>
+  <li>Present the Data you collected in <code class="highlighter-rouge">Data</code> folder with names <code class="highlighter-rouge">Data1.mp4</code> and <code class="highlighter-rouge">Data2.mp4</code> (Be sure to have the format as <code class="highlighter-rouge">.mp4</code> <strong>ONLY</strong>).</li>
+  <li>Present the output videos for Triangulation, TPS and PRNet as <code class="highlighter-rouge">Data1OutputTri.mp4</code>, <code class="highlighter-rouge">Data1OutputTPS.mp4</code> and <code class="highlighter-rouge">Data1OutputPRNet.mp4</code> for Data 1 respectively in the <code class="highlighter-rouge">Data</code> folder. Also, present outputs videos for Triangulation, TPS and PRNet as <code class="highlighter-rouge">Data2OutputTri.mp4</code>, <code class="highlighter-rouge">Data2OutputTPS.mp4</code> and <code class="highlighter-rouge">Data2OutputPRNet.mp4</code> for Data 2 respectively in the <code class="highlighter-rouge">Data</code> folder. (Be sure to have the format as <code class="highlighter-rouge">.mp4</code> <strong>ONLY</strong>).</li>
+  <li>For Phase 1, present input and output images for two frames from each of the videos using both Triangulation and TPS approach.</li>
+  <li>For Phase 2, present input and output images for two frames from each of the videos using PRNet approach.</li>
+  <li>Present failure cases for both Phase 1 and 2 and present your thoughts on why the failure occurred.</li>
+</ul>
+
+<p><a name="debug"></a><br />
+## 8. Debugging Tips<br />
+- Plot the triangles with different colors as shown <a href="https://www.learnopencv.com/wp-content/uploads/2015/11/opencv-delaunay-vornoi-subdiv-example.jpg">here</a><br />
+- Plot the face fiducials to check if they match up with color coding the points<br />
+- View the warped images<br />
+- Plotting and indexing functions could be using [row, column] indexing which is different from [x,y] indexing. They are swapped such that x denotes column and y denoted row. Be sure to check documentation to see which function uses what.<br />
+- OpenCV documentation often has a lot of bugs with regard to indexing. Be sure to implement simple sanity checks.</p>
+
+<p><a name="allowed"></a><br />
+## 9. Allowed and Disallowed functions</p>
+
+<p><b> Allowed:</b></p>
+
+<p>Any functions regarding reading, writing and displaying/plotting images in <code class="highlighter-rouge">cv2</code>, <code class="highlighter-rouge">matplotlib</code><br />
+- Basic math utilities including convolution operations in <code class="highlighter-rouge">numpy</code> and <code class="highlighter-rouge">math</code><br />
+- Any functions for pretty plots<br />
+- Any function for blending<br />
+- Any function for Motion Filtering<br />
+- Any function for interpolation including <code class="highlighter-rouge">scipy.interpolated.interp2d</code><br />
+- Functions for Delaunay Triangulation including <code class="highlighter-rouge">getTriangleList()</code> function in <code class="highlighter-rouge">cv2.Subdiv2D</code> class of OpenCV. However you are not allowed to use this for checking which triangle a point belongs to and to compute barycentric coordinates.<br />
+- PRNet network and any helper functions for Phase2.</p>
+
+<p><b> Disallowed:
+- Any function that implements barycentic coordinate calculation.
+- Any function that implements checking which triangle a point belongs to.
+- Any function which implements in part of full the TPS.</b></p>
+
+<p><a name="coll"></a><br />
+## 10. Collaboration Policy<br />
+You are encouraged to discuss the ideas with your peers. However, the code should be your own, and should be the result of you exercising your own understanding of it. If you reference anyone else’s code in writing your project, you must properly cite it in your code (in comments) and your writeup. For the full honor code refer to the CMSC733 Spring 2019 website.</p>
+
+<p><a name="ack"></a><br />
+## 11. Acknowledgements<br />
+This fun project was inspired by a similar project in UPenn’s <a href="https://alliance.seas.upenn.edu/~cis581/wiki/index.php?title=CIS_581:_Computer_Vision_%26_Computational_Photography">CIS581</a> (Computer Vision &amp; Computational Photography).</p>
+
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        
+        
+        <li>
+          <a href="mailto:"></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- mathjax -->
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>

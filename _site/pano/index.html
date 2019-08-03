@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Panorama Stitching</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Course materials and notes for University of Maryland's class CMSC733: Computer Vision.">
+    <link rel="canonical" href="http://cmsc733.github.io/pano/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+    <!-- Google tracking -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46895817-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap title-wrap">
+    <a class="site-title" href="/">CMSC733 Computer Vision</a>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>Panorama Stitching</h1>
+  </header>
+
+  <article class="post-content">
+  <p><strong>This article is written by <a href="http://chahatdeep.github.io/">Chahat Deep Singh.</a></strong> (chahat[at]terpmail.umd.edu)</p>
+
+<p>Please contact <strong>Chahat</strong> if there are any errors.</p>
+
+<p>Table of Contents:</p>
+
+<ul>
+  <li><a href="#intro">Introduction</a></li>
+  <li><a href="#anms">Adaptive Non-Maximal Suppression</a></li>
+  <li><a href="#feat-descriptor">Feature Descriptor</a></li>
+  <li><a href="#feat-matching">Feature Matching</a></li>
+  <li><a href="#homography">RANSAC to estimate Robust Homography</a></li>
+  <li><a href="#cyl-projection">Cylinderical Projection</a></li>
+  <li><a href="#blending">Blending Images</a></li>
+</ul>
+
+<p><a name="intro"></a><br />
+## Introduction</p>
+
+<p>Now that we have learned about a few building blocks of computer vision from <a href="vision-basics">Learning the basics</a>, let us try to do something cool with it! The purpose of this project is to stitch two or more images in order to create one seamless panorama image. Each image should have few repeated local features (<script type="math/tex">\sim 30-50\%</script> or more, emperically chosen). In this project, you need to capture multiple such images. Note that your camera motion should be limited to purely translational or purely rotational around the camera center. The following method of stitching images should work for most image sets but you’ll need to be creative for working on harder image sets.</p>
+
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/delicate-arch-set.jpg" width="100%" />
+  <div class="figcaption"> Fig. 1: Image Set for Panorama Stitching: Delicate Arch (at Arches National Park, Utah) </div><br />
+  <img src="/assets/pano/delicate-arch-pano.jpg" width="100%" />
+  <div class="figcaption"> Fig. 2: Panorama image of the Delicate Arch </div>
+</div>
+
+<p>For this project, let us consider a set of sample images with much stronger corners as shown in the Fig. 3.</p>
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/pano-image-set.png" width="100%" />
+  <div class="figcaption"> Fig. 3: Sample image set for panorama stitching </div>
+</div>
+
+<p><a name="anms"></a><br />
+## 2. Adaptive Non-Maximal Suppression (or ANMS)<br />
+The objective of this step is to detect corners such that they are equally distributed across the image in order to avoid weird artifacts in warping. Corners in the image can be detected using <code class="highlighter-rouge">cornermetric</code> function with the appropriate parameters. The output is a matrix of corner scores: the higher the score, the higher the probability of that pixel being a corner. <i> Try to visualize the output using the Matlab function </i><code class="highlighter-rouge">imagesc</code> or <code class="highlighter-rouge">surf</code>.</p>
+
+<p>To find particular strong corners that are spread across the image, first we need to find <script type="math/tex">N</script><sub>strong</sub> corners. Feel free to use MATLAB function <code class="highlighter-rouge">imregionalmax</code>. Because, when you take a real image, the corner is never perfectly sharp, each corner might get a lot of hits out of the <script type="math/tex">N</script> strong corners - we want to choose only the <script type="math/tex">N</script><sub>best</sub> best corners after ANMS. In essence, you will get a lot more corners than you should! ANMS will try to find corners which are local maxima.</p>
+
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/anms.png" width="100%" />
+</div>
+
+<p>Fig 4. shows the output after ANMS. Clearly, the corners are spread across the image. To plot these dots over the image in MATLAB, do: <script type="math/tex">\texttt{imshow(..); hold on; plot(...); hold off;}</script></p>
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/anms-output.png" width="100%" />
+  <div class="figcaption"> Fig. 4: Output of ANMS on first 2 images. </div>
+</div>
+
+<p><a name="feat-descriptor"></a><br />
+## 3. Feature Descriptor<br />
+In the previous step, you found the feature points (locations of the N best best corners after ANMS are called the feature points). You need to describe each feature point by a feature vector, this is like encoding the information at each feature points by a vector. One of the easiest feature descriptor is described next.</p>
+
+<p>Take a patch of size <script type="math/tex">40 \times 40</script> centered <b>(this is very important)</b> around the keypoint. Now apply gaussian blur (feel free to play around with the parameters, for a start you can use Matlab’s default parameters in <code class="highlighter-rouge">fspecial</code> command, Yes! you are allowed to use <code class="highlighter-rouge">fspecial</code> command in this project). Now, sub-sample the blurred output (this reduces the dimension) to <script type="math/tex">8 \times 8</script>. Then reshape to obtain a <script type="math/tex">64 \times 1</script> vector. Standardize the vector to have zero mean and variance of 1 <i>(This can be done by subtracting all values by mean and then dividing by the standard deviation)</i>. Standardization is used to remove bias and some illumination effect.</p>
+
+<p><a name="feat-match"></a><br />
+## 4. Feature Matching<br />
+In the previous step, you encoded each keypoint by <script type="math/tex">64\times1</script> feature vector. Now, you want to match the feature points among the two images you want to stitch together. In computer vision terms, this step is called as finding feature correspondences within the 2 images. Pick a point in image 1, compute sum of square difference between all points in image 2. Take the ratio of best match (lowest distance) to the second best match (second lowest distance) and if this is below some ratio keep the matched pair or reject it. Repeat this for all points in image 1. You will be left with only the comfident feature correspondences and these points will be used to estimate the transformation between the 2 images also called as <a href="pano-prereq#homography"><em>Homography</em></a>. Use the function <code class="highlighter-rouge">dispMatchedFeatures</code> given to you to visualize feature correspondences. Fig. 5 shows a sample output of <code class="highlighter-rouge">disMatchedFeatures</code> on the first two images.</p>
+
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/feat-match.png" width="100%" />
+  <div class="figcaption"> Fig. 5: Output of \(\texttt{dispMatchedFeatures}\) on first 2 images. </div>
+</div>
+
+<p><a name="homography"></a><br />
+## 5. RANSAC to estimate Robust Homography<br />
+We now have matched all the features correspondences but not all matches will be right. To remove incorrect matches, we will use a robust method called <i>Random Sampling Concensus</i> or <b>RANSAC</b> to compute homography.</p>
+
+<p>Recall the RANSAC steps are: <br />
+1. Select four feature pairs (at random), <script type="math/tex">p_i</script> from image 1, <script type="math/tex">p_i^1</script> from image 2.<br />
+2. Compute homography <script type="math/tex">H</script> (exact). Use the function <code class="highlighter-rouge">est_homography</code> that will be provided to you. Check Panorama assignment!<br />
+3. Compute inliers where <script type="math/tex">% <![CDATA[
+SSD(p_i^1, Hp_i) < \texttt{thresh} %]]></script>. Here, <script type="math/tex">Hp_i</script> computed using the <script type="math/tex">\texttt{apply_homography}</script> function given to you. <script type="math/tex">SSD</script>: Sum of Square Distance.<br />
+4. Repeat the last three steps until you have exhausted <script type="math/tex">N</script><sub>max</sub> number of iterations (specified by user) or you found more than percentage of inliers (Say <script type="math/tex">90\%</script> for example).<br />
+5. Keep largest set of inliers.<br />
+6. Re-compute least-squares <script type="math/tex">\hat{H}</script> estimate on all of the inliers. Use the function <code class="highlighter-rouge">est_homography</code> given to you.</p>
+
+<p><a name="cyl-projection"></a><br />
+## 6. Cylinderical Projection<br />
+When we are try to stitch a lot of images with translation, a simple projective transformation (homography) will produce substandard results and the images will be strectched/shrunken to a large extent over the edges. Fig. 6 below highlights the stitching with bad distortion at the edges. Check <a href="https://graphics.stanford.edu/courses/cs178/applets/projection.html">this implementation/demo</a> of cylinderical projection from Stanford Computer Graphics department.</p>
+
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/distortion.png" width="100%" />
+  <div class="figcaption"> Fig. 6: Panorama stitched using projective transform showing bad distortion at edges. </div>
+</div>
+
+<p>To overcome such distortion problem at the edges, we will be using cylinderical projection on the images first before performing other operations. Essentially, this is a pre-processing step. The following equations transform between normal image co-ordinates and cylinderical co-ordinates:</p>
+
+<script type="math/tex; mode=display">x' = f \cdot tan \left(\cfrac{x-x_c}{f}\right)+x_c</script>
+
+<script type="math/tex; mode=display">y' = \left( \cfrac{y-y_c}{cos\left(\cfrac{x-x_c}{f}\right)}\right)+y_c</script>
+
+<p>In the above equations, <script type="math/tex">f</script> is the focal length of the lens in pixels (feel free to experiment with values, generally values range from 100 to 500, however this totally depends on the camera and can lie outside this range). The original image co-ordinates are <script type="math/tex">(x, y)</script> and the transformed image co-ordinates (in cylindrical co-ordinates) are <script type="math/tex">(x' ,y')</script>. <script type="math/tex">x_c</script> and <script type="math/tex">y_c</script> are the image center co-ordinates. Note that, <script type="math/tex">x</script> is the column number and <script type="math/tex">y</script> is the row number in MATLAB.</p>
+
+<p style="background-color:#ddd; padding:5px"><b>Note:</b> Use `meshgrid`, `ind2sub`, `sub2ind` to speed up this part. <b>Using loops will TAKE FOREVER!</b></p>
+
+<p>A sample input image and its cylinderical projection is shown in Fig. 7.</p>
+
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/input_image.png" width="60%" />
+  <img src="/assets/pano/cylinderical_image.png" width="60%" />
+  <div class="figcaption"> Fig. 7: Original Image vs Cylinderical Projection. </div>
+</div>
+
+<p style="background-color:#ddd; padding:5px"><b>Note: The above equations talk about pixel coordinates, NOT pixel values.</b> The idea is you compute the coordinate transformation and copy poaste pixel values to these new pixel coordinates (in all 3 RGB channel).</p>
+
+<p>However, when you compute the values of <script type="math/tex">(x',y')</script> they might not be integers. A simple way to get around this is to use round or actually interpolate the values. If you decide to round the co-ordinates off you might be left<br />
+with black pixels, fill them using some weighted combination of it’s neighbours (gaussian works best). A trivial way to do this is to blur the image and copy paste pixel values on-to original image where there were pure black pixels. (You can also initialize pixels to NaN’s instead of zeros to avoid removing actual zero pixels).</p>
+
+<p><a name="blending"></a><br />
+## 7. Blending Images:<br />
+Panorama can be produced by overlaying the pairwise aligned images to create the final output image. The following MATLAB functions can be useful to solve this (like <script type="math/tex">\texttt{imtransform}</script> and <script type="math/tex">\texttt{imwarp}</script>). Feel free to implement <script type="math/tex">\texttt{imwarp}</script> or similar function by yourself. For such implementation, apply bilinear tranpolation when you copy pixel values. Feel free to use any third party code for warping and transforming images. Fig. 8 shows the panorama output for the image set in Fig. 3.</p>
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/pano-output.png" width="80%" />
+  <div class="figcaption"> Fig. 8: Final Panorama output. </div>
+</div>
+
+<p><i>Come up with a logic to blend the common region between images while not affecting the regions which are not common.</i> Here, common means shared region, <i>i.e.</i>, a part of first image and part of second image should overlap in the output panorama. Describe what you did in your report. <strong>Feel free to use any built-in Matlab function or third party code to do this.</strong></p>
+
+<p style="background-color:#ddd; padding:5px"><b>Note:</b> The pipeline talks about how to stitch a pair of images, you need to extend this to work for multiple images. You can re-run your images pairwise or do something smarter.</p>
+<p>Your end goal is to be able to stitch any number of given images - maybe 2 or 3 or 4 or 100, your algorithm should work. If a random image with no matches are given, your algorithm needs to report an error.</p>
+
+<p style="background-color:#ddd; padding:5px"><b>Note:</b> When blending these images, there are inconsistency between pixels from different input images due to different exposure/white balance settings or photometric distortions or vignetting. This can be resolved by <i><a href="http://www.irisa.fr/vista/Papers/2003_siggraph_perez.pdf">Poisson blending</a></i>. You can use third party code for the seamless panorama stitching.
+
+</p>
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        
+        
+        <li>
+          <a href="mailto:"></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- mathjax -->
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>

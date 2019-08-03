@@ -1,0 +1,20 @@
+# Site settings
+title: CMSC733 Computer Vision
+#email: yiannis@cs.umd.edu
+description: "Course materials and notes for University of Maryland's class CMSC733: Computer Vision."
+baseurl: ""
+url: "http://cmsc733.github.io"
+#github_username:  cmsc733
+
+# Build settings
+markdown: kramdown
+permalink: pretty
+
+highlighter: rouge
+kramdown:
+  input: GFM
+  auto_ids: true
+  syntax_highlighter: rouge
+
+
+theme: jekyll-theme-cayman

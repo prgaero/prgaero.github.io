@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Structure from Motion</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Course materials and notes for University of Maryland's class CMSC733: Computer Vision.">
+    <link rel="canonical" href="http://cmsc733.github.io/2019/proj/p3">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+    <!-- Google tracking -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46895817-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap title-wrap">
+    <a class="site-title" href="/">CMSC733 Computer Vision</a>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>Structure from Motion</h1>
+  </header>
+
+  <article class="post-content">
+  <p><u>Table of Contents</u>:</p>
+
+<p><b>Traditional Approach</b></p>
+
+<ul>
+  <li><a href="#intro">Introduction</a></li>
+  <li><a href="#featmatch">Feature Matching</a></li>
+  <li><a href="#estfundmatrix">Estimating Fundamental Matrix</a>
+    <ul>
+      <li><a href="#epipole">Epipolar Geometry</a></li>
+      <li><a href="#fundmatrix">Fundamental Matrix</a></li>
+      <li><a href="#ransac">Match Outlier Rejection using RANSAC</a></li>
+    </ul>
+  </li>
+  <li><a href="#essential">Estimate Camera Pose from Essential Matrix</a></li>
+  <li><a href="#tri">Check for Cheirality Condition using Triangulation</a>
+    <ul>
+      <li><a href="#nonlintri">Non-Linear Triangulation</a></li>
+    </ul>
+  </li>
+  <li>
+    <p><a href="#pnp">Perspective-<script type="math/tex">n</script>-points</a></p>
+
+    <ul>
+      <li><a href="#nonlinpnp">Non-Linear PnP</a></li>
+    </ul>
+  </li>
+  <li><a href="#ba">Bundle Adjustment</a></li>
+</ul>
+
+<hr />
+
+<p><b>Deep Learning</b></p>
+
+<ul>
+  <li><a href="#sfmlearner">SfMLearner</a>
+    <ul>
+      <li><a href="#view">View Synthesis</a></li>
+      <li><a href="#render">Differentiable Depth Image-based Rendering</a></li>
+      <li><a href="#expl-mask">Explainability Mask</a></li>
+      <li><a href="#gradlocal">Gradient Locality Issues</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p><a name="intro"></a></p>
+
+<h2 id="introduction">Introduction</h2>
+<p>We have been playing with images for so long, mostly in 2D scene. Recall <a href="/2019/proj/p1">project 1</a> where we stitched multiple images with about 30-50% common features between a couple of images. Now let’s learn how to <strong>reconstruct a 3D scene and simultaneously obtain the camera poses</strong> of a monocular camera w.r.t. the given scene. This procedure is known as Structure from Motion (SfM). As the name suggests, you are creating the entire <strong>rigid</strong> structure from a set of images with different view points (or equivalently a camera in motion). A few years ago, Agarwal et. al published <a href="http://grail.cs.washington.edu/rome/rome_paper.pdf">Building Rome in a Day</a> in which they reconstructed the entire city just by using a large collection of photos from the Internet. Ever heard of Microsoft <a href="https://en.wikipedia.org/wiki/Photosynth">Photosynth?</a> <em>Facinating? isn’t it!?</em> There are a few open source SfM algorithm available online like <a href="http://ccwu.me/vsfm/">VisualSFM</a>. <em>Try them!</em></p>
+
+<p>Let’s learn how to recreate such algorithm. There are a few steps that collectively form SfM:</p>
+
+<ul>
+  <li><strong>Feature Matching</strong> and Outlier rejection using <strong>RANSAC</strong></li>
+  <li>Estimating <strong>Fundamental Matrix</strong></li>
+  <li>Estimating <strong>Essential Matrix</strong> from Fundamental Matrix</li>
+  <li>Estimate <strong>Camera Pose</strong> from Essential Matrix</li>
+  <li>Check for <strong>Cheirality Condition</strong> using <strong>Triangulation</strong></li>
+  <li><strong>Perspective-n-Point</strong></li>
+  <li><strong>Bundle Adjustment</strong></li>
+</ul>
+
+<p><em>(If you haven’t heard of the above terminology before, don’t worry! If you knew the following already, you wouldn’t be taking the class right now!)</em></p>
+
+<p><a name="featmatch"></a><br />
+### 1. Feature Matching, Fundamental Matrix and RANSAC:<br />
+We have already learned about keypoint matching using SIFT keypoints and descriptors (Recall Project 2: Panorama Stitching). It is important to refine the matches by rejecting outline correspondence.<br />
+Before rejecting the correspondences, let us first understand what Fundamental matrix is!</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/sfm/featmatch.png" width="100%" />
+  <div class="figcaption">
+    Figure 1: Feature matching between two images from different views.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<p><a name="estfundmatrix"></a></p>
+
+<h3 id="estimating-fundamental-matrix">1.1. Estimating Fundamental Matrix:</h3>
+<p>The fundamental matrix, denoted by <script type="math/tex">F</script>, is a <script type="math/tex">3\times 3</script> (<em>rank 2</em>) matrix that relates the corresponding set of points in two images from different views (or stereo images). But in order to understand what fundamental matrix actually is, we need to understand what <em>epipolar geometry</em> is! The epipolar geometry is the intrinsic projective geometry between two views. It only depends on the cameras’ internal parameters (<script type="math/tex">K</script> matrix) and the relative pose <em>i.e.</em> it is <strong>independent of the scene structure</strong>.</p>
+
+<p><a name="epipole"></a></p>
+
+<h3 id="epipolar-geometry">1.2. Epipolar Geometry:</h3>
+<p>Let’s say a point <script type="math/tex">\mathbf{X}</script> in the 3D-space (viewed in two images) is captured as <script type="math/tex">\mathbf{x}</script> in the first image and <script type="math/tex">\mathbf{x'}</script> in the second. <em>Can you think how to formulate the relation between the corresponding image points <script type="math/tex">\mathbf{x}</script> and <script type="math/tex">\mathbf{x'}</script>?</em> Consider Fig. 2. Let <script type="math/tex">\mathbf{C}</script> and <script type="math/tex">\mathbf{C'}</script> be the respective camera centers which forms the baseline for the stereo system. Clearly, the points <script type="math/tex">\mathbf{x}</script>, <script type="math/tex">\mathbf{x'}</script> and <script type="math/tex">\mathbf{X}</script> (or <script type="math/tex">\mathbf{C}</script>, <script type="math/tex">\mathbf{C'}</script> and <script type="math/tex">\mathbf{X}</script>) are coplanar <em>i.e.</em>  <script type="math/tex">\mathbf{\overrightarrow{Cx}}\cdot \left(\mathbf{\overrightarrow{CC'}}\times\mathbf{\overrightarrow{C'x'}}\right)=0</script> <br />
+and the plane formed can be denoted by <script type="math/tex">\pi</script>. Since these points are coplanar, the rays back-projected from <script type="math/tex">\mathbf{x}</script> and <script type="math/tex">\mathbf{x'}</script> intersect at <script type="math/tex">\mathbf{X}</script>. This is the most significant property in searching for a correspondence.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/sfm/epipole1.png" width="120%" />
+  <div class="figcaption">
+ 	Figure 2(a): Caption goes here.
+  </div>
+<br /><br />
+  <img src="/assets/sfm/epipole2.png" width="120%" />
+  <div class="figcaption">
+  	Figure 2(b): Caption goes here.
+  </div>
+</div>
+
+<p>Now, let us say that only <script type="math/tex">\mathbf{x}</script> is known, not <script type="math/tex">\mathbf{x'}</script>. We know that the point <script type="math/tex">\mathbf{x'}</script> lies in the plane <script type="math/tex">\pi</script> which is governed by the camera baseline <script type="math/tex">\mathbf{CC'}</script> and <script type="math/tex">\mathbf{\overrightarrow{Cx}}</script>.  Hence the point <script type="math/tex">\mathbf{x'}</script> lies on the line of intersetion of <script type="math/tex">\mathbf{l'}</script> of <script type="math/tex">\pi</script> with the second image plane. The line <script type="math/tex">\mathbf{l'}</script> is the image in the second view of the ray back-projected from <script type="math/tex">\mathbf{x}</script>. This line <script type="math/tex">\mathbf{l'}</script> is called the <em>epipolar line</em> corresponding to <script type="math/tex">\mathbf{x}</script>. The benifit is that you don’t need to search for the point corresponding to <script type="math/tex">\mathbf{x}</script> in the entire image plane as it can be restricted to the <script type="math/tex">\mathbf{l'}</script>.</p>
+
+<ul>
+  <li><strong>Epipole</strong> is the point of intersection of the line joining the camera centers with the image plane. (see <script type="math/tex">\mathbf{e}</script> and <script type="math/tex">\mathbf{e'}</script> in the Fig. 2(a))</li>
+  <li><strong>Epipolar plane</strong> is the plane containing the baseline.</li>
+  <li><strong>Epipolar line</strong> is the intersection of an epipolar plane with the image plane. <em>All the epipolar lines intersect at the epipole.</em></li>
+</ul>
+
+<p><a name="estfundmatrix"></a></p>
+
+<h3 id="the-fundamental-matrix-mathbff">1.3 The Fundamental Matrix <script type="math/tex">\mathbf{F}</script>:</h3>
+<p>The <script type="math/tex">\mathbf{F}</script> matrix is only an algebraic representation of epipolar geometry and can both geometrically <em>(contructing the epipolar line)</em> and arithematically. (<a href="http://cvrs.whu.edu.cn/downloads/ebooks/Multiple%20View%20Geometry%20in%20Computer%20Vision%20\(Second%20Edition\).pdf">See derivation</a>) (<a href="https://www.youtube.com/watch?v=DgGV3l82NTk">Fundamental Matrix Song</a>)<br />
+As a result, we obtain:<br />
+<script type="math/tex">\mathbf{x}_i'^{\ \mathbf{T}}\mathbf{F} \mathbf{x}_i = 0</script><br />
+where <script type="math/tex">i=1,2,....,m.</script> <br />
+This is known as epipolar constraint or correspondance condition (or <em>Longuet-Higgins</em> equation). Since, <script type="math/tex">\mathbf{F}</script> is a <script type="math/tex">3\times3</script> matrix, we can set up a homogenrous linear system with 9 unknowns:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{bmatrix} x'_i & y'_i & 1 \end{bmatrix}
+\begin{bmatrix}f_{11} & f_{12} & f_{13} \\ f_{21} & f_{22} & f_{23} \\ f_{31} & f_{32} & f_{33} \end{bmatrix}
+\begin{bmatrix} x_i \\ y_i \\ 1 \end{bmatrix} = 0 %]]></script>
+
+<p><script type="math/tex">\begin{equation}x_i x'_i f_{11} + x_i y'_i f_{21} + x_i f_{31} + y_i x'_i f_{12} + y_i y'_i f_{22} + y_i f_{32} +  x'_i f_{13} + y'_i f_{23} + f_{33}=0\end{equation}</script><br />
+<br /><br /></p>
+
+<p>Simplifying for <script type="math/tex">m</script> correspondences,</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{bmatrix} x_1 x'_1 & x_1 y'_1 & x_1 & y_1 x'_1 & y_1 y'_1 & y_1 &  x'_1 & y'_1 & 1 \\ \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\ x_m x'_m & x_m y'_m & x_m & y_m x'_m & y_m y'_m & y_m &  x'_m & y'_m & 1 \end{bmatrix}\begin{bmatrix} f_{11} \\ f_{21} \\ f_{31} \\ f_{12} \\ f_{22} \\ f_{32} \\ f_{13} \\f_{23} \\ f_{33}\end{bmatrix} = 0 %]]></script>
+
+<p><strong><em>How many points do we need to solve the above equation? Think! Twice!</em></strong> <br />
+Remember <em>homography</em>, where each point correspondence contributes two constraints? Unlike homography, in <script type="math/tex">\mathbf{F}</script> matrix estimation, each point only contributes one constraints as the epipolar constraint is a scalar equation.<br />
+Thus, we require at least 8 points to solve the above homogenous system. That is why it is known as <a href="https://en.wikipedia.org/wiki/Eight-point_algorithm">Eight-point algorithm</a>.</p>
+
+<p>With <script type="math/tex">N \geq 8</script> correspondences between two images, the fundamental matrix, <script type="math/tex">F</script> can be obtained as:<br />
+By stacking the above equation in a matrix <script type="math/tex">A</script>, the equation<br />
+<script type="math/tex">Ax=0</script> is obtained.<br />
+	This system of equation can be answered by solving the linear least squares using Singular Value Decomposition (SVD) as explained in the <a href="https://cmsc426.github.io/math-tutorial/#svd">Math module</a>. When applying SVD to matrix <script type="math/tex">\mathbf{A}</script>, the decomposition <script type="math/tex">\mathbf{USV^T}</script> would be obtained with <script type="math/tex">\mathbf{U}</script> and <script type="math/tex">\mathbf{V}</script> orthonormal matrices and a diagonal matrix <script type="math/tex">\mathbf{S}</script> that contains the singular values. The singular values <script type="math/tex">\sigma_i</script> where <script type="math/tex">i\in[1,9], i\in\mathbb{Z}</script>, are positive and are in decreasing order with <script type="math/tex">\sigma_9=0</script> since we have 8 equations for 9 unknowns. Thus, the last column of <script type="math/tex">\mathbf{V}</script> is the true solution given that <script type="math/tex">\sigma_i\neq 0 \  \forall i\in[1,8], i\in\mathbb{Z}</script>. However, due to noise in the correspondences, the estimated <script type="math/tex">\mathbf{F}</script> matrix can be of rank 3 <em>i.e.</em> <script type="math/tex">\sigma_9\neq0</script>. So, to enfore the rank 2 constraint, the last singular value of the estimated <script type="math/tex">\mathbf{F}</script> must be set to zero. If <script type="math/tex">F</script> has a full rank then it will have an empty null-space <em>i.e.</em> it won’t have any point that is on entire set of lines. Thus, there wouldn’t be any epipoles. See Fig. 3 for full rank comparisons for <script type="math/tex">F</script> matrices.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/sfm/FMatrixRank.png" width="120%" />
+  <div class="figcaption">
+ 	Figure 3: F Matrix: Rank 3 vs Rank 2 comparison
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<p>In MATLAB, you can use <code class="highlighter-rouge">svd</code> to solve <script type="math/tex">\mathbf{x}</script> from <script type="math/tex">\mathbf{Ax}=0</script><br />
+<code class="highlighter-rouge">
+[U, S, V] = svd(A);
+x = V(:, end);
+F = reshape(x, [3,3])';
+</code></p>
+
+<p><a name="ransac"></a></p>
+
+<h3 id="match-outlier-rejection-via-ransac">1.4. Match Outlier Rejection via RANSAC:</h3>
+<p>Since the point correspondences are computed using SIFT or some other feature descriptors, the data is bound to be noisy and (in general) contains several outliers. Thus, to remove these outliers, we use RANSAC algorithm <em>(Yes! The same as used in Panorama stitching!)</em> to obtain a better estimate of the fundamental matrix. So, out of all possibilities, the <script type="math/tex">\mathbf{F}</script> matrix with maximum number of inliers is chosen.<br />
+Below is the pseduo-code that returns the <script type="math/tex">\mathbf{F}</script> matrix for a set of matching corresponding points (computed using SIFT) which maximizes the number of inliers.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/sfm/ransac.png" width="80%" />
+  <div class="figcaption">
+ 	Algorithm 1: Get Inliers RANSAC
+  </div>
+  <div style="clear:both;"></div>
+<br /><br />
+  <img src="/assets/sfm/featmatchransac.png" width="100%" />
+  <div class="figcaption">
+ 	Figure 4: Feature matching after RANSAC. (Green: Selected correspondences; Red: Rejected correspondences)
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<h3 id="estimate-essential-matrix-from-fundamental-matrix">2. Estimate <em>Essential Matrix</em> from Fundamental Matrix:</h3>
+<p>Since we have computed the <script type="math/tex">\mathbf{F}</script> using epipolar constrains, we can find the relative camera poses between the two images. This can be computed using the <em>Essential Matrix</em>, <script type="math/tex">\mathbf{E}</script>. Essential matrix is another <script type="math/tex">3\times3</script> matrix, but with some additional properties that relates the corresponding points assuming that the cameras obeys the pinhole model (unlike <script type="math/tex">\mathbf{F}</script>). More specifically, <br />
+<script type="math/tex">\mathbf{E}</script> = <script type="math/tex">\mathbf{K^TFK}</script><br />
+where <script type="math/tex">\mathbf{K}</script> is the camera calibration matrix or camera intrinsic matrix. Clearly, the essential matrix can be extracted from <script type="math/tex">\mathbf{F}</script> and <script type="math/tex">\mathbf{K}</script>. As in the case of <script type="math/tex">\mathbf{F}</script> matrix computation, the singular values of <script type="math/tex">\mathbf{E}</script> are not necessarily <script type="math/tex">(1,1,0)</script> due to the noise in <script type="math/tex">\mathbf{K}</script>. This can be corrected by reconstructing it with <script type="math/tex">(1,1,0)</script> singular values, <em>i.e.</em><br />
+<script type="math/tex">% <![CDATA[
+\mathbf{E}=U\begin{bmatrix}1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 0 \end{bmatrix}V^T %]]></script></p>
+
+<p><em>It is important to note that the <script type="math/tex">\mathbf{F}</script> is defined in the original image space (i.e. pixel coordinates) whereas <script type="math/tex">\mathbf{E}</script> is in the normalized image coordinates. Normalized image coordinates have the origin at the optical center of the image. Also, relative camera poses between two views can be computed using <script type="math/tex">\mathbf{E}</script> matrix. Moreover, <script type="math/tex">\mathbf{F}</script> has 7 degrees of freedom while <script type="math/tex">\mathbf{E}</script> has 5 as it takes camera parameters in account. (<a href="http://users.cecs.anu.edu.au/~hongdong/new5pt_cameraREady_ver_1.pdf">5-Point Motion Estimation Made Easy</a>)</em></p>
+
+<p><a name="essential"></a></p>
+
+<h3 id="estimate-camera-pose-from-essential-matrix">3. Estimate <strong>Camera Pose</strong> from Essential Matrix</h3>
+<p>The camera pose consists of 6 degrees-of-freedom (DOF) Rotation (Roll, Pitch, Yaw) and Translation (X, Y, Z) of the camera with respect to the world. Since the <script type="math/tex">\mathbf{E}</script> matrix is identified, the four camera pose configurations: <script type="math/tex">(C_1, R_1), (C_2, R_2), (C_3, R_3)</script> and <script type="math/tex">(C_4, R4)</script> where <script type="math/tex">\ C\in\mathbb{R}^3</script> is the camera center and <script type="math/tex">R\in SO(3)</script> is the rotation matrix, can be computed. Thus, the camera pose can be written as:<br />
+<script type="math/tex">% <![CDATA[
+P = KR\begin{bmatrix}I_{3\times3} & -C\end{bmatrix} %]]></script><br />
+These four pose configurations can be computed from <script type="math/tex">\mathbf{E}</script> matrix. Let <script type="math/tex">\mathbf{E}=UDV^T</script> and <script type="math/tex">% <![CDATA[
+W=\begin{bmatrix}0 & -1 & 0\\ 1 & 0 & 0\\ 0 & 0 & 1\end{bmatrix} %]]></script>. The four configurations can be written as: <br />
+1. <script type="math/tex">C_1=U(:, 3)</script> and <script type="math/tex">R_1=UWV^T</script><br />
+2. <script type="math/tex">C_2=-U(:, 3)</script> and <script type="math/tex">R_2=UWV^T</script><br />
+3. <script type="math/tex">C_3=U(:, 3)</script> and <script type="math/tex">R_3=UW^TV^T</script><br />
+4. <script type="math/tex">C_4=-U(:, 3)</script> and <script type="math/tex">R_4=UW^TV^T</script></p>
+
+<p><strong>It is important to note that the <script type="math/tex">\ det(R)=1</script>. If <script type="math/tex">det(R)=-1</script>, the camera pose must be corrected <em>i.e.</em> <script type="math/tex">C=-C</script> and <script type="math/tex">R=-R</script>.</strong></p>
+
+<p><a name="tri"></a></p>
+
+<h3 id="check-for-cheirality-condition-using-triangulation">4. Check for <strong>Cheirality Condition</strong> using <strong>Triangulation</strong>:</h3>
+<p>In the previous section, we computed four different possible camera poses for a pair of images using essential matrix. Though, in order to find the <em>correct</em> unique camera pose, we need to remove the disambiguity. This can be accomplish by checking the <strong>cheirality condition</strong> <em>i.e.</em> <em>the reconstructed points must be in front of the cameras</em>. <br />
+To check the cheirality condition, triangulate the 3D points (given two camera poses) using <strong>linear least squares</strong> to check the sign of the depth <script type="math/tex">Z</script> in the camera coordinate system w.r.t. camera center. A 3D point <script type="math/tex">X</script> is in front of the camera iff:<br />
+<script type="math/tex">r_3\mathbf{(X-C)} > 0</script><br />
+where <script type="math/tex">r_3</script> is the third row of the rotation matrix (z-axis of the camera). Not all triangulated points satisfy this coniditon due of the presence of correspondence noise. The best camera configuration, <script type="math/tex">(C, R, X)</script> is the one that produces the maximum number of points satisfying the cheirality condition.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/sfm/lintria.png" width="60%" />
+  <div class="figcaption">
+  	Figure 5: Initial triangulation plot with disambiguity, showing all four possible camera poses.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<p><a name="nonlintri"></a></p>
+
+<h3 id="non-linear-triangulation">4.1 Non-Linear Triangulation:</h3>
+<p>Given two camera poses and linearly triangulated points, <script type="math/tex">X</script>, the locations of the 3D points that minimizes the reprojection error (Recall <a href="https://cmsc426.github.io/pano/#reproj">Project 2</a>) can be refined. The linear triangulation minimizes the algebraic error. Though, the reprojection error is geometrically meaningful error and can be computed by measuring error between measurement and projected 3D point:<br /><br />
+<script type="math/tex">\underset{x}{\operatorname{min}}</script> <script type="math/tex">\sum_{j=1,2}\left(u^j - \frac{P_1^{jT}\widetilde{\phi}}{P_3^{jT}{X}}\right)^2 + \left(v^j - \frac{P_2^{jT}\widetilde{\phi}}{P_3^{jT}{X}}\right)^2</script></p>
+
+<p>Here, <script type="math/tex">j</script> is the index of each camera, <script type="math/tex">\widetilde{X}</script> is the hoomogeneous representation of <script type="math/tex">X</script>. <script type="math/tex">P_i^T</script> is each row of camera projection matrix, <script type="math/tex">P</script>. This minimization is highly nonlinear due to the divisions. The initial guess of the solution, <script type="math/tex">X_0</script>, is estimated via the linear triangulation to minimize the cost function. This minimization can be solved using nonlinear optimization toolbox such as <code class="highlighter-rouge">fminunc</code> or <code class="highlighter-rouge">lsqnonlin</code> in MATLAB.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/sfm/nonlintria.png" width="100%" />
+  <div class="figcaption">
+ 	Figure 6: Comparison between non-linear vs linear triangulation.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<p><a name="pnp"></a></p>
+
+<h3 id="perspective-n-points">5. Perspective-<script type="math/tex">n</script>-Points:</h3>
+<p>Now, since we have a set of <script type="math/tex">n</script> 3D points in the world, their <script type="math/tex">2D</script> projections in the image and the intrinsic parameter; the 6 DOF camera pose can be estimated using linear least squares. This fundamental problem, in general is known as <em>Persepective</em>-<script type="math/tex">n</script>-<em>Point</em> (PnP). For there to exist a solution, <script type="math/tex">n\geq 3</script>. There are multiple methods to solve the P<script type="math/tex">n</script>P problem and have an assumptions in most of them that the camera is calibrated. Methods such as <a href="https://pdfs.semanticscholar.org/f1d6/2775d4a51161663ff9453b37bb21a1263f25.pdf">Unified P<script type="math/tex">n</script>P</a> (or UPnP) do not abide with the said assumption as they estimate both intrinsic and extrinsic parameters.</p>
+
+<p>P<script type="math/tex">n</script>P is prone to error as there are outliers in the given set of point correspondences. To overcome this error, we can use RANSAC (yes, again!) to make our camera pose more robust to outliers. The alogrithm below depicts the solution with RANSAC.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/sfm/pnpransac.png" width="80%" />
+  <div class="figcaption">
+ 	Algorithm 2: PnP RANSAC
+  </div>
+  <div style="clear:both;"></div>
+
+
+  <img src="/assets/sfm/PnPRANSAC.png" width="50%" />
+  <div class="figcaption">
+ 	Figure 7: Plot of the camera poses with feature points. Different color represents feature correspondences from different pair of images. Blue points are features from Image 1 and Image 2; Red points are features from Image 2 and Image 3 etc.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<p>Just like in triangulation, since we have the linearly estimated camera pose, we can refine the camera pose that minimizes the reprojection error (Linear PnP only minimizes the algebraic error). Though, reprojection error is the geometrically meaningful error and can be computed by measuring error between measurement and projected 3D point.</p>
+
+<script type="math/tex; mode=display">\underset{C,R}{\operatorname{min}} \sum_{i=1,J} \left(u^j - \frac{P_1^{jT}\widetilde{X_j}}{P_3^{jT}{\widetilde{X_j}}}\right)^2 + \left(v^j - \frac{P_2^{jT}\widetilde{X_j}}{P_3^{jT}{X_j}}\right)^2</script>
+
+<p><a name="ba"></a></p>
+
+<h3 id="bundle-adjustment">6. Bundle Adjustment:</h3>
+<p>Once you have computed all the camera poses and 3D points, we need to refine the poses and 3D points together, initialized by previous reconstruction by minimizing reporjection error.</p>
+<div class="fig fighighlight">
+  <img src="/assets/sfm/BA.png" width="80%" />
+  <div class="figcaption">
+ 	Figure 7: The final reconstructed scene after Sparse Bundle Adjustment (SBA).
+  </div>
+  <div style="clear:both;"></div>
+</div>
+<p>The optimization problem can formulated as following:</p>
+
+<p><script type="math/tex">\underset{\{C_i, q_i\}_{i=1}^i,\{X\}_{j=1}^J}{\operatorname{min}}\sum_{i=1}^I\sum_{j=1}^J V_{ij}\left(\left(u^j - \dfrac{P_1^{jT}\tilde{\phi}}{P_3^{jT}\tilde{X}}\right)^2 + \left(v^j - \dfrac{P_2^{jT}\tilde{\phi}}{P_3^{jT}\tilde{X}}\right)^2\right)</script><br />
+where <script type="math/tex">V_{ij}</script> is the visibility matrix.<br />
+(<em>Don’t scratch your head yet!</em>)</p>
+
+<p>Visibility matrix signifies the relationship between the camera and a point. <script type="math/tex">V_{ij}</script> is one if <script type="math/tex">j^{th}</script> point is visible from the <script type="math/tex">i^{th}</script> camera and zero otherwise. One can use a nonlinear optimization toolbox such as <code class="highlighter-rouge">fminunc</code> or <code class="highlighter-rouge">lsqnonlin</code> in MATLAB but is extremely slow as the number of parameters are large. The <i>Sparse Bundle Adjustment</i> toolbox is designed to solve such optimization problem by exploiting sparsity of visibility matrix, <script type="math/tex">V</script>.</p>
+
+<p>Clearly, solving such a method to compute the structure from motion is complex and slow <em>(can take from several minutes for only 8-10 images)</em>. The above steps collectively is the traditional way of solving the problem of SfM. However, the solution to the problem of structure from motion can be made more robust with deep learning.</p>
+
+<hr />
+
+<h2 id="deep-learning-sfmlearner">Deep Learning (SfMLearner)</h2>
+
+<p>To achieve more robust results, we are going to implement an unsupervised deep learning framework (<a href="https://people.eecs.berkeley.edu/~tinghuiz/projects/SfMLearner/cvpr17_sfm_final.pdf">SfMLearner</a>) to estimate monocular depth and camera motion from continuous set of frames. This is an end-to-end learning approach that will basically replace all the steps from feature matching to non linear PnP.</p>
+
+<p>One of the trivial ways to do it is to learn rotation and translation from a sequence of data. Although, learning such parameters directly is weakly constrained. Thus, methods like SfMLearner, jointly train a single view depth CNN and a camera pose estimation CNN from unlabeled video sequence.</p>
+
+<p>Assumption: The scene is fairly rigid <i>i.e.</i> the scene appearance change across different frames is dominated by the camera motion.</p>
+
+<p><b> You are required to read <a href="https://people.eecs.berkeley.edu/~tinghuiz/projects/SfMLearner/cvpr17_sfm_final.pdf">SfMLearner</a> paper before reading further. </b></p>
+
+<h3 id="view-synthesis">1. View Synthesis</h3>
+
+<p>The key supervision signal for our depth and pose prediction CNNs comes from the task of novel view synthesis: given one input view of a scene, synthesize a new image of the scene seen from a different camera pose. We can synthesize a target view given a per-pixel depth in that image, plus the pose and visibility in a nearby view. Thus, synthesizing the target view works as a supervision for training. The view synthesis objective can be formulated as:</p>
+
+<p><script type="math/tex">L_{vs} = \sum_s \sum_p |I_t(p) - \hat{I_s}(p)|</script> <br />
+where <script type="math/tex">p</script> indexes over pixel coordinates and <script type="math/tex">\hat{I_s}</script> is the source view <script type="math/tex">I_s</script> warped to the target coordinate frame based on a depth imae-based rendering module. See Figure xx for an illustration of SfMLearner learning pipeline for depth and pose estimation.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p3/overview.png" width="80%" />
+  <div class="figcaption">
+  Figure xx: Overview of the supervision pipeline based on view synthesis.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<h3 id="differentiable-depth-image-based-rendering">2. Differentiable Depth Image-based Rendering</h3>
+<p>A key component of this framework is a differentiable depth image-based renderer (Refer section 3.1 of the paper) that reconstructs the target view <script type="math/tex">I_t</script> by sampling pixels from a source view <script type="math/tex">I_s</script> based on the predicted depth map <script type="math/tex">\hat{D_t}</script> and the relative pose <script type="math/tex">\hat{T}_{t\rightarrow s}</script></p>
+
+<p>Fig. xx is an illustration of the differentiable image warping process.</p>
+<div class="fig fighighlight">
+  <img src="/assets/2019/p3/image-warp.png" width="80%" />
+  <div class="figcaption">
+  Figure xx: For each point \(p_t\) in the target view, we first project it onto the source view based on the predicted depth and camera pose, and then use bilinear interpolation to obtain the value of the warped image \(\hat{I}_s\) at location \(p_t\).
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<p>To obtain <script type="math/tex">I_s(p_s)</script> for populating the value of <script type="math/tex">\hat{I}_s(p_t)</script>, we use the differentiable bilinear sampling mechanism proposed in the spatial transformer networks(STN) that linearly interpolates the values of the 4-pixel neighboring pixels of <script type="math/tex">p_s</script> to approximate <script type="math/tex">I_s(p_s)</script>. For this project, you may ‘use’ STN rather than writing your own. A sample tensorflow implementation of STN can be found <a href="https://github.com/kevinzakka/spatial-transformer-network">here</a>. Feel free to use any other implementation.</p>
+
+<h3 id="explainability-mask">3. Explainability Mask</h3>
+
+<p><b>Note</b>: Till now, we assume the scene is static; there are no occlusions between the target and source views; the surface is Lambertian so that the photo-consistency error is meaningful. With any of the these assumptions voilated in the training sequence, the gradients could be corrupted. To improve the robustness of our training process, we separately train a <i>explainability prediction</i> network that outputs a per-pixel soft mask <script type="math/tex">\hat{E}_s</script> for each  target-source pair.</p>
+
+<p>Thus, the view synthesis objective is updated as:</p>
+
+<script type="math/tex; mode=display">L_{vs} = \sum_s \sum_p \hat{E}_s(p)\ |I_t(p) - \hat{I_s}(p)|</script>
+
+<h3 id="gradient-locality-issues">4. Gradient Locality Issues</h3>
+
+<p>There is still another problem that needs to be dealt with. The gradients in the framework are mainly derived from the pixel intensity difference between the center pixel and its neighbours which will cause problems in training if the correct <script type="math/tex">p_s</script> (neighbour pixel) is located in a low-texture region. This is a common issue in motion estimation. To overcome this problem, we can use a encoder-decoder CNN with a small bottleneck for the depth network that implicitly constrains the output to be globally smooth and facilitates gradients to propogate from meaningful regions to nearby regions. <br />
+Thus, for smoothness, we minimize the <script type="math/tex">L_1</script> norm of second-order gradients for the predicted depth maps:</p>
+
+<script type="math/tex; mode=display">L_{final} = \sum_l L^l_{vs} + \lambda_s L^l_{smooth} + \lambda_e \sum_s L_{reg}(\hat{E}^l_s)</script>
+
+<p>where <script type="math/tex">l</script> indexes over different images scales, <script type="math/tex">s</script> indexes over source images and <script type="math/tex">\lambda_s</script> and <script type="math/tex">\lambda_e</script> are weighting for the depth smoothness loss and explainability regularization respectively.</p>
+
+<p>The network architecture is given below:</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p3/network.png" width="100%" />
+  <div class="figcaption">
+  Figure xx: Overview of the supervision pipeline based on view synthesis.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        
+        
+        <li>
+          <a href="mailto:"></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- mathjax -->
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>

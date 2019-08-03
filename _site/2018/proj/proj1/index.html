@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Color Segmentation using GMM</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Course materials and notes for University of Maryland's class CMSC426: Computer Vision.">
+    <link rel="canonical" href="http://cmsc426.github.io/2018/proj/proj1/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+    <!-- Google tracking -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46895817-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap title-wrap">
+    <a class="site-title" href="/">CMSC426 Computer Vision</a>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>Color Segmentation using GMM</h1>
+  </header>
+
+  <article class="post-content">
+  <p><strong>This article is written by <a href="http://analogicalnexus.github.io">Chethan Parameshwara</a>.</strong></p>
+
+<p>Table of Contents:<br />
+- <a href="#due">Due Date</a><br />
+- <a href="#intro">Introduction</a><br />
+- <a href="#problem">What you need to do</a><br />
+  - <a href="#pro">Problem Statement</a><br />
+- <a href="#sub">Submission Guidelines</a><br />
+- <a href="#coll">Collaboration Policy</a></p>
+
+<p><a name="due"></a><br />
+## Due Date <br />
+10:59AM, Tuesday, September 17, 2018</p>
+
+<p><a name="intro"></a><br />
+## Introduction</p>
+
+<p>Have you ever played with these adorable Nao robots?</p>
+
+<p><a href="http://www.youtube.com/watch?feature=player_embedded&amp;v=Gy_wbhQxd_0 " target="_blank"><img src="http://img.youtube.com/vi/Gy_wbhQxd_0/0.jpg" alt=" Nao robot demo " width="480" height="360" border="10" /></a></p>
+
+<p>Nao robots are star players in RoboCup, an annual autonomous robot soccer competitions. <br />
+We are planning to build the Maryland RoboCup team to compete in RoboCup 2019 so we need your help. <br />
+Would you like to help us in Nao’s soccer training? We need to train Nao to detect a soccer ball and estimate the depth of the ball to know how far to kick it.</p>
+
+<p>Nao’s training has two phases:<br />
+- Color Segmentation using Gaussian Mixture Model (GMM)<br />
+- Depth Estimation</p>
+
+<p><a name="problem"></a><br />
+## What you need to do<br />
+To make logistics easier, we have collected camera data from Nao robot on behalf of you and saved the data in form of color images. as you can see our lab setup.</p>
+<div class="fig fighighlight">
+  <img src="/assets/proj1/proj1_image.PNG" width="100%" />
+  <div class="figcaption">
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<p><a name="pro"></a><br />
+### Problem Statement</p>
+
+<p><a name="sub"></a><br />
+## Submission Guidelines</p>
+
+<p><b> If your submission does not comply with the following guidelines, you’ll be given ZERO credit </b></p>
+
+<h3 id="file-tree-and-naming">File tree and naming</h3>
+
+<p>Your submission on Canvas must be a zip file, following the naming convention <strong>YourDirectoryID_proj1.zip</strong>.  For example, xyz123_proj1.zip.  The file <strong>must have the following directory structure</strong>, based on the starter files</p>
+
+<p>[          ]</p>
+
+<h3 id="report">Report</h3>
+<p>For each section of the homework, explain briefly what you did, and describe any interesting problems you encountered and/or solutions you implemented.  You must include the following details in your writeup:</p>
+
+<p>[        ]</p>
+
+<p>As usual, your report must be full English sentences,<strong>not</strong> commented code. There is a word limit of 750 words and no minimum length requirement</p>
+
+<p><a name="coll"></a><br />
+## Collaboration Policy<br />
+You are encouraged to discuss the ideas with your peers. However, the code should be your own, and should be the result of you exercising your own understanding of it. If you reference anyone else’s code in writing your project, you must properly cite it in your code (in comments) and your writeup.  For the full honor code refer to the CMSC426 Fall 2018 website</p>
+
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        
+        
+        <li>
+          <a href="mailto:"></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- mathjax -->
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>

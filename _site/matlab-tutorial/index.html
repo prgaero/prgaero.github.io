@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>MATLAB Tutorial</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Course materials and notes for University of Maryland's class CMSC733: Computer Vision.">
+    <link rel="canonical" href="http://cmsc733.github.io/matlab-tutorial/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+    <!-- Google tracking -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46895817-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap title-wrap">
+    <a class="site-title" href="/">CMSC733 Computer Vision</a>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>MATLAB Tutorial</h1>
+  </header>
+
+  <article class="post-content">
+  <h2 id="setup">Setup</h2>
+<p>You can work on the assignment in one of two ways: locally on your own machine, or on a virtual machine on Google Cloud.</p>
+
+<h3 id="working-remotely-on-google-cloud-recommended">Working remotely on Google Cloud (Recommended)</h3>
+
+<p><strong>Note:</strong> after following these instructions, make sure you go to <strong>Download data</strong> below (you can skip the <strong>Working locally</strong> section).</p>
+
+<p>As part of this course, you can use Google Cloud for your assignments. We recommend this route for anyone who is having trouble with installation set-up, or if you would like to use better CPU/GPU resources than you may have locally. Please see the set-up tutorial <a href="http://cs231n.github.io/gce-tutorial/">here</a> for more details. :)</p>
+
+<h3 id="working-locally">Working locally</h3>
+
+<p><strong>Installing Anaconda:</strong><br />
+If you decide to work locally, we recommend using the free <a href="https://www.anaconda.com/download/">Anaconda Python distribution</a>, which provides an easy way for you to handle package dependencies. Please be sure to download the Python 3 version, which currently installs Python 3.6. We are no longer supporting Python 2.</p>
+
+<p><strong>Anaconda Virtual environment:</strong><br />
+Once you have Anaconda installed, it makes sense to create a virtual environment for the course. If you choose not to use a virtual environment, it is up to you to make sure that all dependencies for the code are installed globally on your machine. To set up a virtual environment, run (in a terminal)</p>
+
+<p><code class="highlighter-rouge">conda create -n cs231n python=3.6 anaconda</code></p>
+
+<p>to create an environment called <code class="highlighter-rouge">cs231n</code>.</p>
+
+<p>Then, to activate and enter the environment, run</p>
+
+<p><code class="highlighter-rouge">source activate cs231n</code></p>
+
+<p>To exit, you can simply close the window, or run</p>
+
+<p><code class="highlighter-rouge">source deactivate cs231n</code></p>
+
+<p>Note that every time you want to work on the assignment, you should run <code class="highlighter-rouge">source activate cs231n</code> (change to the name of your virtual env).</p>
+
+<p>You may refer to <a href="https://conda.io/docs/user-guide/tasks/manage-environments.html">this page</a> for more detailed instructions on managing virtual environments with Anaconda.</p>
+
+<p><strong>Python virtualenv:</strong><br />
+Alternatively, you may use python <a href="http://docs.python-guide.org/en/latest/dev/virtualenvs/">virtualenv</a> for the project. To set up a virtual environment, run the following:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nb">cd </span>assignment1
+sudo pip install virtualenv      <span class="c"># This may already be installed</span>
+virtualenv -p python3 .env       <span class="c"># Create a virtual environment (python3)</span>
+<span class="c"># Note: you can also use "virtualenv .env" to use your default python (please note we support 3.6)</span>
+<span class="nb">source</span> .env/bin/activate         <span class="c"># Activate the virtual environment</span>
+pip install -r requirements.txt  <span class="c"># Install dependencies</span>
+<span class="c"># Work on the assignment for a while ...</span>
+deactivate                       <span class="c"># Exit the virtual environment</span>
+</code></pre>
+</div>
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        
+        
+        <li>
+          <a href="mailto:"></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- mathjax -->
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>

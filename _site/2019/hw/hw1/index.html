@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>AutoCalib</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Course materials and notes for University of Maryland's class CMSC733: Computer Vision.">
+    <link rel="canonical" href="http://cmsc733.github.io/2019/hw/hw1/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+    <!-- Google tracking -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46895817-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap title-wrap">
+    <a class="site-title" href="/">CMSC733 Computer Vision</a>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>AutoCalib</h1>
+  </header>
+
+  <article class="post-content">
+  <p><strong>To be submitted individually</strong></p>
+
+<p>Table of Contents:<br />
+- <a href="#due">1. Due Date</a><br />
+- <a href="#intro">2. Introduction</a><br />
+- <a href="#data">3. Data</a><br />
+- <a href="#init">4. Initial Parameter Estimation</a><br />
+  - <a href="#solveK">4.1. Solving for approximate <script type="math/tex">K</script> or camera intrinsic matrix</a><br />
+  - <a href="#solveRT">4.2. Estimate approximate <script type="math/tex">R</script> and <script type="math/tex">t</script> or camera extrinsics</a><br />
+  - <a href="#solvedist">4.3. Approximate Distortion <script type="math/tex">k_c</script></a><br />
+- <a href="#nonlinmin">5. Non-linear Geometric Error Minimization</a><br />
+- <a href="#sub">6. Submission Guidelines</a><br />
+  - <a href="#files">6.1. File tree and naming</a><br />
+  - <a href="#report">6.2. Report</a><br />
+- <a href="#coll">7. Collaboration Policy</a></p>
+
+<p><a name="due"></a><br />
+## 1. Due Date <br />
+<strong>11:59PM, Thursday, April 6, 2019.</strong></p>
+
+<p><a name="intro"></a><br />
+## 2. Introduction</p>
+
+<p>Estimating parameters of the camera like the focal length, distortion coefficients and principle point is called <strong>Camera Calibration</strong>. It is one of the most time consuming and important part of any computer vision research involving 3D geometry. An automatic way to perform efficient and robust camera calibration would be wonderful. One such method was presented Zhengyou Zhang of Microsoft in <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr98-71.pdf">this paper</a> and is regarded as one of the hallmark papers in camera calibration. Recall that the camera calibration matrix <script type="math/tex">K</script> is given as follows</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+K = \begin{bmatrix} 
+f_x & 0 & c_x\\
+0 & f_y & c_y\\
+0 & 0 & 1\\
+\end{bmatrix} %]]></script>
+
+<p>and radial distortion parameters are denoted by <script type="math/tex">k_1</script> and <script type="math/tex">k_2</script> respectively. Your task is to estimate <script type="math/tex">f_x, f_y, c_x, c_y, k_1, k_2</script>.</p>
+
+<p><a name="data"></a><br />
+## 3. Data<br />
+The Zhang’s paper relies on a calibration target (checkerboard in our case) to estimate camera intrinsic parameters. The calibration target used can be found in the file <code class="highlighter-rouge">checkerboardPattern.pdf</code> <a href="https://github.com/cmsc733/cmsc733.github.io/raw/master/assets/2019/hw1/checkerboardPattern.pdf">Link</a>. This was<br />
+printed on an A4 paper and the size of each square was 21.5mm. Note that the <script type="math/tex">Y</script> axis has odd number of squares and <script type="math/tex">X</script> axis has even number of squares. It is a general practice to neglect<br />
+the outer squares (extreme square on each side and in both directions). Thirteen images taken from a Google Pixel XL phone with focus locked can be downloaded from <a href="https://github.com/cmsc733/cmsc733.github.io/raw/master/assets/2019/hw1/Calibration_Imgs.zip">here</a> which you will use to calibrate.</p>
+
+<p><a name="init"></a><br />
+## 4. Initial Parameter Estimation<br />
+We are trying to get a good initial estimate of the parameters so that we can feed it into the non-linear optimizer. We will define the parameters we are using in the code next.</p>
+
+<p><script type="math/tex">x</script> denotes the image points, <script type="math/tex">X</script> denotes the world points (points on the checkerboard), <script type="math/tex">k_s</script> denotes the radial distortion parameters, <script type="math/tex">K</script> denotes the camera calibration matrix, <script type="math/tex">R</script> and <script type="math/tex">t</script> represent the rotation matrix and the translation of the camera in the world frame.</p>
+
+<p><a name="solveK"></a><br />
+### 4.1. Solving for approximate <script type="math/tex">K</script> or camera intrinsic matrix<br />
+Refer to Section 3.1 in <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr98-71.pdf">this paper</a> for a solution of parameters in <script type="math/tex">K</script>. Use <code class="highlighter-rouge">cv2.findChessboardCorners</code> function in OpenCV to find the corners of the Checker board with appropriate parameters here.</p>
+
+<p><a name="solveRT"></a><br />
+### 4.2. Estimate approximate <script type="math/tex">R</script> and <script type="math/tex">t</script> or camera extrinsics<br />
+Refer to Section 3.1 in <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr98-71.pdf">this paper</a>  for details on how to estimate <script type="math/tex">R</script> and <script type="math/tex">t</script>. Note that the author mentions a method to convert a normal matrix to a rotation matrix in Appendix C, this can be neglected most of the times.</p>
+
+<p><a name="solvedist"></a><br />
+### 4.3. Approximate Distortion <script type="math/tex">k_c</script><br />
+Because we assumed that the camera has minimal distortion we can assume that <script type="math/tex">k_c = [0, 0]^T</script> for a good initial estimate.</p>
+
+<p><a name="nonlinmin"></a><br />
+## 5. Non-linear Geometric Error Minimization<br />
+We have the initial estimates of <script type="math/tex">K, R, t, k_s</script>, now we want to minimize the geometric error defined as given below</p>
+
+<script type="math/tex; mode=display">\sum_{i=1}^N \sum_{j=1}^M \vert \vert x_{i,j} - \hat x_{i,j}\left(K, R_i, t_i, X_j, k_s \right)\vert \vert</script>
+
+<p>Here <script type="math/tex">x_{i,j}</script> and <script type="math/tex">\hat x_{i,j}</script> are an inhomogeneous representation. Feel free to use <code class="highlighter-rouge">scipy.optimize</code> to minimize the loss function described above. Refer to Section 3.3 in <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr98-71.pdf">this paper</a> for a detailed explanation of the distortion model, you’ll need this part for the minimization function.</p>
+
+<p><a name="sub"></a><br />
+## 6. Submission Guidelines</p>
+
+<p><b> If your submission does not comply with the following guidelines, you’ll be given ZERO credit </b></p>
+
+<p><a name="files"></a><br />
+### 6.1. File tree and naming</p>
+
+<p>Your submission on ELMS/Canvas must be a <code class="highlighter-rouge">zip</code> file, following the naming convention <code class="highlighter-rouge">YourDirectoryID_hw1.zip</code>. If you email ID is <code class="highlighter-rouge">abc@umd.edu</code> or <code class="highlighter-rouge">abc@terpmail.umd.edu</code>, then your <code class="highlighter-rouge">DirectoryID</code> is <code class="highlighter-rouge">abc</code>. For our example, the submission file should be named <code class="highlighter-rouge">abc_hw1.zip</code>. The file <strong>must have the following directory structure</strong> because we’ll be autograding assignments. The file to run for your project should be called <code class="highlighter-rouge">Wrapper.py</code>. You can have any helper functions in sub-folders as you wish, be sure to index them using relative paths and if you have command line arguments for your Wrapper codes, make sure to have default values too. Please provide detailed instructions on how to run your code in <code class="highlighter-rouge">README.md</code> file. Please <strong>DO NOT</strong> include data in your submission.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>YourDirectoryID_hw1.zip
+│   README.md
+|   Your Code files 
+|		├── Any subfolders you want along with files
+|   Wrapper.py 
+└──	Report.pdf
+</code></pre>
+</div>
+<p><a name="report"></a><br />
+### 6.2. Report</p>
+
+<p>For each section of the homework, explain briefly what you did, and describe any interesting problems you encountered and/or solutions you implemented.  You must include the following details in your writeup:</p>
+
+<ul>
+  <li>Your report <strong>MUST</strong> be typeset in LaTeX in the IEEE Tran format provided to you in the <code class="highlighter-rouge">Draft</code> folder and should of a conference quality paper.</li>
+  <li>Present images of checkerboard after rectification and reprojection of corners on rectified image.</li>
+  <li>Present the value of re-projection error.</li>
+  <li>Clearly, specify the <script type="math/tex">K</script> matrix in the report.</li>
+</ul>
+
+<p><a name="coll"></a><br />
+## 7. Collaboration Policy<br />
+You are encouraged to discuss the ideas with your peers. However, the code should be your own, and should be the result of you exercising your own understanding of it. If you reference anyone else’s code in writing your project, you must properly cite it in your code (in comments) and your writeup.  For the full honor code refer to the CMSC733 Spring 2019 website.</p>
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        
+        
+        <li>
+          <a href="mailto:"></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- mathjax -->
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>

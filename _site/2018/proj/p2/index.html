@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Panorama Stitching</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Course materials and notes for University of Maryland's class CMSC426: Computer Vision.">
+    <link rel="canonical" href="http://cmsc426.github.io/2018/proj/p2/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+    <!-- Google tracking -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46895817-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap title-wrap">
+    <a class="site-title" href="/">CMSC426 Computer Vision</a>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>Panorama Stitching</h1>
+  </header>
+
+  <article class="post-content">
+  <p>Table of Contents:<br />
+- <a href="#due">Deadline</a><br />
+- <a href="#intro">Introduction</a><br />
+- <a href="#system_overview">System Overview</a><br />
+  - <a href="#pro">Problem Statement</a><br />
+- <a href="#sub">Submission Guidelines</a><br />
+- <a href="#coll">Collaboration Policy</a></p>
+
+<p><a name="due"></a><br />
+## Deadline <br />
+10:59AM, Tuesday, October 09, 2018</p>
+
+<p><a name="intro"></a><br />
+## Introduction</p>
+
+<p>The aim of this project is to implement an end-to-end pipeline for panorama stitching. We all use the panorama mode on our smart-phones– you’ll implement a pipeline which does the same basic thing!</p>
+
+<p>This document just provides an overview of what you need to do.  For a full breakdown of how each step in the pipeline works, see <a href="https://cmsc426.github.io/pano/">the course notes for this project</a>.</p>
+
+<p><a name="system_overview"></a><br />
+## System Overview</p>
+
+<p>Here’s a system diagram, showing each step in your panorama-stitching pipeline:</p>
+
+<div class="fig figcenter fighighlight">
+  <img src="/assets/proj2/system_diagram.png" width="100%" />
+</div>
+
+<p>A brief description of each step (you’ll implement the steps <strong>in bold</strong>):</p>
+
+<ul>
+  <li>Cylinder Projection:  Project images onto a cylinder, to reduce distortion at the panorama’s edges.  For this project, it’s optional.</li>
+  <li>Detect Corners:  identify corner points in your images.  (You can just use Matlab’s <code class="highlighter-rouge">cornermetric</code>.)</li>
+  <li><strong>ANMS</strong>: pick out the stronger corner points.</li>
+  <li><strong>Feature Descriptors</strong>: create descriptors for the corner points, so they can be matched between images (in the next step).</li>
+  <li><strong>Feature Matching</strong>: Match feature descriptors from different images, to find possible point correspondences.</li>
+  <li><strong>RANSAC and Homography Estimation</strong>: refine the feature point matches, and use the correspondences to estimate homographies between images.</li>
+  <li><strong>Image Warping (and Blending)</strong>: Use the estimated homographies to warp the images onto one another, and apply blending to reduce the appearance of seams where they fit together.
+    <ul>
+      <li>For blending in this project, you can simply average the pixel values of overlapping images.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="point-distribution">Point Distribution:</h3>
+<ul>
+  <li>ANMS: 25 pts</li>
+  <li>Feature Descriptors: 15pts</li>
+  <li>Feature Matching: 15pts</li>
+  <li>RANSAC and Homography Estimation: 20pts</li>
+  <li>Image Warping (and Blending): 25pts</li>
+</ul>
+
+<h2 id="project-files-and-starter-code">Project Files and Starter Code</h2>
+<p>Please find the starter code at <a href="https://drive.google.com/file/d/1RA-NYd3CErQSqKy0OAlC7LqCgIiuxKiw/view?usp=sharing">this
+link</a>.</p>
+
+<p>This also includes three sets of “training<br />
+images”.  Twenty-four hours before the due date, we’ll distribute a “test set” of two more sets of images (look out for an announcement on Piazza).</p>
+
+<p>When writing your program, you can assume that input images will always follow the filename convention “1.jpg”, “2.jpg”, etc.</p>
+
+<h4 id="functions-allowed">Functions Allowed</h4>
+
+<p>For this project, imfilter, conv2, imrotate, im2double, rgb2gray, fspecial, imtransform, imwarp (and imref2d), meshgrid, sub2ind, ind2sub and all other plotting and matrix operation/manipulation functions are allowed.</p>
+
+<p><a name="sub"></a><br />
+## Submission Guidelines</p>
+
+<p><b> We will deduct points if your submission does not comply with the following guidelines.</b></p>
+
+<h3 id="file-tree-and-naming">File tree and naming</h3>
+
+<p>Your submission on Canvas must be a zip file, following the naming convention <strong>YourDirectoryID_proj2.zip</strong>.  For example, xyz123_proj2.zip.  The file <strong>must have the following directory structure</strong>:</p>
+
+<ul>
+  <li>YourDirectoryID_proj2.zip/
+    <ul>
+      <li>Code/
+        <ul>
+          <li>MyPanorama.m</li>
+          <li>*(any dependencies of MyPanorama.m)</li>
+        </ul>
+      </li>
+      <li>train_images/</li>
+      <li>test_images/</li>
+      <li>input/</li>
+      <li>report.pdf</li>
+    </ul>
+  </li>
+</ul>
+
+<p>When run, MyPanorama.m must load a set of images from <em>Images/input/</em>, and return<br />
+the resulting panorama.</p>
+
+<h3 id="report">Report</h3>
+<p><strong>You will be graded primarily based on your report.</strong>  We want<br />
+you to demonstrate an understanding of the concepts involved in the project, and to show the output<br />
+produced by your code.</p>
+
+<p>Include visualizations of the output of each stage in your pipeline (as shown in the system diagram<br />
+on page 2), and a description of what you did for each step.  Assume that we’re familiar with the<br />
+project, so you don’t need to spend time repeating what’s already in the course notes.  Instead, focus on any interesting problems you encountered and/or solutions you implemented.</p>
+
+<p>Be sure to include the output panoramas for <strong>all five image sets</strong> (from the training <strong>and</strong> test sets).  Because you have limited time in which to access the “test set” images, we won’t expect in-depth analysis of your results for them.</p>
+
+<p>As usual, your report must be full English sentences, <strong>not</strong> commented code. There is a word limit of 1500 words and no minimum length requirement.</p>
+
+<p><a name="coll"></a><br />
+## Collaboration Policy<br />
+We encourage you to work closely with your groupmates, including collaborating on writing code.  With students outside your group, you may discuss methods and ideas but may not share code.</p>
+
+<p>For the full collaboration policy, including guidelines on citations and limitations on using online resources, see <a href="http://prg.cs.umd.edu/cmsc426">the course website</a>.</p>
+
+<h2 id="acknowledgements">Acknowledgements</h2>
+<p>This fun project was inspired by a similar project in UPenn’s <a href="https://alliance.seas.upenn.edu/~cis581/wiki/index.php?title=CIS_581:_Computer_Vision_%26_Computational_Photography">CIS581</a> (Computer Vision &amp; Computational Photography).</p>
+
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        
+        
+        <li>
+          <a href="mailto:"></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- mathjax -->
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>

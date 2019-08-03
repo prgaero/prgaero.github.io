@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Learning the basics of Computer Vision</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Course materials and notes for University of Maryland's class CMSC733: Computer Vision.">
+    <link rel="canonical" href="http://cmsc733.github.io/pano-prereq/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+    <!-- Google tracking -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46895817-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap title-wrap">
+    <a class="site-title" href="/">CMSC733 Computer Vision</a>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>Learning the basics of Computer Vision</h1>
+  </header>
+
+  <article class="post-content">
+  **This article is written by <a href="">Chahat Deep Singh</a>**
+
+
+Table of Contents:
+
+- [Introduction](#intro)
+- [Convolution](#convolution)
+- [Filtering](#filtering)
+- [Features](#features)
+	- [Edges](#edges)
+	- [Corners](#corners)
+	- [Feature Descriptors](#feat-desc)
+- [Camera Optics](#optics)
+	- [Camera Model](#pinhole)
+	- [Distortion](#distortion)
+	- [Camera Calibration (or Intrinsic Calibration)](#intrinsic)
+		- [Reprojection Error](#reproj-error)
+	- [Extrinsic Calibration](#extrinsic)
+- [Transformations in Images](#transform)
+	- [Homogenous Coordinates](#homo-coordinates)
+	- [Projective Geometry](#projective-geometry)
+	- [Affine Transformation](#affine)
+	- [Vanishing Points](#vanishing-points)
+	- [Homography](#homography)
+	- [Single View Geometry](#single-view-geometry)
+- [Optical Flow](#flow)
+- [Discussion](#discussion)
+
+
+<a name='quick'></a>
+## 1. Introduction
+
+We have seen fascinating things that our camera applications like instagram, snachat or your default phone app do. It can be creating a full structure of your face for facial recognition or simply creating a panorama from multiple images. In this course, we will learn how to recreate such applications but before that we require to learn about the basics like filtering, features, camera models and transformations. This article is all about laying down the groundwork for the aforementioned applications. Let's start with understanding the most basic aspects of an image: features.
+
+## 2. Features and Convolution
+### 2.1 What are features?
+What are <i>features</i> in Machine vision? <i> Is it similar as Human visual perception?</i> This question can have different answers but one thing is certain that feature detection is an imperative building block for a variety of computer vision applications. We all have seen <i> Panorama Stitching </i> in our smartphones or other softwares like Adobe Photoshop or AutoPano Pro. The fundamental idea in such softwares is to align two or more images before seamlessly stitching into a panorama image. Now back to the question, <i> what kind of features should be detected before the alignment? </i> Can you think of a few types of features?
+
+Certain locations in the images like corners of a building or mountain peaks can be considered as features. These kinds of localized features are known as <i>corners</i> or keypoints or interest points and are widely used in different applications. These are characterized by the appearance of neigborhood pixels surrounding the point (or local patches). Fig. 1 demonstrates strong and weak corner features.
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/strong-corners.png" width="49%">
+  <div class="figcaption">Fig. 1: The section in <b><font color="red">red</font></b> illustrates good or strong corner features while the <b>black</b> depicts weak or bad features.</div>
+</div>
+
+The other kind of feature is based on the orientation and local appearance and is generally a good indicator of object boundaries and occlusion events. <i> (Occlusion means that there is something in the field of view of the camera but due to some sensor/optical property or some other scenario, you can't.)</i> There are multiple ways to detect certain features. One of the way is <b>convolution</b>. 
+
+### 2.2 Convolution
+<i>Ever heard of Convolutional Neural Networks (CNN)? What is convolution? Is it really that 'convoluted'? </i> Let's try to answer such questions but before that let's understand what convolution really means! Think of it as an operation of changing the pixel values to a new set of values based on the values of the nearby pixels. <i> Didn't get the gist of it? Don't worry! </i>
+
+Convolution is an operation between two functions, resulting in another function that depicts how the shape of first function is modified by the second function. The convolution of two functions, say $$f$$ and $$g$$ is written is $$f\star g$$ or $$f*g$$ and is defined as:
+
+$$
+(f*g)(t) = \int_{-\infty}^{\infty} f(\tau)g(t-\tau)d\tau = \int_{-\infty}^{\infty} f(t-\tau)g(\tau)d\tau
+$$
+
+Let's try to visualize convolution in one dimension. The following <i>figure</i> depcits the convolution <i>(in black)</i> of the two functions <i>(blue and red).</i> One can think convolution as the common area under the functions  $$f$$ and $$g$$.
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/conv.gif" width="49%">
+  <div class="figcaption">Convolution of \(f\) and \(g\) is given by the area under the black curve.</div>
+</div>
+
+
+Since we would be dealing with discrete functions in this course (as images are of the size $$M\times N$$), let us look at a simple discrete 1D example:
+$$f = [10, 50, 60, 10, 20, 40, 30]$$ and 
+$$g = [1/3, 1/3, 1/3]$$.
+Let the output be denoted by $$h$$. What would be the value of $$h(3)$$? In order to compute this, we slide $$g$$ so that it is centered around $$f(3)$$ _i.e._
+$$\begin{bmatrix}10 & 50 & 60 & 10 & 20 & 40 & 30\\0 & 1/3 & 1/3 & 1/3 & 0 & 0 & 0\end{bmatrix}$$.
+We multiply the corresponding values of $$f$$ and $$g$$ and then add up the products _i.e._
+$$h(3)=\dfrac{1}{3}50+\dfrac{1}{3}60\dfrac{1}{3}10=40$$
+It can be inferred that the function $$g$$ (also known as kernel or the filter) is computing a windowed average of the image.
+
+Similarly, one can compute 2D convolutions (and hence any $$N$$ dimensions convolution) as shown in image below:
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/Conv2D.png" width="49%">
+  <div class="figcaption">Convolution of a Matrix with a kernal.</div>
+</div>
+These convolutions are the most commonly used operations for smoothing and sharpening tasks. Look at the example down below:
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/ConvImg.png" width="49%">
+  <div class="figcaption">Smoothing/Blurring using Convolution.</div>
+</div>
+Different kernels (or convolution masks) can be used to perform different level of sharpness:
+
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/DifferentKernel.png" width="49%">
+  <div class="figcaption">(a). Convolution with an identity masks results the same image as the input image. (b). Sharpening the image. (c). Normalization (or box blur). (d). 3X3 Gaussian blur. (e). 5X5 Gaussian blur. (f). 5X5 unsharp mask, it is based on the gaussian blur. NOTE: The denominator outside all the matrices are used to normalize the operation.</div>
+</div>
+
+Apart from the smoothness operations, convolutions can be used to detect features such as edges as well. The figure given below shows 
+how different kernel can be used to find the edges in an image using convolution.
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/ConvImgEdge.png" width="49%">
+  <div class="figcaption">Detecting edges in an image with different kernels.</div>
+</div>
+
+
+A good explanation of convolution can also be found <a href="http://colah.github.io/posts/2014-07-Understanding-Convolutions/">here</a>.
+
+
+### Deconvolution:
+
+Clearly as the name suggests, deconvolution is simply a process that reverses the effects of convolution on the given information. Deconvolution is implemented (generally) by computing the _Fourier Transform_ of the signal $$h$$ and the transfer function $$g$$ (where $$h=f * g$$). In frequency domain, (assuming no noise) we can say that: $$F=H/G$$. Fourier Transformation: [Optional Read](https://betterexplained.com/articles/an-interactive-guide-to-the-fourier-transform/), [Video](https://www.youtube.com/watch?v=spUNpyF58BY/)
+
+
+One can perform deblurring and restoration tasks using deconvolution as shown in figure:
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/deconv.jpg" width="49%">
+  <div class="figcaption">Left half of the image represents the input image. Right half represents the image after deconvolution.</div>
+</div>
+
+
+Now, since we have learned the fundamentals about convolution and deconvolution, let's dig deep into _Kernels_ or _point operators_). One can apply small convolution filters of size $$2\times2$$ or $$3\times3$$ or so on. These can be _Sobel, Roberts, Prewitt, Laplacian_ operators etc. We'll learn about them in a while. Operators like these are a good approximation of the derivates in an image. While for a better texture analysis in an image, larger masks like _Gabor_ filters are used.
+But what does it mean to take the derivative of an image? The derivative or the gradient of an image is defined as: 
+$$\nabla f=\left[\dfrac{\delta f}{\delta x}, \dfrac{\delta f}{\delta y}\right]$$
+It is important to note that the gradient of an image points towards the direction in which the intensity changes at the highest rate and thus the direction is given by:
+$$\theta=tan^{-1}\left(\dfrac{\delta f}{\delta y}\Bigg{/}\dfrac{\delta f}{\delta x}\right)$$
+Moreover, the gradient direction is always perpendicular to the edge and the edge strength can by given by:
+$$||\nabla f|| = \sqrt{\left(\dfrac{\delta f}{\delta x}\right)^2 + \left(\dfrac{\delta f}{\delta y}\right)^2}$$. In practice, the partial derivatives can be written (in discrete form) as the different of values between consecutive pixels _i.e._ $$f(x+1,y) -  f(x,y)$$ as $$\delta x$$  and  $$f(x,y+1) -  f(x,y)$$ as $$\delta y$$.
+
+Figure below shows commonly used gradient operators. 
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/gradoperators.png" width="49%">
+  <div class="figcaption">Commonly used gradient operators.</div>
+</div>
+
+You can implement the following in MATLAB using the function `edge` with various methods for edge detection. 
+Before reading any further, try the following in MATLAB:
+-  `C = conv2(A, B)` <b>[Refer](https://www.mathworks.com/help/matlab/ref/conv2.html) </b>
+-  `BW = edge(I, method, threshold, sigma)` <b>[Refer](https://www.mathworks.com/help/images/ref/edge.html)</b>
+-  `B = imfilter(A, h, 'conv')` <b>[Refer](https://www.mathworks.com/help/images/ref/imfilter.html)</b>
+
+### Different Operators:
+
+#### Sobel Operator:
+This operator has two $$3\times 3$$ kernels that are convolved with the original image `I` in order to compute the approximations of the derivatives.
+The horizontal and vertical are defined as follows:
+
+$$G_x = \begin{bmatrix} +1 & 0 & -1 \\ +2 & 0 & -2 \\ +1 & 0 & -1 \end{bmatrix}$$
+
+$$G_y = \begin{bmatrix} +1 & +2 & +1 \\ 0 & 0 & 0 \\ -1 & -2 & -1 \end{bmatrix}$$
+
+The gradient magnitude can be given as: $$G=\sqrt{G^2_x + G^2_y}$$ and the gradient direction can be written as: $$\theta=a tan \Bigg(\cfrac{G_y}{G_x}\Bigg)$$. Figure below shows the input image and its output after convolving with Sobel operator.
+
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/filt1.png" width="70%">
+  <div class="figcaption">(a). Input Image. (b). Sobel Output.</div>
+</div>
+
+#### Prewitt:
+
+$$G_x = \begin{bmatrix} +1 & 0 & -1 \\ +1 & 0 & -1 \\ +1 & 0 & -1 \end{bmatrix}$$
+
+$$G_y = \begin{bmatrix} +1 & +1 & +1 \\ 0 & 0 & 0 \\ -1 & -1 & -1 \end{bmatrix}$$
+
+#### Roberts:
+
+$$G_x = \begin{bmatrix} +1 & 0 \\ 0 & -1 \end{bmatrix}$$
+
+$$G_x = \begin{bmatrix} 0 & +1 \\ -1 & 0 \end{bmatrix}$$
+
+
+#### Canny:
+Unlike any other filters, we have studied above, canny goes a bit further. In Canny edge detection, before finding the intensities of the image, a gaussian filter is applied to smooth the image in order to remove the noise. Now, one the gradient intensity is computed on the imge, it uses _non-maximum suppression_ to suppress only the weaker edges in the image. Refer: [A computational approach to edge detection](https://ieeexplore.ieee.org/document/4767851/). `MATLAB` has an `approxcanny` function that finds the edges using an approximate version which provides faster execution time at the expense of less precise detection. Figure below illustrates different edge detectors.
+
+
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/filt2.png" width="80%">
+  <div class="figcaption">(a). Prewitt Output. (b). Roberts Output. (c). Canny Output (d) Laplacian of Gaussian (LoG). </div>
+</div>
+
+
+### Corner Detection:
+Now that we have learned about different edge features, let's understand what corner features are! Corner detection is used to extract certain kinds of features and common in panorama stitching (Project 1), video tracking (project 3), object recognition, motion detection etc. 
+
+_What is a corner?_ To put it simply, a corner is the intersection of two edges. One can also define corner as: if there exist a point in an image such that there are two defintive (and different) edge directions in a local neighborhood of that point, then it is considered as a corner feature. In computer vision, corners are commonly written as 'interest points' in literature. 
+
+The paramount property of a corner detector is the ability to detect the same corner in multiple images under different translation, rotation, lighting etc. The simplest approach for corner detection in images is using correlation. (Correlation is similar in nature to convolution of two functions). Optional Read: [Correlation](http://www.ee.ic.ac.uk/hp/staff/dmb/courses/e1fourier/00800_correlation.pdf)
+
+
+FAST: Features from Accelerated Segment Test
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/harris.jpg" width="49%">
+  <div class="figcaption">Harris Corner Detection.</div>
+</div>
+
+
+
+### Blob detection: 
+- LoG (Laplacian of Gaussian)
+- DoG (Difference of Gaussian)
+
+
+### Feature Descriptor:
+
+- Feature Descriptor: SIFT (Scale selectivity (CIS 580) Multi-scale concepts), SURF and HOG
+
+
+## 5. Camera Model
+- Pinhole model
+- Distortion
+- Intrinsic Calibration $$K$$ Matrix
+- Extrinsic calibration (couple of lines)
+
+
+## 6. Transformation:
+- Homogenous Coordinates
+- Projective Geometry
+- Projective Transformation
+- Affine Tranformation
+- Vanishing Points
+- Homography
+- Deep learning, CNN and Deep Homography
+- Single View Geometry
+
+[Filtering] imfilt and imgauss
+[Feature Descriptor: SIFT (Scale selectivity (CIS 580) Multi-scale concepts), SURF and HOG]
+
+
+<a name='optics'></a>
+## Camera Optics
+We learned about ISO, shutter speed, apertures and focal length in the [Color Imaging section](https://cmsc426.github.io/colorseg/#colimaging) in project 1. Let us now learn about how the camera optics work! We have learned that smaller the Field Of View (FOV), larger the focal length ($$f$$) is. One can say:
+$$FOV = tan^{-1}\left(\dfrac{d}{2f}\right)$$
+where $$d$$ is the camera sensor size. The  figure below shows the effect of focal length to the FOV. 
+
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/diff-focal.png" width="100%">
+  <div class="figcaption">Different focal length vs field of view. </div>
+</div>
+
+Also, large focal length compresses the depth. The following figure illustrates images captured at different focal length and their effects.
+
+<div class="fig figcenter fighighlight">
+  <img src="/assets/pano/diff-f.png" width="80%">
+  <img src="/assets/pano/depth-of-field.png" width="60%">
+  <div class="figcaption">Effect of focal length on depth of field. </div>
+</div>
+
+
+
+
+
+[Camera Model]
+- Pinhole model
+- Intrinsic Calibration $$K$$ Matrix
+- Distortion and lens correction
+- Extrinsic calibration (couple of lines)
+
+
+[Transformation]
+
+
+## Transformations:
+- At an elementary level, geometry is the study of points and lines and their relationships. 
+- A point in the plane can be represented as a pair of coordinates $$(x,y)$$ in $$\mathbb{R}^2$$ (Remember Math module: Hilbert space). 
+- Points and lines: A line in any plane can be represented as: $$ax+by+c=0$$ where $$a,b,c\in\mathbb{R}$$. This line can also be represented as a vector $$(a,b,c)^T$$. It is important to note that the vector can be of any scale $$\lambda$$ _i.e._ the line can be written as a vector $$\lambda(a,b,c)^T$$ $$\ \ \forall \lambda\in\mathbb{R}-\{0\}$$. A set of such vectors with different values of $$k$$ forms an equivalence class of vectors and are known as homogenous vectors or homogenous coordinates.
+- 3D point projection (Metric Space): The real world point $$(X,Y,Z)$$ is projected on the image plane as 
+
+
+<div class="fig figcenter fighighlight">
+  <img src="/assets/nn1/neuron.png" width="49%">
+  <img src="/assets/nn1/neuron_model.jpeg" width="49%" style="border-left: 1px solid black;">
+  <div class="figcaption">A cartoon drawing of a biological neuron (left) and its mathematical model (right).</div>
+</div>
+
+
+<a name='add'></a>
+- Homogenous Coordinates
+- Projective Geometry
+- Projective Transformation
+- Affine Tranformation
+- Vanishing Points
+- Homography
+- Deep learning, CNN and Deep Homography
+- Single View Geometry
+
+[Panorama Stitching:]
+- ANMS
+- Feature Correspondence
+- Homography
+- Make it robust using RANSAC
+- Cylindrical Projection
+- Blending images (Laplacian Pyramid)
+
+
+
+
+
+
+
+## Transformations:
+- At an elementary level, geometry is the study of points and lines and their relationships. 
+- A point in the plane can be represented as a pair of coordinates $$(x,y)$$ in $$\mathbb{R}^2$$ (Remember Math module: Hilbert space). 
+- Points and lines: A line in any plane can be represented as: $$ax+by+c=0$$ where $$a,b,c\in\mathbb{R}$$. This line can also be represented as a vector $$(a,b,c)^T$$. It is important to note that the vector can be of any scale $$\lambda$$ _i.e._ the line can be written as a vector $$\lambda(a,b,c)^T$$ $$\ \ \forall \lambda\in\mathbb{R}-\{0\}$$. A set of such vectors with different values of $$k$$ forms an equivalence class of vectors and are known as homogenous vectors or homogenous coordinates.
+- 3D point projection (Metric Space): The real world point $$(X,Y,Z)$$ is projected on the image plane as 
+
+
+
+	We are familiar with Euclidean spaces and Euclidean geometry that describes our 3D world very well.
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        
+        
+        <li>
+          <a href="mailto:"></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- mathjax -->
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>

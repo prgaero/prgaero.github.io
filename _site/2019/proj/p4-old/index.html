@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Sexy Semantic Mapping</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Course materials and notes for University of Maryland's class CMSC733: Computer Vision.">
+    <link rel="canonical" href="http://cmsc733.github.io/2019/proj/p4-old/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+    <!-- Google tracking -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46895817-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap title-wrap">
+    <a class="site-title" href="/">CMSC733 Computer Vision</a>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>Sexy Semantic Mapping</h1>
+  </header>
+
+  <article class="post-content">
+  <p>Table of Contents:</p>
+
+<ul>
+  <li><a href="#due">1. Deadline</a></li>
+  <li><a href="#intro">2. Introduction</a></li>
+  <li><a href="#table-top">3. Extract object of interest from Table-Top Images</a>
+    <ul>
+      <li><a href="#create-pcl">3.1. Create a Point Cloud from RGB-D images</a></li>
+      <li><a href="#build-3D-model">3.2. Build 3D model of object from RGB-D Images</a></li>
+      <li><a href="#extract">3.3. Extract the ‘Collection of Objects’ from a given scene</a></li>
+    </ul>
+  </li>
+  <li><a href="#segment">4. Segment the scene using known Objects</a></li>
+  <li><a href="#semantic">5. Build a Semantic Map</a></li>
+  <li><a href="#stuff">6. Stuff Given to you</a></li>
+  <li><a href="#testset">7. Notes about Test Set</a></li>
+  <li><a href="#sub">8. Submission Guidelines</a>
+    <ul>
+      <li><a href="#files">8.1. File tree and naming</a></li>
+      <li><a href="#report">8.2. Report</a></li>
+    </ul>
+  </li>
+  <li><a href="#coll">9. Collaboration Policy</a></li>
+  <li><a href="#ack">10. Acknowledgements</a></li>
+</ul>
+
+<p><a name="due"></a><br />
+## 1. Deadline <br />
+<strong>11:59PM, Monday, May 20, 2019.</strong></p>
+
+<p><a name="intro"></a><br />
+## 2. Introduction</p>
+
+<p>The aim of this project is to build semantic map of a 3D scene (See Fig. 1). This project gives you a peek into the world of robotics perception <i>i.e.</i> how robots understand and build the model of the world. <i>Excited?</i></p>
+
+<div class="fig fighighlight"><center>
+  <img src="/assets/2019/p4/seg.png" width="60%" /></center>
+  <div class="figcaption">
+    Figure 1: (a) Reconstruction from a samples of RGBD images. (b) Segmentation of a 3D scene.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<p>In the next few sections, we will detail how this can be done along with the specifications of the functions for each part. <b>Just like the previous projects, this project is to be done in groups of two and only one submission is required per group.</b></p>
+
+<p><a name="table-top"></a></p>
+
+<h2 id="extract-object-of-interest-from-table-top-images">3. Extract object of interest from Table-Top Images</h2>
+
+<p>You are given a set of RGB-D (RGB-Depth) frames of table top images and you need to extract the ‘object of interest’ from each frame and build a 3D model of the filtered object. When we say ‘extract object of interest’, you need to remove the table, walls of the room (if any) and any such irrelevant data from the scene. You also might need to filter stray points during the extraction process. But before that we need to align the data from RGB camera and the depth sensor from the Kinect. See Fig xx. Clearly, the RGB image and Depth images are not aligned.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p4/rgb.png" width="49%" />
+  <img src="/assets/2019/p4/depth.png" width="49%" />
+  <div class="figcaption">
+  Figure 3 (a): RGB and Depth images from Kinect.
+  </div>
+  <br /><center>
+  <img src="/assets/2019/p4/rgbd.png" width="75%" /></center>
+  <div class="figcaption">
+  Figure 3 (b): Uncalibrated RGB-D images. Thus we need calibration parameters in order to align the two images.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<p><a name="create-pcl"></a></p>
+
+<h3 id="create-a-point-cloud-from-rgb-d-images">3.1. Create a Point Cloud from RGB-D images</h3>
+
+<p>So, in order to align them we would need calibration parameters <i>i.e.</i> the rotation and translation between the camera centers of RGB camera and the depth sensor as <script type="math/tex">(u,v)</script> does not represents <script type="math/tex">(u',v')</script>, see fig. xx.</p>
+
+<div class="fig fighighlight"><center>
+  <img src="/assets/2019/p4/RotAndTrans1.png" width="90%" /></center>
+  <div class="figcaption">
+    Figure 2: .
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<p>To formulate: Given all camera parameters <script type="math/tex">(R,t,f)</script> (rotation, translation and focal lengths of both sensors), find the corresponding points of a RGB and a depth image. Thus, we need to generate a point cloud that can be represented as <script type="math/tex">(x,y,z,r,g,b)</script>. (See Fig. xx)</p>
+<div class="fig fighighlight"><center>
+  <img src="/assets/2019/p4/RotAndTrans2.png" width="60%" /></center>
+  <div class="figcaption">
+    Figure 2: .
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<p>In order to solve this problem, first recall: <script type="math/tex">\cfrac{u}{f_u} = \cfrac{x}{z}</script></p>
+<p style="background-color:#ddd; padding:5px"><b>Note:</b>
+Now, to generate a point cloud from RGB-D data, follow these steps:</p>
+<ul>
+  <li>Compute 3D coordinate <font color="red">\(X^{IR}\)</font> in the <font color="red">\(IR\)</font> camera frame. (IR: Infrared or depth sensor frame)</li>
+</ul>
+
+<font color="red">\(x^{IR} = \cfrac{uz}{f^{IR}}\); \ \ \(y^{IR} = \cfrac{vz}{f^{IR}}\); \ \ \(X^{IR} = [x^{IR} \ y^{IR} \ z^{IR}]\)</font>
+<ul>
+  <li>Transform into RGB frame
+    <font color="blue">\(X^{RGB} = RX^{IR} + t\)</font>
+  </li>
+  <li>Reproject them into the image plane</li>
+</ul>
+<font color="blue">\(u^{RGB} = f^{RGB}\cfrac{x^{RGB}}{z^{RGB}} = f^{RGB}\cfrac{y^{RGB}}{z^{RGB}}\)</font>
+<ul>
+  <li>
+    <p>Read <font color="blue">\((r,g,b)\)</font> at <font color="blue">\((u,v)^{RGB}\)</font></p>
+
+    <font color="blue">\((r,g,b)\)</font>
+    <p>is the color of <font color="red">\(X^{IR}\)</font> point.</p>
+  </li>
+</ul>
+
+<p>Now, once the point clouds are generated from a single view, let us learn how to build 3D model of the scene from multiple views.</p>
+
+<p><a name="build-3D-model"></a></p>
+
+<h3 id="build-3d-model-of-object-from-rgb-d-images">3.2. Build 3D model of object from RGB-D Images</h3>
+
+<p>The RGB-D data provided is recorded from an Asus Xtion Pro sensor. Using the method in the previous stage, you get the 3D view of the object from one single camera view point, use many such views from different frames of the same object to iteratively build a 3D model of the object.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p4/data-collect.png" width="100%" />
+  <div class="figcaption">
+    Figure 2: .
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<p>The idea here is you need to find out 3D translation and rotation parameters between two 3D point clouds of the same object from different frames, use these parameters to back project 3D point cloud from second frame on to the first and now you have little more information of the 3D model of the object as compared to the 3D point cloud from a single frame. You do it iteratively until you build a complete (or more or less complete) 3D model of the object.</p>
+
+<p>You will need to implement any variant of the Iterative Closest Point (ICP) algorithm which gives the relative translation and rotation between two 3D point clouds. We have uploaded a lot of ICP related papers with this description for your reference, please cite the reference you follow.</p>
+
+<p><a name="extract"></a></p>
+
+<h3 id="extract-the-collection-of-objects-from-a-given-scene">3.3. Extract the ‘Collection of Objects’ from a given scene</h3>
+
+<p>Here you will pretty much redo the same thing from previous sections, only difference being the set of table top images now have a collection of objects. And you need to extract just the objects without any irrelevant data from the scene.</p>
+
+<p><a name="segment"></a></p>
+
+<h3 id="segment-the-scene-using-known-objects">4. Segment the scene using known Objects</h3>
+
+<p>Now that you have reconstructed the 3D point cloud of the scene you need to segment each individual object of the scene by finding a suitable match in the set of 3D objects that you have already constructed. And while segmenting it you need to color code each object in the scene to the label of that object (feel free to use random color codes for each object such that each object is a different color). Also, note that you cannot assume that you know the number of objects in the scene, this has to be computed by your algorithm.</p>
+
+<p><a name="semantic"></a></p>
+
+<h3 id="build-a-semantic-map">5. Build a Semantic Map</h3>
+
+<p>Now try to see if you can derive relationships between the segmented objects, like this object is at this angle with respect to another object or this object is so much smaller than another object or this object is on top of another object and so on. Think of this as modelling information how a human would think of this scene.</p>
+
+<p><a name="stuff"></a></p>
+
+<h3 id="stuff-given-to-you">6. Stuff given to you</h3>
+
+<p>Calibration parameters and uncalibrated RGB-D data. Note that you are allowed to use third party code for basic stuff but not for the whole algorithm. You are only allowed to use <code class="highlighter-rouge">pcread</code>, <code class="highlighter-rouge">pcshow</code> from the Matlab’s point cloud library. Functions like <code class="highlighter-rouge">KDTreeSearcher</code> and <code class="highlighter-rouge">knnsearch</code> can be used for point to point correspondence search. You are also allowed to use any other basic functions built into the computer vision or image processing toolbox in Matlab.</p>
+
+<p>Make sure to check Reference Papers folders for papers regarding ICP (Standard ICP paper is the easiest but the worst performing) and Object Segmentation. Dataset folder contains the data of various scenes containing individual objects and multiple objects.</p>
+
+<p><a name="testset"></a><br />
+## 7. Notes about Test Set<br />
+One day (24 hours) before the deadline, a test set will be released with details of what faces to replace. We’ll grade on the completion of the project and visually appealing results.</p>
+
+<p><a name="sub"></a><br />
+## 8. Submission Guidelines</p>
+
+<p>Make a video of all the objects and all the segmented scenes where you pan the 3D point cloud to show it is fully reconstructed and is correctly segmented for each object. You MUST submit a report written in IEEE double column format in L A TEXand should not exceed 6 pages (Template given in Draft folder). The report should be of a conference paper quality. Feel free to add videos you feel are cool or paste YouTube links in your report. You should also include a detailed README file explaining how to run your code.</p>
+
+<p>Submit your .fig files (of 3D point clouds for all individual objects), codes (.m files) with the naming convention YourDirectoryID P5.zip onto ELMS/Canvas (Please compress it to .zip and no other format). If your e-mail ID is <code class="highlighter-rouge">ABCD[at]terpmail.umd.edu</code> or <code class="highlighter-rouge">ABCD[at]umd.edu</code> your Directory ID will be <code class="highlighter-rouge">ABCD</code>.</p>
+
+<p>To summarize, you need to submit these things and in the following strcture: A zip file with the name <code class="highlighter-rouge">YourDirectoryID_P4.zip</code> onto ELMS/Canvas. A main folder with the name <code class="highlighter-rouge">YourDirectoryID_P4</code> with the following things (for EACH of the given scene)):</p>
+
+<ul>
+  <li>A video showing a full 3D reconstruction for each object.</li>
+  <li>A video showing a full 3D reconstruction and segmentation of each scene.</li>
+  <li><b><code class="highlighter-rouge">.fig</code></b> files for 3D models of all individual objects and scenes (color coded with segmentation labels)</li>
+  <li>Code used for this project with a detailed README file.</li>
+  <li>A conference paper quality report written in IEEE double column format in LATEX format (Check <b><code class="highlighter-rouge">Draft</code></b> folder for necessary template and class files)</li>
+</ul>
+
+<p><b> If your submission does not comply with the following guidelines, you’ll be given ZERO credit </b></p>
+
+<p><a name="files"></a><br />
+### 8.1. File tree and naming</p>
+
+<p>Your submission on ELMS/Canvas must be a <code class="highlighter-rouge">zip</code> file, following the naming convention <code class="highlighter-rouge">YourDirectoryID_p3.zip</code>. If you email ID is <code class="highlighter-rouge">abc@umd.edu</code> or <code class="highlighter-rouge">abc@terpmail.umd.edu</code>, then your <code class="highlighter-rouge">DirectoryID</code> is <code class="highlighter-rouge">abc</code>. For our example, the submission file should be named <code class="highlighter-rouge">abc_p1.zip</code>. The file <strong>must have the following directory structure</strong> because we’ll be autograding assignments. The file to run for your project should be called <code class="highlighter-rouge">Wrapper.py</code>. You can have any helper functions in sub-folders as you wish, be sure to index them using relative paths and if you have command line arguments for your Wrapper codes, make sure to have default values too. Please provide detailed instructions on how to run your code in <code class="highlighter-rouge">README.md</code> file. Please <strong>DO NOT</strong> include data in your submission.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>YourDirectoryID_hw1.zip
+│   README.md
+|   Your Code files 
+|   ├── Any subfolders you want along with files
+|   Wrapper.py 
+|   Data
+|   ├── Data1.mp4
+|   ├── Data2.mp4
+|   ├── Data1OutputTri.mp4
+|   ├── Data1OutputTPS.mp4
+|   ├── Data1OutputPRNet.mp4
+|   ├── Data2OutputTri.mp4
+|   ├── Data2OutputTPS.mp4
+|   ├── Data2OutputPRNet.mp4
+└── Report.pdf
+</code></pre>
+</div>
+<p><a name="report"></a><br />
+### 8.2. Report</p>
+
+<p>For each section of the project, explain briefly what you did, and describe any interesting problems you encountered and/or solutions you implemented.  You must include the following details in your writeup:</p>
+
+<ul>
+  <li>Your report <strong>MUST</strong> be typeset in LaTeX in the IEEE Tran format provided to you in the <code class="highlighter-rouge">Draft</code> folder and should of a conference quality paper.</li>
+  <li>Present the Data you collected in <code class="highlighter-rouge">Data</code> folder with names <code class="highlighter-rouge">Data1.mp4</code> and <code class="highlighter-rouge">Data2.mp4</code> (Be sure to have the format as <code class="highlighter-rouge">.mp4</code> <strong>ONLY</strong>).</li>
+  <li>Present the output videos for Triangulation, TPS and PRNet as <code class="highlighter-rouge">Data1OutputTri.mp4</code>, <code class="highlighter-rouge">Data1OutputTPS.mp4</code> and <code class="highlighter-rouge">Data1OutputPRNet.mp4</code> for Data 1 respectively in the <code class="highlighter-rouge">Data</code> folder. Also, present outputs videos for Triangulation, TPS and PRNet as <code class="highlighter-rouge">Data2OutputTri.mp4</code>, <code class="highlighter-rouge">Data2OutputTPS.mp4</code> and <code class="highlighter-rouge">Data2OutputPRNet.mp4</code> for Data 2 respectively in the <code class="highlighter-rouge">Data</code> folder. (Be sure to have the format as <code class="highlighter-rouge">.mp4</code> <strong>ONLY</strong>).</li>
+  <li>For Phase 1, present input and output images for two frames from each of the videos using both Triangulation and TPS approach.</li>
+  <li>For Phase 2, present input and output images for two frames from each of the videos using PRNet approach.</li>
+  <li>Present failure cases for both Phase 1 and 2 and present your thoughts on why the failure occurred.</li>
+</ul>
+
+<p><a name="coll"></a><br />
+### 9. Collaboration Policy</p>
+
+<p>You can discuss the ideas with any number of people. But the code you turn-in should be from your own team and you SHOULD NOT USE codes from other students. For other honor code refer to the CMSC733 Spring 2019 website.</p>
+
+<p><a name="ack"></a><br />
+### 10. Acknowledgements</p>
+
+<p>We would like to thank <a href="http://users.umiacs.umd.edu/~aecins/">Aleksandrs Ecins</a> for the dataset. This fun project was inspired from Nitin’s research and a course project at University of Pennsylvania, <a href="http://www.grasparche.com/">GRASP ARCHE</a>.</p>
+
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        
+        
+        <li>
+          <a href="mailto:"></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- mathjax -->
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>

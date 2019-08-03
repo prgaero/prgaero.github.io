@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Rotobrush</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Course materials and notes for University of Maryland's class CMSC733: Computer Vision.">
+    <link rel="canonical" href="http://cmsc733.github.io/2018/proj/p3/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+    <!-- Google tracking -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46895817-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap title-wrap">
+    <a class="site-title" href="/">CMSC733 Computer Vision</a>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>Rotobrush</h1>
+  </header>
+
+  <article class="post-content">
+  <p>Table of Contents:<br />
+- <a href="#due">Deadline</a><br />
+- <a href="#intro">Introduction</a><br />
+- <a href="#system_overview">Implementation Overview</a><br />
+- <a href="#sub">Submission Guidelines</a><br />
+- <a href="#coll">Collaboration Policy</a></p>
+
+<p><a name="due"></a><br />
+## Deadline <br />
+10:59:59AM, Thursday, November 15, 2018</p>
+
+<p><a name="intro"></a><br />
+## Introduction</p>
+
+<p>The aim of this project is to segment deformable object from a given video sequence. <br />
+This document just provides an overview of what you need to do.  For a full breakdown of how each step in the pipeline works, see <a href="https://cmsc426.github.io/rotobrush/">the course notes for this project</a>.</p>
+
+<p><a name="system_overview"></a><br />
+## Implementation Overview</p>
+
+<p>Download the starter code and data <a href="https://www.dropbox.com/s/32fa11l5pnakcph/CMSC426_P3.zip"> here </a></p>
+
+<p>A brief description of each step (you’ll implement the steps <strong>in bold</strong>):<br />
+- <strong><code class="highlighter-rouge">myRotobrush.m</code>:  Wrapper function.</strong><br />
+- <code class="highlighter-rouge">initLocalWindows.m</code>:  Creates local windows on boundary of mask. <br />
+- <strong><code class="highlighter-rouge">initColorModels.m</code>:   Initializes color models.</strong> <br />
+- <strong><code class="highlighter-rouge">initShapeConfidences.m</code>: Initializes shape confidences.</strong> <br />
+- <strong><code class="highlighter-rouge">localFlowWarp.m</code>:  Calculates local window movement based on optical flow between frames.</strong><br />
+- <strong><code class="highlighter-rouge">calculateGlobalAffine.m</code>:  Finds affine transform between two frames.</strong> <br />
+- <strong><code class="highlighter-rouge">updateModels.m</code>:  Update shape and color models.</strong> <br />
+- <code class="highlighter-rouge">showLocalWindows.m</code>:  Plots local windows. <br />
+- <code class="highlighter-rouge">showColorConfidences.m</code>: Plots the color confidence for each local window. <br />
+- <code class="highlighter-rouge">equidistantPointsOnPerimeter.m</code>: Find equally spaced points along the perimeter of a polygon</p>
+
+<h3 id="point-distribution">Point Distribution:</h3>
+<ul>
+  <li>Setup Local Windows: 5 pts</li>
+  <li>Initialize Color Models: 10pts</li>
+  <li>Compute Color Model Confidence: 5 pts</li>
+  <li>Initialize Shape Model: 10 pts</li>
+  <li>Compute Shape confidence: 5 pts</li>
+  <li>Estimate Entire-Object Motion: 5 pts</li>
+  <li>Estimate Local Boundary Deformation: 10 pts</li>
+  <li>Update Color Model (and color confidence): 15 pts</li>
+  <li>Combine Shape and Color Models: 5 pts</li>
+  <li>Merge Local Windows: 10 pts</li>
+  <li>Extract final foreground mask: 20 pts</li>
+</ul>
+
+<p>For <strong>extra credit</strong>, implement any remaining part of the SnapCut paper (other than mentioned above). Be innovative!<br />
+Try to make your system robust as much as possible! Hint: Try to have additional image features, something beyond shape and color!</p>
+
+<h2 id="project-files">Project Files</h2>
+
+<p>When running <code class="highlighter-rouge">MyRotobrush.m</code>, it must load a set of frames from the folder <code class="highlighter-rouge">Frames/</code>. Assume<br />
+that the frames will be <code class="highlighter-rouge">jpeg</code> images of the form <code class="highlighter-rouge">1.jpg</code>, <code class="highlighter-rouge">2.jpg</code>, etc. Your program must then<br />
+prompt the user to specify a region of interest in the first frame (for example using the<br />
+<code class="highlighter-rouge">roipoly</code> tool), and then track the specified object through the rest of the frames. For each<br />
+frame, draw the tracked boundary in red and save the result with the same filename in<br />
+<code class="highlighter-rouge">Output/</code>.</p>
+
+<h4 id="functions-allowed">Functions Allowed</h4>
+
+<p>For this project, roipoly, fitgmdist, estimateGeometricTransform, opticalFlowFarneback, vl_sift (http://www.vlfeat.org/overview/sift.html), imfilter, conv2, imrotate, im2double, rgb2gray, fspecial, imtransform, imwarp (and imref2d), meshgrid, sub2ind, ind2sub and all other plotting and matrix operation/manipulation functions are allowed.</p>
+
+<p><a name="sub"></a><br />
+## Submission Guidelines<br />
+<b> We will deduct points if your submission does not comply with the following guidelines.</b></p>
+
+<h3 id="file-tree-and-naming">File tree and naming</h3>
+
+<p>Your submission on Canvas must be a zip file, following the naming convention <strong>YourDirectoryID_proj3.zip</strong>.  For example, xyz123_proj3.zip.  The file <strong>must have the following directory structure</strong>:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">YourDirectoryID_proj3.zip/</code>
+    <ul>
+      <li><code class="highlighter-rouge">Code/</code>
+        <ul>
+          <li><code class="highlighter-rouge">MyRotobrush.m</code></li>
+          <li>*(any dependencies of MyRotobrush.m)</li>
+        </ul>
+      </li>
+      <li><code class="highlighter-rouge">Input/</code></li>
+      <li><code class="highlighter-rouge">Output/</code></li>
+      <li><code class="highlighter-rouge">result1.mp4</code></li>
+      <li><code class="highlighter-rouge">result2.mp4</code></li>
+      <li><code class="highlighter-rouge">result3.mp4</code></li>
+      <li><code class="highlighter-rouge">result4.mp4</code></li>
+      <li><code class="highlighter-rouge">result5.mp4</code></li>
+      <li><code class="highlighter-rouge">report.pdf</code></li>
+    </ul>
+  </li>
+</ul>
+
+<p>When run, <code class="highlighter-rouge">MyRotobrush.m</code> must load a set of images from <em>Images/Input/</em>, and return<br />
+the resulting panorama.</p>
+
+<h2 id="output-videos">Output Videos</h2>
+
+<p>You have been provided the frames from five video clips. Run your code on each set of<br />
+frames and create videos, named as indicated above. For each video track the following:</p>
+
+<ul>
+  <li>Frames1: Track the turtle. <a href="">Source</a>: An underwater video captured by Chahat at Lakshadweep islands, India.</li>
+  <li>Frames2: Track the motorcycle and rider. <a href="https://www.youtube.com/watch?v=jhxCJLm4C-0">Source</a>.</li>
+  <li>Frames3: Track the gymnast. <a href="https://www.youtube.com/watch?v=gMNCwgXtQIw">Source</a>.</li>
+  <li>Frames4: Track the powerlifter, without the weights. <a href="https://www.youtube.com/watch?v=EiqEFUFM-KI">Source</a>.</li>
+  <li>Frames5: Track the lizard (including tail). <a href="https://www.youtube.com/watch?v=Mp1R4Lxoj5c">Source</a>.</li>
+</ul>
+
+<h3 id="report">Report</h3>
+<p><strong>You will be graded primarily based on your report.</strong>  <br />
+<strong>The most important part is to understand and explain why your algorithm is working or not working on a given dataset. What do you think are the drawbacks of your code!?</strong></p>
+
+<p>We want you to demonstrate an understanding of the concepts involved in the project, and to show the output produced by your code.</p>
+
+<p>Include visualizations of the output of each stage in your pipeline (as shown in the system diagram<br />
+on page 2), and a description of what you did for each step.  Assume that we’re familiar with the<br />
+project, so you don’t need to spend time repeating what’s already in the course notes.  Instead, focus on any interesting problems you encountered and/or solutions you implemented.</p>
+
+<p>As usual, your report must be full English sentences, <strong>not</strong> commented code. There is a word limit of 1500 words and no minimum length requirement.</p>
+
+<p><a name="coll"></a><br />
+## Collaboration Policy<br />
+We encourage you to work closely with your groupmates, including collaborating on writing code.  With students outside your group, you may discuss methods and ideas but may not share code.</p>
+
+<p>For the full collaboration policy, including guidelines on citations and limitations on using online resources, see <a href="http://prg.cs.umd.edu/cmsc426">the course website</a>.</p>
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        
+        
+        <li>
+          <a href="mailto:"></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- mathjax -->
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>

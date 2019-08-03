@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Linear Least Squares</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Course materials and notes for University of Maryland's class CMSC733: Computer Vision.">
+    <link rel="canonical" href="http://cmsc733.github.io/2018/hw/hw1/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+    <!-- Google tracking -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46895817-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap title-wrap">
+    <a class="site-title" href="/">CMSC733 Computer Vision</a>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>Linear Least Squares</h1>
+  </header>
+
+  <article class="post-content">
+  <p><strong>This article is written by <a href="http://analogicalnexus.github.io">Chethan Parameshwara</a>.</strong></p>
+
+<p>Table of Contents:<br />
+- <a href="#due">Due Date</a><br />
+- <a href="#intro">Introduction</a><br />
+- <a href="#problem">What you need to do</a><br />
+  - <a href="#pro">Problem Statement</a><br />
+- <a href="#sub">Submission Guidelines</a><br />
+- <a href="#coll">Collaboration Policy</a></p>
+
+<p><a name="due"></a><br />
+## Due Date <br />
+10:59AM, Thursday, September 6, 2018</p>
+
+<p><a name="intro"></a><br />
+## Introduction</p>
+
+<p>This home work is designed to test your understanding of mathematics tutorial discussed in this <a href="https://cmsc426.github.io/math-tutorial/">link</a>. The task is to fit the line to two dimensional data points using different linear least square techniques discussed in the tutorials:</p>
+
+<ul>
+  <li>Line fitting using Linear Least Squares</li>
+  <li>Outliers rejection using Regularization</li>
+  <li>Outliers rejection using RANSAC</li>
+</ul>
+
+<p><a name="problem"></a><br />
+## What you need to do</p>
+
+<p>The 2D points data is provided in the form of .mat file (click <a href="https://drive.google.com/file/d/1B90tU1-HrR2YMjZC50APiNkQdLtVco6z/view?usp=sharing">here</a> to download). The visualization of data with different noise level is shown in the following figure.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/hw1/data.jpg" width="100%" />
+  <div class="figcaption">
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<p><a name="pro"></a><br />
+### Problem Statement</p>
+
+<ul>
+  <li>Write matlab code to visualize geometric interpretation of eigenvalues/covariance matrix as discussed in this <a href="http://www.visiondummy.com/2014/04/geometric-interpretation-covariance-matrix/">link</a> [40 points]</li>
+  <li>Decide the best outlier rejection technique for each of these datasets and write matlab code to fit the line. Also, discuss why your choice of technique is optimal [60 points]</li>
+</ul>
+
+<p><a name="sub"></a><br />
+## Submission Guidelines</p>
+
+<p><b> If your submission does not comply with the following guidelines, you’ll be given ZERO credit </b></p>
+
+<h3 id="file-tree-and-naming">File tree and naming</h3>
+
+<p>Your submission on Canvas must be a zip file, following the naming convention <strong>YourDirectoryID_hw1.zip</strong>.  For example, xyz123_hw1.zip.  The file <strong>must have the following directory structure</strong>, based on the starter files</p>
+
+<p>YourDirectoryID_hw1.zip.<br />
+ - data/. <br />
+ - plot_eigen.m.<br />
+ - least_square.m.<br />
+ - report.pdf</p>
+
+<h3 id="report">Report</h3>
+<p>For each section of the homework, explain briefly what you did, and describe any interesting problems you encountered and/or solutions you implemented.  You must include the following details in your writeup:</p>
+
+<ul>
+  <li>Your understanding of eigenvectors and eigenvalues</li>
+  <li>Your choice of outlier rejection technique for each dataset</li>
+  <li>Limitation of each outliers rejection technique</li>
+</ul>
+
+<p>As usual, your report must be full English sentences,<strong>not</strong> commented code. There is a word limit of 750 words and no minimum length requirement</p>
+
+<p><a name="coll"></a><br />
+## Collaboration Policy<br />
+You are encouraged to discuss the ideas with your peers. However, the code should be your own, and should be the result of you exercising your own understanding of it. If you reference anyone else’s code in writing your project, you must properly cite it in your code (in comments) and your writeup.  For the full honor code refer to the CMSC426 Fall 2018 website</p>
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        
+        
+        <li>
+          <a href="mailto:"></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- mathjax -->
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>

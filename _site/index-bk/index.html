@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>CMSC733 Computer Vision</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Course materials and notes for University of Maryland's class CMSC733: Computer Vision.">
+    <link rel="canonical" href="http://cmsc733.github.io/index-bk/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+    <!-- Google tracking -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46895817-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap title-wrap">
+    <a class="site-title" href="/">CMSC733 Computer Vision</a>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div>
+  These notes accompany the University of Maryland CS class <a href="http://prg.cs.umd.edu/" style="color:SteelBlue">CMSC733: Computer Processing of Pictorial Information</a> AKA Traditional and Deep Learning approaches for Geometric Computer Vision by <a href="http://legacydirs.umiacs.umd.edu/~yiannis/">Prof. Yiannis Aloimonos</a>, <a href="http://nitinjsanket.github.io">Nitin J. Sanket</a> and <a href="https://chahatdeep.github.io/">Chahat Deep Singh</a>. The logistics for the course are available <a href="http://prg.cs.umd.edu/cmsc733">here</a>. All the notes are written by <a href="http://nitinjsanket.github.io">Nitin J. Sanket</a> and <a href="https://chahatdeep.github.io/">Chahat Deep Singh</a> (your friendly TA's), don't hesitate to contact them on Piazza if you find errors. Please do **NOT** contact the TA's or the Instructor via Email unless it's an emergency, and do **NOT** contact the TA's on any social media platform such as Facebook or WhatsApp (please respect their privacy) regarding course content. If you want to have a chat about our research, feel free to contact the TA's or Instructor on any platform. 
+  <br>
+</div>
+
+<div class="home">
+  <div class="materials-wrap">
+
+    <div class="module-header">Module 0: Preparation</div>
+
+    <div class="materials-item">
+      <a href="system-setup" style="color:SteelBlue">
+        System Setup
+      </a>
+    </div>
+
+    <div class="materials-item">
+      <a href="python-tutorial/" style="color:SteelBlue">
+        Python Tutorial
+      </a>
+    </div>
+
+    <div class="materials-item">
+      <a href="math-tutorial/" style="color:SteelBlue">
+        Math Tutorial
+      </a>
+    </div>
+
+   
+	<!-- hardcoding items here to force a specific order -->
+    <!-- <div class="module-header">Project 1: Color Segmentation using GMM</div> -->
+
+    <div class="module-header">Project 1: MyAutoPano</div>
+    <div class="materials-item">
+      <a href="2019/proj/p1/" style="color:SteelBlue">
+        Project 1: Color Segmentation using GMM
+      </a>
+      <div class="kw" style="color:black">
+        color segmentation, bayer filter, image acquisition, color-space
+      </div>
+    </div>
+
+
+    <div class="module-header">Module 2:  Panaroma Stitching</div>
+    <div class="materials-item">
+
+        Project 2: Stitching multiple images seemlessly to create a panorama
+     
+<ul style="list-style-type:none">
+	<li><a href="pano-prereq/" style="color:SteelBlue"> Part I: Learning the basics</a>
+      	<div class="kw" style="color:black">
+        convolution, filtering, features, edges, corners, SIFT, camera model, pinhole model, calibration, projective geometry, homography
+	</div></li></ul>
+     </div>
+    	<div class="materials-item">
+<ul style="list-style-type:none">
+	<li><a href="pano/" style="color:SteelBlue"> Part II: Panorama Stitching</a>
+      	<div class="kw" style="color:black">
+    	ANMS, feature descriptor, feature correspondence, homography, ransac, cylinderical projection, blending images,
+	</div></li></ul>
+     </div>
+ 
+
+    <div class="module-header">Module 3: Rotobrush </div>
+    <div class="materials-item">
+      <a href="rotobrush/" style="color:SteelBlue">
+        Project 3: Rotobrush
+      </a>
+      <div class="kw" style="color:black">
+      local classifiers, color confidence, shape confidence, local boundary deformation
+	</div>
+    </div>
+
+
+    <div class="module-header">Module 4: SfM or SLAM</div>
+    <div class="materials-item">
+
+        Project 4: Structure from Motion (SfM) or Simultaneous Localization and Mapping (SLAM)
+     
+<ul style="list-style-type:none">
+	<li><a href="/sfm" style="color:SteelBlue"> Part I: The Traditional Approach</a>
+      	<div class="kw" style="color:black">
+        pinhole model, epipolar geometry, triangulation, PnP, bundle adjustment
+        </div></li></ul>
+     </div>
+    	<div class="materials-item">
+<ul style="list-style-type:none">
+	<li><a href="/gtsam" style="color:SteelBlue"> Part II: The Modern Approach</a>
+      	<div class="kw" style="color:black">
+	factor graphs, GTSAM
+    	</div></li></ul>
+     </div>
+	 <br>
+	 <hr>
+
+    <div class="module-header">Fall 2019 Assignments</div>
+   
+	<div class="materials-item">
+      <a href="2018/hw/hw1" style="color:SteelBlue">
+	      <b>Homework 1: Linear Least Squares</b>
+      </a>
+	<ul style="list-style-type:none">
+	<li> &#160 Release Date: Aug 30, 2018</li>
+	<li> <font color="red">&#160 Deadline: Sep 6, 2018</font></li>
+	</ul>
+    </div>
+	
+    <div class="materials-item">
+      <a href="2018/proj/p1/" style="color:SteelBlue">
+        <b>Project 1: Color Segmentation using GMM</b>
+      </a>
+	<ul style="list-style-type:none">
+	<li> &#160 Release Date: Sep 6, 2018</li>
+	<li> <font color="red">&#160 Deadline: Sep 18, 2018</font></li>
+	</ul>
+    </div>
+
+    <div class="materials-item">
+      <a href="2018/hw/hw2" style="color:SteelBlue">
+        <b>Homework 2: Image Features and Warping</b>
+      </a>
+	<ul style="list-style-type:none">
+	<li> <font color="red">&#160 Deadline: October 2nd, 2018</font></li>
+	</ul>
+    </div>
+
+    <div class="materials-item">
+      <a href="2018/proj/p2" style="color:SteelBlue">
+        <b>Project 2: Panorama Stitching</b>
+      </a>
+	<ul style="list-style-type:none">
+	<li> <font color="red">&#160 Deadline: Oct 11, 2018</font></li>
+	</ul>
+    </div>
+
+    <div class="materials-item">
+        <b>In-class Midterm</b>
+	<ul style="list-style-type:none">
+	<li> <font color="red">&#160 Oct 25, 2018</font></li>
+	</ul>
+    </div>
+	
+    <div class="materials-item">
+      <a href="2018/proj/p3" style="color:SteelBlue">
+        <b>Project 3: Rotobrush</b>
+      </a>
+	<ul style="list-style-type:none">
+	<li> <font color="red">&#160 Deadline: Nov 15, 2018</font></li>
+	</ul>
+    </div>
+	
+    <div class="materials-item">
+      <a href="2018/proj/p4" style="color:SteelBlue">
+       <b>Project 4: SfM or SLAM</b>
+      </a>
+	<ul style="list-style-type:none">
+	<li> <font color="red">&#160 Deadline: Dec 18, 2018</font></li>
+        <li> <b>Extra credit</b> for submissions before Dec. 11</li>
+	</ul>
+    </div>
+
+
+  </div>
+</div>
+<hr>
+
+<!--Footer-->
+<br>
+<br>
+<center>
+<font color="gray">
+	<a href="http://prg.cs.umd.edu/" title="Perception & Robotics Group"><img class="img-circle" src="http://prg.cs.umd.edu/img/logo/prg-black.png" style=" width: auto; height: 180px; -webkit-border-radius:40px; -moz-border-radius: 40px;">
+	</a></font>
+	<br>
+	<span> <font color="gray" size="1px">Perception & Robotics Group<br>University of Maryland<br>Copyright © 2018</font></span>
+</center>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        
+        
+        <li>
+          <a href="mailto:"></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- mathjax -->
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>

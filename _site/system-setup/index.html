@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>System Setup</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Course materials and notes for University of Maryland's class CMSC733: Computer Vision.">
+    <link rel="canonical" href="http://cmsc733.github.io/system-setup/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+    <!-- Google tracking -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46895817-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap title-wrap">
+    <a class="site-title" href="/">CMSC733 Computer Vision</a>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>System Setup</h1>
+  </header>
+
+  <article class="post-content">
+  <h2 id="system-setup-for-local-machines">System Setup for local machines:</h2>
+
+<p>This is the system setup instructions for CMSC733 class for local machines. We <b>ONLY</b> support Ubuntu-16.04. Feel free to use a Virtual Machine on your system if you don’t an Ubuntu machine. We <b>STRONGLY</b> recommend <a href="https://www.virtualbox.org/wiki/Downloads">Virtual Box</a> as a virtual machine monitor.</p>
+
+<h3 id="install-opencv-34">1. Install OpenCV-3.4:</h3>
+
+<p>Due to certain issues in <code class="highlighter-rouge">opencv-4</code>, we have decided to revert back to <code class="highlighter-rouge">opencv3</code> for this course. After the latest release, the ‘right’ way to install <code class="highlighter-rouge">opencv-3</code> is to <code class="highlighter-rouge">build</code> from source. Feel free to follow the official documentation for version <code class="highlighter-rouge">3.4.0</code> if you want or follow the given steps:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo apt update
+sudo apt upgrade
+</code></pre>
+</div>
+
+<p>Go to <a href="https://github.com/chahatdeep/ubuntu-for-robotics/tree/master/CMSC733">this github page</a> and download the two shell scripts:<br />
+- <a href="https://github.com/chahatdeep/ubuntu-for-robotics/blob/master/CMSC733/install_opencv3-Part1.sh">install_opencv3-Part1.sh</a><br />
+- <a href="https://github.com/chahatdeep/ubuntu-for-robotics/blob/master/CMSC733/install_opencv3-Part2.sh">install_opencv3-Part2.sh</a></p>
+
+<p>Do: <br />
+<code class="highlighter-rouge">
+sudo chmod u+x install_opencv3-Part1.sh install_opencv3-Part2.sh
+./install_opencv3-Part1.sh
+</code></p>
+
+<p>If it outputs an error, please read the lines <code class="highlighter-rouge">33-36</code> from <code class="highlighter-rouge">install_opencv3-Part1.sh</code> to tackle the problem (hopefully).<br />
+If it works, perfectly fine, do:<br />
+<code class="highlighter-rouge">
+install_opencv3-Part2.sh
+</code></p>
+
+<p>Now, check the OpenCV version by opening <code class="highlighter-rouge">python</code> console and do the following:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>import cv2
+cv2.__version__
+</code></pre>
+</div>
+
+<p>It must be <code class="highlighter-rouge">3.4.0</code>.</p>
+
+<p>Please feel free to use any other sources for installation and try to avoid <code class="highlighter-rouge">virtualenv</code> and <code class="highlighter-rouge">conda</code> if possible.</p>
+
+<hr />
+
+<h3 id="python-dependencies">2. Python Dependencies:</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo apt install python-numpy python-scipy python-scikits-learn python-matplotlib python-skimage python-pil
+</code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo -H pip install termcolor tqdm
+</code></pre>
+</div>
+
+<h3 id="tensorflow-cpu-version">3. TensorFlow (CPU version)</h3>
+
+<p>If you have GPU’s that don’t support NVIDIA <code class="highlighter-rouge">CUDA</code>, install the CPU version for tensorflow</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo -H pip install tensorflow
+</code></pre>
+</div>
+
+<h3 id="tensorflow-gpu-version">4. TensorFlow (GPU version)</h3>
+
+<p>If you have NVIDIA 970 or later, using gpu version of tensorflow is recommended.</p>
+
+<h4 id="bab-install-nvidia-drivers-if-you-dont-have-one"><b>A.</b> Install NVIDIA drivers, if you don’t have one.</h4>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo apt install nvidia-smi nvidia-384
+</code></pre>
+</div>
+<p>— or —</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>sudo apt install nvidia-smi nvidia-396
+</code></pre>
+</div>
+<p><br /></p>
+
+<h4 id="bbb-download-and-install-cuda-90--file-size-is-11gb"><b>B.</b> Download and install <code class="highlighter-rouge">CUDA-9.0</code> : (File size is 1.1GB)</h4>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>cd ~/Downloads/
+wget https://developer.nvidia.com/compute/cuda/9.0/Prod/local_installers/cuda-repo-ubuntu1604-9-0-local_9.0.176-1_amd64-deb
+mv -i cuda-repo-ubuntu1604-9-0-local_9.0.176-1_amd64-deb cuda-repo-ubuntu1604-9-0-local_9.0.176-1_amd64.deb 
+sudo apt-key add /var/cuda-repo-9-0-local/7fa2af80.pub
+sudo dpkg -i cuda-repo-ubuntu1604-9-0-local_9.0.176-1_amd64.deb 
+sudo apt-get update
+sudo apt-get install cuda
+sudo apt install nvidia-cuda-toolkit
+nvcc --version
+</code></pre>
+</div>
+
+<ul>
+  <li>If you see Cuda compilation tools version (<code class="highlighter-rouge">nvcc --version</code>) as <code class="highlighter-rouge">7.5</code> instead of <code class="highlighter-rouge">cuda-9.0</code>, do:</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>echo 'export PATH=/usr/local/cuda-9.0/bin${PATH:+:${PATH}}' &gt;&gt; ~/.bashrc
+source ~/.bashrc
+</code></pre>
+</div>
+
+<ul>
+  <li>Check <code class="highlighter-rouge">nvcc --version</code> again. It should show you <code class="highlighter-rouge">cuda-9.0</code>.<br />
+<br /><br /></li>
+</ul>
+
+<h4 id="bcb-cudnn-installation"><b>C.</b> CuDNN Installation:</h4>
+
+<ul>
+  <li>Download <code class="highlighter-rouge">cudnn-7.4</code> (for <code class="highlighter-rouge">cuda-9.0</code> ) <a href="https://drive.google.com/open?id=1xWPfS8xaxdUHeiZQbdMGr0R3sPfOdNfp">here</a>. The file is 347 MB.</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code># install cuDNN v7.4
+CUDNN_TAR_FILE="cudnn-9.0-linux-x64-v7.4.1.5.tgz"
+tar -xzvf ${CUDNN_TAR_FILE}
+sudo cp -P cuda/include/cudnn.h /usr/local/cuda-9.0/include
+sudo cp -P cuda/lib64/libcudnn* /usr/local/cuda-9.0/lib64/
+sudo chmod a+r /usr/local/cuda-9.0/lib64/libcudnn*
+</code></pre>
+</div>
+<div class="highlighter-rouge"><pre class="highlight"><code># set environment variables
+export PATH=/usr/local/cuda-9.0/bin${PATH:+:${PATH}}
+export LD_LIBRARY_PATH=/usr/local/cuda-9.0/lib64:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+</code></pre>
+</div>
+
+<h4 id="bdb-tensorflow-gpu-package-installation"><b>D.</b> TensorFlow GPU package installation:</h4>
+<p><code class="highlighter-rouge">sudo -H pip install tensorflow-gpu</code></p>
+
+<hr />
+
+<h2 id="google-cloud-platform-setup">Google Cloud Platform Setup</h2>
+<p>(Coming Soon)</p>
+
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        
+        
+        <li>
+          <a href="mailto:"></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- mathjax -->
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>

@@ -1,0 +1,172 @@
+<p><b>To be submitted in a group.</b></p>
+
+<p>Table of Contents:</p>
+
+<ul>
+  <li><a href="#due">1. Deadline</a></li>
+  <li><a href="#intro">2. Introduction</a></li>
+  <li><a href="#sfmlearner">3. SfMLearner</a>
+    <ul>
+      <li><a href="#view">3.1. View Synthesis</a></li>
+      <li><a href="#render">3.2. Differentiable Depth Image-based Rendering</a></li>
+      <li><a href="#expl-mask">3.3. Explainability Mask</a></li>
+      <li><a href="#gradlocal">3.4. Gradient Locality Issues</a></li>
+    </ul>
+  </li>
+  <li><a href="#testset">4. Notes about the dataset</a></li>
+  <li><a href="#sub">5. Submission Guidelines</a>
+    <ul>
+      <li><a href="#files">5.1. File tree and naming</a></li>
+      <li><a href="#report">5.2. Report</a></li>
+      <li><a href="#video">5.3. Video Presentation</a></li>
+    </ul>
+  </li>
+  <li><a href="#coll">6. Collaboration Policy</a></li>
+</ul>
+
+<p><a name="due"></a></p>
+
+<h2 id="deadline">1. Deadline</h2>
+
+<p><strong>11:59PM, May 16, 2019.</strong></p>
+
+<p><a name="intro"></a></p>
+
+<h2 id="introduction">2. Introduction</h2>
+
+<p>We have dealt with reconstructing 3D structure of a given scene using images from multiple views using the traditional (geometric) approach. Though, there is a possibility of achieving more robust results. In this project, we will learn about estimating depth and pose (or ego-motion) from a sequence of images using unsupervised learning methods. In <a href="https://people.eecs.berkeley.edu/~tinghuiz/projects/SfMLearner/cvpr17_sfm_final.pdf">SfMLearner</a> paper by David Lowe’s team at Google, an unsupervised learning framework was presented for the task of monocular depth and camera motion estimation from unstructured video sequences.</p>
+
+<p>Your task is to make <a href="https://people.eecs.berkeley.edu/~tinghuiz/projects/SfMLearner/cvpr17_sfm_final.pdf">SfMLearner</a> ‘better’! When we say better, it means that the error in depth and pose estimation should be less than that of SfMLearner’s paper on different empirical evaluation scales. Research papers like <a href="https://arxiv.org/pdf/1803.02276.pdf">GeoNet</a> might help you in improving the results. Although, research papers in this field are in abundance. Feel free to search through the internet.</p>
+
+<p>You will be mainly graded on the analysis of your approach and ‘your original’ implementation to make the SfMLearner better! Along with the standard report, you will be submitting a presentation video of about 5-7 mins long, explaining your approach and the in-depth analysis of your methods and the results. More on submission details are mentioned below in <a href="#sub">section 5</a>.</p>
+
+<p>Note: You don’t have to reimplement SfMLearner again! You will be not graded for that. Use the SfMLearner code on <a href="https://github.com/tinghuiz/SfMLearner">Github</a> by the original authors. Feel free to modify or use any code available online to make the results better but DO NOT forget to cite them. You are restricted to <script type="math/tex">\sim</script> 20K images provided in the dataset for training.</p>
+
+<p><a href="https://people.eecs.berkeley.edu/~tinghuiz/projects/SfMLearner/cvpr17_sfm_final.pdf">SfMLearner</a></p>
+
+<p><a name="sfmlearner"></a></p>
+
+<h2 id="sfmlearner">3. SfMLearner</h2>
+
+<p>One of the trivial ways to solve this problem is to learn rotation and translation from a sequence of data. Although, learning such parameters directly is a weakly constrained problem. Thus, methods like <a href="https://people.eecs.berkeley.edu/~tinghuiz/projects/SfMLearner/cvpr17_sfm_final.pdf">SfMLearner</a>, jointly train a single-view depth CNN and a camera pose estimation CNN from unlabeled video sequence.</p>
+
+<p><b> You are required to read <a href="https://people.eecs.berkeley.edu/~tinghuiz/projects/SfMLearner/cvpr17_sfm_final.pdf">SfMLearner</a> paper before reading further. </b></p>
+
+<p>Following the a brief summary of the proposed framework in SfMLearner for jointly training a single-view depth CNN and a camera pose estimation CNN from unlabeled video sequences.  <br />
+<b>Assumption: The scene is fairly rigid <i>i.e.</i> the scene appearance change across different frames is dominated by the camera motion.</b></p>
+
+<p><a name="view"></a></p>
+
+<h3 id="view-synthesis">3.1. View Synthesis</h3>
+<p>The key supervision signal for our depth and pose prediction CNNs comes from the task of novel view synthesis: given one input view of a scene, synthesize a new image of the scene seen from a different camera pose. We can synthesize a target view given a per-pixel depth in that image, plus the pose and visibility in a nearby view. Thus, synthesizing the target view works as a supervision for training. The view synthesis objective can be formulated as:</p>
+
+<p><script type="math/tex">L_{vs} = \sum_s \sum_p |I_t(p) - \hat{I_s}(p)|</script> <br />
+where <script type="math/tex">p</script> indexes over pixel coordinates and <script type="math/tex">\hat{I_s}</script> is the source view <script type="math/tex">I_s</script> warped to the target coordinate frame based on a depth imae-based rendering module. See Figure xx for an illustration of SfMLearner learning pipeline for depth and pose estimation.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p4/overview.png" width="80%" />
+  <div class="figcaption">
+  Figure 1: Overview of the supervision pipeline based on view synthesis.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<h3 id="differentiable-depth-image-based-rendering">3.2. Differentiable Depth Image-based Rendering</h3>
+<p>A key component of this framework is a differentiable depth image-based renderer (Refer section 3.1 of the paper) that reconstructs the target view <script type="math/tex">I_t</script> by sampling pixels from a source view <script type="math/tex">I_s</script> based on the predicted depth map <script type="math/tex">\hat{D_t}</script> and the relative pose <script type="math/tex">\hat{T}_{t\rightarrow s}</script></p>
+
+<p>Fig. xx is an illustration of the differentiable image warping process.</p>
+<div class="fig fighighlight">
+  <img src="/assets/2019/p4/image-warp.png" width="80%" />
+  <div class="figcaption">
+  Figure 2: For each point \(p_t\) in the target view, we first project it onto the source view based on the predicted depth and camera pose, and then use bilinear interpolation to obtain the value of the warped image \(\hat{I}_s\) at location \(p_t\).
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<p>To obtain <script type="math/tex">I_s(p_s)</script> for populating the value of <script type="math/tex">\hat{I}_s(p_t)</script>, we use the differentiable bilinear sampling mechanism proposed in the spatial transformer networks(STN) that linearly interpolates the values of the 4-pixel neighboring pixels of <script type="math/tex">p_s</script> to approximate <script type="math/tex">I_s(p_s)</script>. For this project, you may ‘use’ STN rather than writing your own. A sample tensorflow implementation of STN can be found <a href="https://github.com/kevinzakka/spatial-transformer-network">here</a>. Feel free to use any other implementation.</p>
+
+<h3 id="explainability-mask">3.3. Explainability Mask</h3>
+
+<p><b>Note</b>: Till now, we assume the scene is static; there are no occlusions between the target and source views; the surface is Lambertian so that the photo-consistency error is meaningful. With any of the these assumptions voilated in the training sequence, the gradients could be corrupted. To improve the robustness of our training process, we separately train a <i>explainability prediction</i> network that outputs a per-pixel soft mask <script type="math/tex">\hat{E}_s</script> for each  target-source pair.</p>
+
+<p>Thus, the view synthesis objective is updated as:</p>
+
+<script type="math/tex; mode=display">L_{vs} = \sum_s \sum_p \hat{E}_s(p)\ |I_t(p) - \hat{I_s}(p)|</script>
+
+<h3 id="gradient-locality-issues">3.4. Gradient Locality Issues</h3>
+
+<p>There is still another problem that needs to be dealt with. The gradients in the framework are mainly derived from the pixel intensity difference between the center pixel and its neighbours which will cause problems in training if the correct <script type="math/tex">p_s</script> (neighbour pixel) is located in a low-texture region. This is a common issue in motion estimation. To overcome this problem, we can use a encoder-decoder CNN with a small bottleneck for the depth network that implicitly constrains the output to be globally smooth and facilitates gradients to propogate from meaningful regions to nearby regions. <br />
+Thus, for smoothness, we minimize the <script type="math/tex">L_1</script> norm of second-order gradients for the predicted depth maps:</p>
+
+<script type="math/tex; mode=display">L_{final} = \sum_l L^l_{vs} + \lambda_s L^l_{smooth} + \lambda_e \sum_s L_{reg}(\hat{E}^l_s)</script>
+
+<p>where <script type="math/tex">l</script> indexes over different images scales, <script type="math/tex">s</script> indexes over source images and <script type="math/tex">\lambda_s</script> and <script type="math/tex">\lambda_e</script> are weighting for the depth smoothness loss and explainability regularization respectively.</p>
+
+<p>The network architecture is given below:</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p4/network.png" width="100%" />
+  <div class="figcaption">
+  Figure 3: Network architecture for SfMLearner's depth/pose/explainability prediction modules.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<p><a name="testset"></a></p>
+
+<h2 id="notes-about-data">4. Notes about Data</h2>
+
+<p>You are given a multiple sequences from the <a href="http://www.cvlibs.net/datasets/kitti/raw_data.php">KITTI</a> dataset. You can download the data from <a href="">here</a>.</p>
+
+<p><a name="sub"></a></p>
+
+<h2 id="submission-guidelines">5. Submission Guidelines</h2>
+
+<p><b> If your submission does not comply with the following guidelines, you’ll be given ZERO credit </b></p>
+
+<p><a name="files"></a></p>
+
+<h3 id="file-tree-and-naming">5.1. File tree and naming</h3>
+
+<p>Your submission on ELMS/Canvas must be a <code class="highlighter-rouge">zip</code> file, following the naming convention <code class="highlighter-rouge">YourDirectoryID_p4.zip</code>. If you email ID is <code class="highlighter-rouge">abc@umd.edu</code> or <code class="highlighter-rouge">abc@terpmail.umd.edu</code>, then your <code class="highlighter-rouge">DirectoryID</code> is <code class="highlighter-rouge">abc</code>. For our example, the submission file should be named <code class="highlighter-rouge">abc_p1.zip</code>. The file <strong>must have the following directory structure</strong> because we’ll be autograding assignments. You can have any helper functions in sub-folders as you wish, be sure to index them using relative paths and if you have command line arguments for your Wrapper codes, make sure to have default values too. Please provide detailed instructions on how to run your code in <code class="highlighter-rouge">README.md</code> file. Please <strong>DO NOT</strong> include data in your submission.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>YourDirectoryID_hw1.zip
+│   README.md
+|   Code 
+|   ├── Train.py
+|   ├── Test.py
+|   ├── Any subfolders you want along with files 
+|   Data
+|   ├── AnyOutputImagesYouWantToHighlight.png
+|   ├── Data2OutputPRNet.mp4
+├── Report.pdf
+└── PresentationVideo.mp4
+</code></pre>
+</div>
+<p><a name="report"></a></p>
+
+<h3 id="report">5.2. Report</h3>
+
+<p>For each section of newly developed solution in the project, explain briefly what you did, and describe any interesting problems you encountered and/or solutions you implemented.  You must include the following details in your writeup:</p>
+
+<ul>
+  <li>Your report <strong>MUST</strong> be typeset in LaTeX in the IEEE Tran format provided to you in the <code class="highlighter-rouge">Draft</code> folder and should of a conference quality paper.</li>
+  <li>Brief explanation of your approach to this problem.</li>
+  <li>Present a set of images for comparison of depth estimation of SfMLearner, YourMethod and Ground Truth (with the input RGB image).</li>
+  <li>Present a odometry comparison of pose estimation of SfMLearner, YourMethod and Ground Truth.</li>
+  <li>Present a comparison of error of SfMLearner and YourMethod in different error metric scale (Abs, Sq, RMSE and RMSE log) as mentioned in the paper. The scripts for computing error metrics for both pose and depth evaluation can be downloaded from <a href="https://github.com/tinghuiz/SfMLearner/tree/master/kitti_eval">here</a>. For this, train ONLY on the KITTI training set provided here and test it on <script type="math/tex">(i)</script> <a href="">KITTI testing set</a> <script type="math/tex">(ii)</script> <a href="">CityScape testing set</a></li>
+  <li>Present Training Accuracy on the provided KITTI training set. Present Testing accuracy on the provided KITTI testing set and the Cityscape testing set.</li>
+  <li>Present an in-depth analysis of your proposed approach. Did you try something specific? If yes, why? Talk about why it performed better or worse?</li>
+  <li>Present a 3D structure of the scene, reconstructed from depth and poses estimated. Feel free to directly use parts of your project 3 or any open source code for this.</li>
+</ul>
+
+<p><a name="video"></a></p>
+
+<h3 id="video-presentation">5.3 Video Presentation</h3>
+
+<p>You are required to submit a video explaining your approach to the given problem. Explain what all problems you tackled during this problem and how you overcame them. Also, give an in-depth analysis of your proposed approach. The video MUST be less 7 mins long. We expect the video to be in somewhere between 5-7 mins.</p>
+
+<p><a name="coll"></a></p>
+
+<h2 id="collaboration-policy">6. Collaboration Policy</h2>
+<p>You are encouraged to discuss the ideas with your peers. However, the code should be your own, and should be the result of you exercising your own understanding of it. If you reference anyone else’s code in writing your project, you must properly cite it in your code (in comments) and your writeup. For the full honor code refer to the CMSC733 Spring 2019 website.</p>

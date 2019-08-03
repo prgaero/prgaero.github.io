@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Final Project</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Course materials and notes for University of Maryland's class CMSC733: Computer Vision.">
+    <link rel="canonical" href="http://cmsc733.github.io/2018/proj/p4/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+    <!-- Google tracking -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46895817-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap title-wrap">
+    <a class="site-title" href="/">CMSC733 Computer Vision</a>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>Final Project</h1>
+  </header>
+
+  <article class="post-content">
+  <p>Table of Contents:<br />
+- <a href="#due">Deadline</a><br />
+- <a href="#intro">Introduction</a><br />
+- <a href="#part1">Part 1: Intro to GTSAM</a><br />
+- <a href="#part2">Part 2: SLAM Implementation</a><br />
+- <a href="#system_overview">Implementation Overview</a><br />
+- <a href="#sub">Submission Guidelines</a><br />
+- <a href="#coll">Collaboration Policy</a></p>
+
+<p><a name="due"></a><br />
+## Deadline <br />
+11:59:59PM, Tuesday, December 18, 2018<br />
+- This is a <strong><em>strict</em></strong> deadline– we will not accept late submissions, with of without late days.<br />
+<strong><em>Submissions made by 11:59PM December 10 will receive extra credit equal to 25% of their grade on<br />
+the project.</em></strong></p>
+
+<p><a name="intro"></a><br />
+## Introduction<br />
+Factor graphs are graphical models that are well suited to modeling complex estimation problems such as Simultaneous Localization and Mapping (SLAM) or Structure from Motion (SfM). You might be familiar with another often used graphical model, Bayesian Networks [1]. Unlike Bayesian Networks, which are directed acyclic graphs (DAG), factor graphs are bipartite graphs consisting of factors connected to variables. Variables represent the unknown random variables and factors represent probabilistic information on those variables, derived from measurement or prior knowledge.</p>
+
+<p>In this project, you’ll implement a Bayesian Network-based solution to SLAM, an estimation problem that’s ubiquitous in robotics. You’ll first familiarize yourself with the algorithm in a simplified setting, before diving into the full problem.  Both our “toy problem” and your project are based on the GTSAM[2] (“Georgia Tech Smoothing and Mapping”) toolbox which can be downloaded from <a href="https://smartech.gatech.edu/handle/1853/45226">this link</a>.</p>
+
+<p>It’s surprising how effectively the factor graph-based frameworks can solve a problem as complex as SLAM (where they provide state-of-the-art performance). Excited already?</p>
+
+<p>For more details about the homework refer to <a href="/gtsam/">the relevant course notes</a>.</p>
+
+<p><a name="part1"></a><br />
+## Part 1: Intro to GTSAM<br />
+To help you familiarize yourself with GTSAM and its application to SLAM, we’ve implemented a “toy example” application.  Find it <a href="https://github.com/NitinJSanket/CMSC828THW1">here</a>.  We highly recommend that you install and run it, and gain an understanding of how the code works, before moving on to the rest of the project.</p>
+
+<p><a name="part2"></a><br />
+## Part 2: SLAM Implementation<br />
+Now that you’re familiar with how GTSAM can be applied to SLAM in the 2D setting, you’re ready to implement it yourself– in 3D!</p>
+
+<p>We’ve recorded some videos from the perspective of a small drone.  Your task is to build a map based on the observation measurements the drone makes.  <br />
+You’ll use data from the <code class="highlighter-rouge">DataMapping.mat</code> file to build a map and localize your robot on the map (Simultaneous Localization and Mapping) using the GTSAM package.</p>
+
+<h3 id="the-environment">The Environment</h3>
+<p>The provided data for this phase was collected with a hand-held SLAMDunk sensor module [3] (shown in Fig. 1), manufactured by Parrot R , simulating flight patterns over a floor mat of AprilTags [4] each of which has a unique ID.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/proj4/slamdunk.png" width="80%" />
+  <div class="figcaption">
+    Figure 1: Parrot SLAMDunk
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<p>The data contains the rectified left camera images, IMU data, SLAMDunk’s pose estimates, AprilTag [4] detections with tag size and camera intrinsics and extrinsics. All units are in m, rad, rads^1 and ms^2 if not specified.</p>
+
+<p>Camera Intrinsics and Extrinsics are given specifically in <code class="highlighter-rouge">CalibParams.mat</code> and has the following parameters:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">K</code> has the camera intrinsics (assume that the distortion coefficients in the radtan model<br />
+are zero).</li>
+  <li><code class="highlighter-rouge">TagSize</code> is in size of each AprilTag in meters.</li>
+  <li><code class="highlighter-rouge">qIMUToC</code> has the quaternion to transform from IMU to Camera frame (<code class="highlighter-rouge">QuaternionW</code>,<br />
+<code class="highlighter-rouge">QuaternionX</code>, <code class="highlighter-rouge">QuaternionY</code>, <code class="highlighter-rouge">QuaternionZ</code>).</li>
+  <li><code class="highlighter-rouge">TIMUToC</code> has the translation to transform from IMU to Camera frame <code class="highlighter-rouge">(TransX</code>, <code class="highlighter-rouge">TransY</code>,<br />
+<code class="highlighter-rouge">TransZ</code>).</li>
+</ul>
+
+<p>The <code class="highlighter-rouge">.mat</code> file for any of the sequence (in the format <code class="highlighter-rouge">DataNAME OF SEQUENCE.mat</code> for e.g., <code class="highlighter-rouge">DataSquare.mat</code> where Square is the sequence name) will contain the following data:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">DetAll</code> is a cell array with AprilTag detections per frame. For e.g., frame 1 detections can be extracted as <code class="highlighter-rouge">DetAll{1}</code>. Each cell has multiple rows of data. Each row has the following data format:
+    <ul>
+      <li><code class="highlighter-rouge">[TagID, p1x, p1y, p2x, p2y, p3x, p3y, p4x, p4y]</code>
+        <ul>
+          <li>Here <code class="highlighter-rouge">p1</code> is the left bottom corner and points are incremented in counter-clockwise direction, i.e., the <code class="highlighter-rouge">p1x</code>, <code class="highlighter-rouge">p1y</code> are coordinates of the bottom left, <code class="highlighter-rouge">p2</code> is bottom right, <code class="highlighter-rouge">p3</code> is top right, and <code class="highlighter-rouge">p4</code> is top left corners (Refer to Fig. 2). <br />
+You will use the left bottom corner (p1) of Tag 10 as the world frame origin with positive X being direction pointing from p1 to p2 in Tag 10 and positive Y being pointing from p1 to p4 in Tag 10 and Z axis being pointing out of the plane (upwards) from the Tag.</li>
+        </ul>
+      </li>
+      <li><code class="highlighter-rouge">IMU</code> is a cell array where each row has the following data:
+        <ul>
+          <li><code class="highlighter-rouge">[QuaternionW, QuaternionX, QuaternionY, QuaternionZ, AccelX, AccelY, AccelZ, GyroX, GyroY, GyroZ, Timestamp]</code></li>
+          <li>You do not need the IMU readings for this project, however, if you find a creative way to use it, please feel free to use it.</li>
+        </ul>
+      </li>
+      <li><code class="highlighter-rouge">LeftImgs</code> is a cell array where each cell is a Image.</li>
+      <li><code class="highlighter-rouge">TLeftImgs</code> is the Timestamps for <code class="highlighter-rouge">LeftImgs</code>. For e.g. <code class="highlighter-rouge">LeftImgs{1}</code> was collected<br />
+at time <code class="highlighter-rouge">TLeftImgs(1)</code>.</li>
+      <li><code class="highlighter-rouge">Pose</code> is an array with each row in the form:
+        <ul>
+          <li><code class="highlighter-rouge">[PosX, PosY, PosZ, QuaternionW, QuaternionX, QuaternionY, QuaternionZ, EulerX, EulerY, EulerZ, Timestamp]</code></li>
+          <li>Here ZYX Euler angle was used which is the default for Matlab’s <code class="highlighter-rouge">quat2eul</code><br />
+function.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<div class="fig fighighlight">
+  <img src="/assets/proj4/apriltag.png" width="40%" />
+  <div class="figcaption">
+    Figure 2: AprilTag, with corners highlighted.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<p><a name="system_overview"></a><br />
+## Implementation Overview</p>
+
+<p>Download the starter code and data <a href="https://drive.google.com/open?id=1ZFXZEv4yWgaVDE1JD6-oYL2KQDypnEUU"> here </a></p>
+
+<h3 id="code">Code</h3>
+<p>The starter code can be found in the code folder. There are two .m files in the folder: <br />
+<code class="highlighter-rouge">SLAMUsingGTSAM.m</code> and <code class="highlighter-rouge">Wrapper.m</code>. Your SLAM implementation goes in <code class="highlighter-rouge">SLAMUsingGTSAM</code> (you may also use helper functions in additional files). The script <code class="highlighter-rouge">Wrapper.m</code> is given for your debugging only.<br />
+The input and output for the <code class="highlighter-rouge">SLAMUsingGTSAM</code> are given in the “Environment” section above. The <code class="highlighter-rouge">SLAMUsingGTSAM</code> function has two return<br />
+arguments, <code class="highlighter-rouge">LandMarksComputed</code> and <code class="highlighter-rouge">AllPosesComputed</code>:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">LandMarksComputed</code> is an array of landmark locations.
+    <ul>
+      <li>Each row is of the form <code class="highlighter-rouge">[TagID, p1x, p1y, p2x, p2y, p3x, p3y, p4x, p4y]</code>.</li>
+      <li>Note that the rows have to be sorted in ascending order by TagIDs.</li>
+    </ul>
+  </li>
+  <li><code class="highlighter-rouge">AllPosesComputed</code> is an array of 6DOF poses.
+    <ul>
+      <li>Each row gives the pose measurement at a single camera timestep.</li>
+      <li>Each row is of the form <code class="highlighter-rouge">[PosX, PosY, PosZ, Quaternion, QuaternionX, QuaternionY, QuaternionZ]</code>.
+        <ul>
+          <li>(We use quaternions because euler angles flip near singularity conditions– similar to the ones we are operating in.)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p><b> Please note: </b></p>
+
+<ul>
+  <li>Do NOT add any subdirectories.</li>
+  <li>Comment out any visualization code or debug print statements before submitting.</li>
+</ul>
+
+<p><a name="sub"></a><br />
+## Submission Guidelines<br />
+<b> We will deduct points if your submission does not comply with the following guidelines.</b></p>
+
+<p>Please submit the project <b> once </b> for your group – there’s no need for each member to submit it.</p>
+
+<h3 id="file-tree-and-naming">File tree and naming</h3>
+
+<p>Your submission on Canvas must be a zip file, following the naming convention <strong>YourDirectoryID_proj4.zip</strong>.  For example, xyz123_proj4.zip.  The file <strong>must have the following directory structure</strong>:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">YourDirectoryID_proj4.zip/</code>
+    <ul>
+      <li><code class="highlighter-rouge">code/</code>
+        <ul>
+          <li><code class="highlighter-rouge">SLAMusingGTSAM.m</code></li>
+          <li>*(any dependencies of <code class="highlighter-rouge">SLAMusingGTSAM.m</code>)</li>
+        </ul>
+      </li>
+      <li><code class="highlighter-rouge">report.pdf</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="report">Report</h3>
+<p><strong>You will be graded primarily based on your report.</strong></p>
+
+<p>Logistics and bookkeeping you <strong>must</strong> include at the top of your report:</p>
+
+<ul>
+  <li>The name of each group member.</li>
+  <li>A brief (one paragraph or less) description of what each group member contributed to the project.</li>
+</ul>
+
+<p>You must include output plots of the landmarks in 3D with the camera poses/localization, as shown in<br />
+the example below.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/proj4/example_results.png" width="80%" />
+  <div class="figcaption">
+    Plot of landmark and camera poses, viewed from above.  Please also provide plots viewed from the side.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+<p>We want you to demonstrate an understanding of the concepts involved in the project, and to show the output produced by your code.</p>
+
+<p>Assume that we’re familiar with the project, so you don’t need to spend time repeating what’s already in the course notes.  Instead, focus on any interesting problems you encountered and/or solutions you implemented.</p>
+
+<p>As usual, your report must be full English sentences, <strong>not</strong> commented code. There is a word limit of 1500 words and no minimum length requirement.</p>
+
+<p><a name="coll"></a><br />
+## Collaboration Policy<br />
+We encourage you to work closely with your groupmates, including collaborating on writing code.  With students outside your group, you may discuss methods and ideas but may not share code.</p>
+
+<p>For the full collaboration policy, including guidelines on citations and limitations on using online resources, see <a href="http://prg.cs.umd.edu/cmsc426">the course website</a>.</p>
+
+<h2 id="references">References:</h2>
+<p>[1] Bernd Pfrommer, Nitin Sanket, Kostas Daniilidis, and Jonas Cleveland. Penncosyvio: A<br />
+challenging visual inertial odometry benchmark. In 2017 IEEE International Conference<br />
+on Robotics and Automation (ICRA), pages 3847–3854, May 2017.</p>
+
+<p>[2] Michael Bloesch, Michael Burri, Sammy Omari, Marco Hutter, and Roland Siegwart.<br />
+Iterated extended kalman filter based visual-inertial odometry using direct photometric<br />
+feedback. The International Journal of Robotics Research, 36(10):1053–1072, 2017.</p>
+
+<p>[3] Parrot. SLAMDunk. http://developer.parrot.com/docs/slamdunk/, 2016.</p>
+
+<p>[4] Edwin Olson. AprilTag: A robust and flexible visual fiducial system. In Proceedings of the<br />
+IEEE International Conference on Robotics and Automation (ICRA), pages 3400–3407.<br />
+IEEE, May 2011.</p>
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        
+        
+        <li>
+          <a href="mailto:"></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- mathjax -->
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>

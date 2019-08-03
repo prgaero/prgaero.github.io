@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Rotobrush</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Course materials and notes for University of Maryland's class CMSC733: Computer Vision.">
+    <link rel="canonical" href="http://cmsc733.github.io/rotobrush/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+    <!-- Google tracking -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46895817-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap title-wrap">
+    <a class="site-title" href="/">CMSC733 Computer Vision</a>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>Rotobrush</h1>
+  </header>
+
+  <article class="post-content">
+  <p><b>This article is written by <a href="http://chahatdeep.umiacs.io">Chahat Deep Singh</a></b>.</p>
+
+<p>Table of Content:</p>
+
+<ul>
+  <li><a href="#intro">Introduction</a></li>
+  <li><a href="#overview">Overview</a></li>
+  <li><a href="#segmenting-loc-classifiers">Segmenting Localized Classifiers</a>
+    <ul>
+      <li><a href="#local-windows">Initializing Local Windows</a></li>
+      <li><a href="#init-color">Initializing Color Models</a></li>
+      <li><a href="#color-model-conf">Color Confidence</a></li>
+      <li><a href="#shape-model">Shape Model</a></li>
+    </ul>
+  </li>
+  <li><a href="#update-window-loc">Updating Window Locations</a>
+    <ul>
+      <li><a href="#estimate-object-motion">Estimate the Motion of the Entire Object</a></li>
+      <li><a href="#estimate-local-boundary">Estimate Local Boundary Deformation</a></li>
+    </ul>
+  </li>
+  <li><a href="#update-local-classifier">Update Local Classifier</a>
+    <ul>
+      <li><a href="#update-shape-model">Updating the Shape Model</a></li>
+      <li><a href="#update-color-model">Updating the Color Model</a></li>
+    </ul>
+  </li>
+  <li><a href="#update-shape-and-color">Updating the Shape and Color Models</a></li>
+  <li><a href="#merge-local-windows">Merging Local Windows</a>
+    <ul>
+      <li><a href="#extract-final-mask">Extracting the Final Foreground Mask</a></li>
+    </ul>
+  </li>
+  <li><a href="#ref">References</a></li>
+</ul>
+
+<p><a name="intro"></a><br />
+## 1. Introduction</p>
+
+<p>In this project, we will learn segmenting objects in a video sequence. Given a <i> good</i> boundary detection in the initial frame of a video, the object can be tracked and segmented out in the remaining sequence. It is much easier to segment the rigid objects in the scene using traditional tracking algorithms but the same can’t be said for deformable objects like the one you can see in the Fig. 1.</p>
+
+<div class="fig figcenter fighighlight">
+<img src="/assets/rotobrush/demo.gif" width="80%" />
+<div class="figcaption"> Fig. 1: Segmenting out non-rigid objects in a video sequence
+</div>
+</div>
+
+<p>In this article, we specifically will implement an algorithm called <a href="http://juew.org/projects/SnapCut/snapcut.htm"><i>Video SnapCut</i></a> (also known as <i>RotoBrush</i> in <i>Adobe After Effects</i>) by Bai et. al. To get a very good inituition, we would <b>highly recommend</b> watching this 5 min <a href="https://www.youtube.com/watch?v=XSXRcXrPyIM"> video </a> that describes the entire paper.</p>
+
+<p style="background-color:#ddd; padding:5px">
+<b>Note:</b> Reading the paper <a href="#ref">[1]</a> is <b>HIGHLY RECOMMENDED</b>.</p>
+
+<p><a name="overview"></a><br />
+## 2. Overview</p>
+
+<p>As mentioned in the introduction section, we need to provide a foreground mask for the object that needs to be segmented. This can be done using <code class="highlighter-rouge">roipoly</code> from Image Processing Toolbox in MATLAB. The <i>SnapCut</i> can then sample a series of overlapping image windows along the object’s boundary. For each such windows, a <i>local classifier</i> is created which is trained to classify whether a pixel belongs to foreground or background. The classifier is trained in such a way that it not only takes into account the color (like [2]) but shape as well.</p>
+
+<div class="fig figcenter fighighlight">
+<img src="/assets/rotobrush/initial.gif" width="60%" />
+<div class="figcaption"> Fig. 2: Creating the initial foreground mask
+</div>
+</div>
+
+<p>For the subsequent frames, the local classifiers are used for estimating an updated foreground mask. First, the object’s movements between frames is estimated for reposition of the image windows. The goal is to have the windows stay in the same position on the object’s boundary, or the most similar place possible. With the window positions updated, we then use the local classifiers to re-estimate the foreground mask for each window. These windows<br />
+overlap, so we merge their foreground masks together to obtain a final, full-object mask. Optionally, we can rerun the local classifiers and merging steps to refine the mask for this frame. Before moving on to the next frame, we re-train the local classifiers, so they remain accurate despite changes in background (and possibly foreground) appearance.</p>
+
+<p style="background-color:#ddd; padding:5px">
+<b>NOTE:</b> 
+In order to develop a practical video cutout that can perform on complicated video with deformable objects, it is import to follow the two underlying principles:<br />
+<b>1.</b> Multiple cues should be used for extracting the foreground such as <b>color, shape, motion and texture information</b>. Among these, shape plays a vital role for maintaining a temporally-coherent recognition.<br />
+<b>2.</b> Multiple cues should be evaluated and integrated not just globally, but locally as well in order to maximize their discriminant powers. 
+</p>
+
+<p><a name="segmenting-loc-classifiers"></a><br />
+## 3. Segmenting with Localized Classifiers<br />
+<a name="local-windows"></a><br />
+### 3.1. Local Windows<br />
+Once the initial mask is obtained, say <script type="math/tex">L^t(x)</script> on a keyframe <script type="math/tex">I_t</script>, a set of overlapping windows <script type="math/tex">W_q^t,...,W_n^t</script> along its contour <script type="math/tex">C_t</script> are to be uniformly sampled as shown in Fig. 3.<br />
+<i>Assume single contour for now, multiple contours can be handled in the same way.</i> The size and density of the windows can be chosen emperically, usually <script type="math/tex">30\times30</script> to <script type="math/tex">80\times80</script> pixels. <br />
+Each window defines the application range of a local classifier, and the classifier will assign to every pixel<br />
+inside the window a foreground (object) probability, based on the local statistics it gathers. Neighboring windows overlap for about one-third of the window size.</p>
+
+<div class="fig figcenter fighighlight">
+<img src="/assets/rotobrush/local-window.png" width="100%" />
+<div class="figcaption"> Fig. 3: Illustrating local classifiers. (a) Overlapping classifiers are initialized along the object boundary on frame t. (b) These classifiers are then propagated onto the next frame by motion estimation.
+</div>
+</div>
+
+<p style="background-color:#ddd; padding:5px"><b>Note:</b> Since each local window moves along its own (averaged) motion vector, the distances between updated neighboring windows may slightly vary. This is one of the main reasons to
+use overlapping windows in the keyframe, so that after propagation, the foreground boundary is still fully covered by the windows.</p>
+
+<p>The window-level <i>local classifiers</i> are composed of a color model (<a href="https://cmsc426.github.io/colorseg/#gmm">GMM</a>), a shape model (the foreground mask  and a shape confidence mask). Confidence metrics are calculated for the color and shape models: for the color model this is a single value, and for the shape model it is a mask. When the color and shape models are integrated into a single mask, the confidence values are used to assign more weight to the more confident model. Fig. 4 illustrates the segmented foreground and combined probability for local classifiers.</p>
+
+<div class="fig figcenter fighighlight">
+<img src="/assets/rotobrush/fig4.png" width="100%" />
+<div class="figcaption"> Fig. 4: (a) Each classifier contains a local color model and shape model, they are initialized on frame t and updated on frame t+1. Local classification results are then combined to generate a global foreground probability map. (e) The final segmented foreground object on frame t + 1.
+</div>
+</div>
+
+<p><a name="init-color"></a><br />
+### 3.2. Initializing the Color Model<br />
+The purpose of the color model is to classify pixels as foreground <script type="math/tex">\mathcal{F}</script> or background <script type="math/tex">\mathcal{B}</script> based on their color. The assumption is that <script type="math/tex">\mathcal{F}</script> and <script type="math/tex">\mathcal{B}</script> pixels generally differ in color. The color model is based on GMM. One can use Matlab’s <code class="highlighter-rouge">fitgmdist</code> and <code class="highlighter-rouge">gmdistribution</code> function from Statistics and Machine Learning toolbox.</p>
+
+<p>In order to create the color model, two GMMs are build for <script type="math/tex">\mathcal{F}</script> and <script type="math/tex">\mathcal{B}</script> regions seperately.</p>
+<p style="background-color:#ddd; padding:5px"><b>Note:</b> Use <i>Lab</i> color space for the color models. To avoid possible sampling errors, we only use pixels whose spatial distance to the segmented boundary is larger than a threshold (5 pixels in our system) as the training data for the GMMs. </p>
+
+<p>Now, for a pixel <script type="math/tex">x</script> in the window, its foreground probability generated from the color model is computed as:</p>
+
+<script type="math/tex; mode=display">p_c(x)=p_c(x \vert \mathcal{F})\ / \ \left(p_c(x \vert \mathcal{F})+p_c(x \vert \mathcal{B})\right)</script>
+
+<p>where <script type="math/tex">p_c</script>, <script type="math/tex">p_c(x \vert \mathcal{F})</script> and <script type="math/tex">p_c(x \vert \mathcal{B})</script> are the corresponding probabilities computed from the two GMMs. <i>Refer to section 2.1 for more details.</i></p>
+
+<p><a name="color-model-conf"></a><br />
+### 3.3. Color Model Confidence<br />
+The local color model confidence <script type="math/tex">f_c</script> is used to describe how separable the local foreground is against the local background using just the color model. Let <script type="math/tex">L^t(x)</script> be the known segmentation label (<script type="math/tex">\mathcal{F}=1</script> and <script type="math/tex">\mathcal{B}=0)</script> of pixel <script type="math/tex">x</script> for the current frame, <script type="math/tex">f_c</script> is computed as</p>
+
+<script type="math/tex; mode=display">f_c=1-\cfrac{\int_{W_k}|L^t(x)-p_c(x)|\cdot\omega_c(x)dx}{\int_{W_k}\omega_c(x)dx}</script>
+
+<p>The weighing function <script type="math/tex">\omega_c(x)</script> is computed as <script type="math/tex">\omega_c(x)=exp(-d^2(x)\ /\ \sigma_c^2</script>, where <script type="math/tex">d(x)</script> is the spatial distance between <script type="math/tex">x</script> and the foreground boundary, computed using the distance transform. <script type="math/tex">\sigma_c</script> is fixed as half of the window size. <script type="math/tex">\omega_c(x)</script> is higher when <script type="math/tex">x</script> is closer to the boundary <i>i.e.</i> the color model is required to work well near the foreground boundary for accurate segmentation.</p>
+
+<p><a name="shape-model"></a><br />
+### 3.4. Shape Model<br />
+The local shape model <script type="math/tex">M_s</script> contains the existing segmentation mask <script type="math/tex">L^t(x)</script> and a shape confidence mask computed as</p>
+
+<script type="math/tex; mode=display">f_s(x)=1-exp(-d^2(x)\ /\ \sigma^2_s)</script>
+
+<p>where <script type="math/tex">d(x)</script> stands for the distance to the foreground boundary and <script type="math/tex">\sigma_s</script> is a parameter. A larger <script type="math/tex">\sigma_s</script> means the shape confidence is low around the foreground boundary while a small <script type="math/tex">\sigma_s</script> means high confidence on the segmentation mask <script type="math/tex">L^t(x)</script>. Fig. 5(d) shows an example of the shape confidence map.<br />
+<b>Note:</b> <script type="math/tex">\sigma_s</script> is a very important parameter in this approach and can be adaptively and automatically adjusted to achieve accurate local segmentation.<br />
+A simple explanation for updating local models can be found in <i>section 2.3</i> in [1].</p>
+
+<div class="fig figcenter fighighlight">
+<img src="/assets/rotobrush/sigma.png" width="100%" />
+<div class="figcaption">Fig. 5: (a) As color confidence \(f_c\) increases (more separable foreground and background color distributions), the value of \(\sigma_s\) increases, giving less weight to the shape prior. (b) Profile of the shape prior \(f(x)\). An example of (c) color probability, (d) shape confidence with parameter \(\sigma\), and (e) the integrated probability \(p_k^k(x)\).
+</div>
+</div>
+
+<p><a name="update-window-loc"></a><br />
+## 4. Updating Window Locations<br />
+In the previous section, we set up local classifiers for identifying foreground and background pixels within their windows. As we move on to the next video frame, the object and background may move and/or change. Our local classifier windows must move to stay centered on approximately the same place on the object’s boundary.<br />
+We accomplish this by tracking two kinds of motion: the rigid motion of the whole object, and then the smaller local deformations of the object’s boundary. For example, in Fig. 3, the football player is overall falling downwards (motion affecting the entire object), as well as bending his arms, turning his head, bending his legs, etc. (changing specific regions of the object’s boundary).</p>
+
+<p><a name="estimate-object-motion"></a><br />
+### 4.1. Estimate the Motion of the Entire Object<br />
+To estimate the overall motion of the object, find matching feature points on the object in the two frames, and use them to find an affine transform between the images. Use this to align the object in frame 1 to frame 2. “This initial shape alignment usually captures and compensates for large rigid motions of the foreground object.” Use Matlab’s <code class="highlighter-rouge">estimateGeometricTransform</code> to do so.</p>
+
+<p><a name="estimate-local-boundary"></a><br />
+### 4.2. Estimate Local Boundary Deformation<br />
+After applying the affine transform from the previous step, we want to track the boundary movement/deformation for the local windows. <a href="pano-prereq#optical-flow">Optical flow</a> will give us an estimate of each pixel’s motion between frames. However, <i>“optical flow is unreliable, especially near boundaries where occlusions occur”</i> [1]. Luckily, we know exactly where the object’s boundary is! Thus, to get a more accurate estimate, find the average of the flow vectors inside the object’s bounds. Use this average vector to estimate how to re-center the local window in the new frame.</p>
+
+<p>While this method for window re-positioning is not perfect, errors are accommodated by the significant overlap between neighboring windows: they should still overlap enough that the object’s entire boundary is covered. You can use Matlab’s optical flow functionality, such as the <code class="highlighter-rouge">opticalFlowHS</code> function.</p>
+
+<p><a name="update-local-classifier"></a><br />
+## 5. Update Local Classifier<br />
+Now that the local windows have been properly re-centered, we can update the local classifiers<br />
+for the new frame.</p>
+
+<p><a name="update-shape-model"></a><br />
+### 5.1. Updating the Shape Model<br />
+The shape model is composed of the foreground mask and the shape confidence map. These<br />
+are both carried over from the previous frame.</p>
+
+<p><a name="update-color-model"></a><br />
+### 5.2. Updating the Color Model <br />
+The distribution of colors in the foreground and background may change from one frame to the next, as different parts of the scene move independently. We want to update the color model to reflect these changes. Simply replacing the existing color model with a new pair of GMMs every frame could pose problems. For one, if there’s a sudden change in color in one frame, which quickly disappears in the next, our color model will be completely de-railed.<br />
+Moreover, the new GMMs may have degraded performance because of improper labling of the pixels used to train them. This is because we label “foreground” and “background” pixels based on the foreground mask, and that may be less accurate after updating window locations in the previous step. <br /><br />
+So what can we do? Bai. et. al. propose to compare two color models: the existing one from the previous frame and a combination of the previous and new frame’s GMMs. They first observe that the colors in the foreground region don’t change much between frames, while the background region can change significantly. Therefore we’d expect the number of pixels classifier by the model as foreground to be relatively consistent between frames. If the number of foreground pixels increases under the new color model, then we should stick with the old one. If we choose the new color model, we must also re-compute the color confidence value, as was done in <i>section 4.3</i>.</p>
+
+<p><a name="update-shape-and-color"></a><br />
+## 6. Updating the Shape and Color Models<br />
+For each window, we now merge the foreground maps produced by the shape and color models, weighting them based on the shape confidence map.  The foreground probability <script type="math/tex">p_{\mathcal{F}}^k(x)</script>, corresponding to the window <script type="math/tex">W_k</script> in the current frame, becomes a linear combination of the updated color probability <script type="math/tex">p_c(x)</script> and the updated (warped) binary shape mask <script type="math/tex">L^{t+1}(x)</script>, using the shape confidence map <script type="math/tex">f_s(x)</script> with the just computed <script type="math/tex">\sigma_s</script> as the interpolation coefficients:&lt;</p>
+
+<script type="math/tex; mode=display">p_{\mathcal{F}}^k(x)=f_s(x)L^{t+1}(x)+(1-f_s(x)) \ p_c(x)</script>
+
+<p>Examples of <script type="math/tex">p_c(x)</script>, <script type="math/tex">f_s(x)</script> and <script type="math/tex">p_{\mathcal{F}}^k(x)</script> are shown in <i>Fig. 5(c,d,e)</i>.</p>
+
+<p><a name="merge-local-windows"></a><br />
+## 7. Merging Local Windows</p>
+
+<p>After the previous step, we have a foreground probability mask for each local window. We now merge the overlapping local windows into a global foreground mask. In this overlapping window design, a pixel is often covered by multiple adjacent windows, and its foreground probability is a weighted linear combination of the probabilities computed from each window it belongs to,</p>
+
+<script type="math/tex; mode=display">p_{\mathcal{F}}(x)=\cfrac{\sum_{k}p_{\mathcal{F}}^k(x)(\vert x-c_k \vert)+\epsilon)^{-1}}{\sum_k(\vert x-c_k \vert +\epsilon)^{-1}}</script>
+
+<p>where <script type="math/tex">k</script> is the index of local windows (the sum ranges over all the <script type="math/tex">k-s</script> such that the updated window <script type="math/tex">W^{t+1}k</script> covers the pixel), is a small constant (<script type="math/tex">0.1</script> in the system), and <script type="math/tex">c_k</script> is the center of the window (<script type="math/tex">\vert x − c_k \vert</script> is the distance from the pixel <script type="math/tex">x</script> to the center).</p>
+
+<p><a name="extract-final-mask"></a><br />
+### 7.1. Extracting the Final Foreground Mask</p>
+
+<p>This gives a real-valued probability map for the foreground mask. We want a binary mask. The simplest solution would be to threshold the values of the probability map. This may produce a somewhat rough result. Bai et. al. use Graph Cut segmentation to obtain a better final result: you are encouraged (but not required) to use Matlab’s <code class="highlighter-rouge">lazysnapping</code> tool to implement this. Fig. 6 shows the output of <i>Video SnapCut</i>.</p>
+
+<div class="fig figcenter fighighlight">
+<img src="/assets/rotobrush/results.png" width="80%" />
+<div class="figcaption"> Fig. 1: Video SnapCut output. First two images on each dataset illustrates the foreground cut-out. The last image on each datset shows how SnapCut can be use to modify the background only.
+</div>
+</div>
+
+<p><i>SnapCut</i> is a novel video cutout system which uses adaptive local classifiers for segmenting dynamic video objects. By localizing the classifiers, the system achieves significantly better results than other algorithms for complicated videos, including complex color distributions, dynamic backgrounds and non-rigid foreground deformations.</p>
+
+<p><a name="ref"></a><br />
+## 8. References<br />
+1. Bai, X., Wang, J., Simons, D. and Sapiro, G., 2009, July. Video snapcut: robust video object cutout using localized classifiers. In ACM Transactions on Graphics (ToG) (Vol. 28, No. 3, p. 70). ACM.<br />
+2. Wang, J. and Cohen, M.F., 2005, October. An iterative optimization approach for unified image segmentation and matting. In Computer Vision, 2005. ICCV 2005. Tenth IEEE International Conference on (Vol. 2, pp. 936-943). IEEE.</p>
+<hr />
+
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        
+        
+        <li>
+          <a href="mailto:"></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- mathjax -->
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>

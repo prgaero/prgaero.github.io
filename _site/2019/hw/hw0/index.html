@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Homework 0 - Alohomora!</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Course materials and notes for University of Maryland's class CMSC733: Computer Vision.">
+    <link rel="canonical" href="http://cmsc733.github.io/2019/hw/hw0/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+    <!-- Google tracking -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46895817-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap title-wrap">
+    <a class="site-title" href="/">CMSC733 Computer Vision</a>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>Homework 0 - Alohomora!</h1>
+  </header>
+
+  <article class="post-content">
+  <p>Student results can be found <a href="/2019/hw/hw0-results/">here</a></p>
+
+<p>Table of Contents:</p>
+
+<ul>
+  <li><a href="#due">1. Due Date</a></li>
+  <li><a href="#pblite">2. Phase 1: Shake My Boundary</a>
+    <ul>
+      <li><a href="#intro">2.1. Introduction</a></li>
+      <li><a href="#overview">2.2. Overview</a></li>
+      <li><a href="#filters">2.3. Filter Banks</a>
+        <ul>
+          <li><a href="#dogfilters">2.3.1. Oriented DoG filters</a></li>
+          <li><a href="#lmfilters">2.3.2. Leung-Malik Filters</a></li>
+          <li><a href="#gaborfilters">2.3.3. Gabor Filters</a></li>
+        </ul>
+      </li>
+      <li><a href="#texton">2.4. Texton Map <script type="math/tex">\mathcal{T}</script></a></li>
+      <li><a href="#brightness">2.5. Brightness Map <script type="math/tex">\mathcal{B}</script></a></li>
+      <li><a href="#color">2.6. Color Map <script type="math/tex">\mathcal{C}</script></a></li>
+      <li><a href="#grad">2.7. Texture, Brightness and Color Gradients <script type="math/tex">\mathcal{T}_g, \mathcal{B}_g, \mathcal{C}_g</script></a></li>
+      <li><a href="#sobelcanny">2.8. Sobel and Canny baselines</a></li>
+      <li><a href="#pbliteout">2.9. Pb-lite Output</a></li>
+    </ul>
+  </li>
+  <li><a href="#dl">3. Phase 2: Deep Dive on Deep Learning</a>
+    <ul>
+      <li><a href="#prob">3.1. Problem Statement</a></li>
+      <li><a href="#cifar10">3.2. Dataset</a></li>
+      <li><a href="#firstnn">3.3. Train your first neural network</a></li>
+      <li><a href="#improveacc">3.4. Improving Accuracy of your neural network</a></li>
+      <li><a href="#otherarch">3.5. ResNet, ResNeXt, DenseNet</a></li>
+    </ul>
+  </li>
+  <li><a href="#sub">4. Submission Guidelines</a>
+    <ul>
+      <li><a href="#starter">4.1. Starter Code</a></li>
+      <li><a href="#files">4.2. File tree and naming</a></li>
+      <li><a href="#report">4.3. Report</a></li>
+    </ul>
+  </li>
+  <li><a href="#funcs">5. Allowed and Disallowed functions</a></li>
+  <li><a href="#coll">6. Collaboration Policy</a></li>
+  <li><a href="#ack">7. Acknowledgements</a></li>
+</ul>
+
+<p><a name="due"></a></p>
+
+<h2 id="due-date">1. Due Date</h2>
+
+<p><strong>11:59PM, Tuesday, January 29, 2019.</strong><br />
+This homework is to be submitted individually. Download starter Code from <a href="#starter">here</a>.</p>
+
+<p><a name="pblite"></a></p>
+
+<h2 id="phase-1-shake-my-boundary">2. Phase 1: Shake My Boundary</h2>
+
+<p><a name="intro"></a></p>
+
+<h3 id="introduction">2.1. Introduction</h3>
+
+<p>Boundary detection is an important, well-studied computer vision problem. Clearly it would be nice to have algorithms which know where one object transitions to another. But boundary detection from a single image is fundamentally diffcult. Determining boundaries could require object-specific reasoning, arguably making the task hard. A simple method to find boundaries is to look for intensity discontinuities in the image, also known of <a href="https://en.wikipedia.org/wiki/Edge_detection"><strong>edges</strong></a>.</p>
+
+<p>Classical edge detection algorithms, including the <a href="https://ieeexplore.ieee.org/document/4767851">Canny</a> and <a href="https://en.wikipedia.org/wiki/Sobel_operator">Sobel</a> baselines we will compare against, look for these intensity discontinuities. The more <a href="https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/papers/amfm_pami2010.pdf">recent pb (probability of boundary) boundary detection algorithm</a> significantly outperforms these classical methods by considering texture and color discontinuities in addition to intensity discontinuities. Qualitatively, much of this performance jump comes from the ability of the pb algorithm to suppress false positives that the classical methods produce in textured regions.</p>
+
+<p>In this homework, you will develop a simplified version of pb, which finds boundaries by examining brightness, color, and texture information across multiple scales (different sizes of objects/image). The output of your algorithm will be a per-pixel probability of boundary. Several papers from Berkeley describe their algorithms and how their methods evolved over time. Here we investigate a simplified version of the recent work from <a href="https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/papers/amfm_pami2010.pdf">this paper</a>. Our simplified boundary detector will still significantly outperform the well regarded Canny and Sobel edge detectors. A qualitative evaluation is carried out against human annotations (ground truth) from a subset of the Berkeley Segmentation Data Set 500 (BSDS500) given to you in <code class="highlighter-rouge">YourDirectoryID_hw0/Phase1/BSDS500/</code> folder.</p>
+
+<p><a name="overview"></a></p>
+
+<h3 id="overview">2.2. Overview</h3>
+
+<p>The overview of the algorithm is shown below.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/hw0/Overview.PNG" width="100%" />
+  <div class="figcaption">
+    Fig 1: Overview of the pb lite pipeline.
+  </div>
+</div>
+
+<p><a name="filters"></a></p>
+
+<h3 id="filter-banks">2.3. Filter Banks</h3>
+
+<p>The first step of the pb lite boundary detection pipeline is to filter the image with a set of filter banks. We will create three different sets of filter banks for this purpose. Once we filter the image with these filters, we’ll generate a texton map which depicts the texture in the image by clustering the filter responses. Let us denote each filter as <script type="math/tex">\mathcal{F}_i</script> and texton map as <script type="math/tex">\mathcal{T}</script>.</p>
+
+<p>Let’s talk a little more about filter banks now. Filtering is at the heart of building the low level features we are interested in. We will use filtering both to measure texture properties and to aggregate regional texture and brightness distributions. As we mentioned earlier, we’ll implement three different sets of filters. Let’s talk about each one of them next.</p>
+
+<p><a name="dogfilters"></a></p>
+
+<h4 id="oriented-dog-filters">2.3.1. Oriented DoG filters</h4>
+
+<p>A simple but effective filter bank is a collection of oriented Derivative of Gaussian (DoG) filters. These filters can be created by convolving a simple Sobel filter and a Gaussian kernel and then rotating the result. Suppose we want <script type="math/tex">o</script> orientations (from 0 to 360<script type="math/tex">^\circ</script>) and <script type="math/tex">s</script> scales, we should end up with a total of <script type="math/tex">s \times o</script> filters. A sample filter bank of size <script type="math/tex">2 \times 16</script> with 2 scales and 16 orientations is shown below. We expect you to read up on how these filter banks are generated and implement them. <strong>DO NOT use any built-in or third party code for this.</strong></p>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/hw0/DoGFilters.png" width="100%" />
+  <div class="figcaption">
+    Fig 2: Oriented DoG filter bank.
+  </div>
+</div>
+
+<p><a name="lmfilters"></a></p>
+
+<h4 id="leung-malik-filters">2.3.2. Leung-Malik Filters</h4>
+
+<p>The Leung-Malik filters or LM filters are a set of multi scale, multi orientation filter bank with 48 filters. It consists of first and second order derivatives of Gaussians at 6 orientations and 3 scales making a total of 36; 8 Laplacian of Gaussian (LOG) filters; and 4 Gaussians. We consider two versions of the LM filter bank. In LM Small (LMS), the filters occur at basic scales <script type="math/tex">\sigma=\{ 1, \sqrt{2}, 2, 2\sqrt{2}\}</script>. The first and second derivative filters occur at the first three scales with an elongation factor of 3, i.e., (<script type="math/tex">\sigma_x = \sigma</script> and <script type="math/tex">\sigma_y = 3\sigma_x</script>). The Gaussians occur at the four basic scales while the 8 LOG filters occur at <script type="math/tex">\sigma</script> and <script type="math/tex">3\sigma</script>. For LM Large (LML), the filters occur at the basic scales <script type="math/tex">\sigma=\{\sqrt{2}, 2, 2\sqrt{2}, 4 \}</script>. You need to implement both LMS and LML filter banks and <strong>DO NOT use any built-in or third party code for this</strong>. The filter bank is shown below. More details about these filters can be <a href="http://www.robots.ox.ac.uk/~vgg/research/texclass/filters.html">found here</a>.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/hw0/LMFilters.jpg" width="100%" />
+  <div class="figcaption">
+    Fig 3: Leung-Malik filter bank.
+  </div>
+</div>
+
+<p><a name="gaborfilters"></a></p>
+
+<h4 id="gabor-filters">2.3.3. Gabor Filters</h4>
+
+<p>Gabor Filters are designed based on the filters in the human visual system. A gabor filter is a gaussian kernel function modulated by a sinusoidal plane wave. More details can be found on the <a href="https://en.wikipedia.org/wiki/Gabor_filter">Wikipedia page</a>. Implement any number of Gabor filters and <strong>DO NOT use any built-in or third party code for this.</strong> A sample of gabor filters is shown below.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/hw0/GaborFilters.jpg" width="100%" />
+  <div class="figcaption">
+    Fig 3: Gabor filter bank.
+  </div>
+</div>
+
+<p><a name="texton"></a></p>
+
+<h3 id="texton-map-mathcalt">2.4. Texton Map <script type="math/tex">\mathcal{T}</script></h3>
+
+<p>Filtering an input image with each element of your filter bank (you can have a lot of them from all the three filter banks you implemented) results in a vector of fillter responses centered on each pixel. For instance, if your filter bank has <script type="math/tex">N</script> filters, you’ll have <script type="math/tex">N</script> filter responses at each pixel. A distribution of these <script type="math/tex">N</script>-dimensional filter responses could be thought of as encoding texture properties. We will simplify this representation by replacing each <script type="math/tex">N</script>-dimensional vector with a discrete texton ID. We will do this by clustering the filter responses at all pixels in the image in to <script type="math/tex">K</script> textons using kmeans (feel free to use Scikit learn’s <code class="highlighter-rouge">sklearn.cluster.KMeans</code> function or implement your own). Each pixel is then represented by a one dimensional, discrete cluster ID instead of a vector of high-dimensional, real-valued filter responses (this process of dimensionality reduction from <script type="math/tex">N</script> to 1 is called “Vector Quantization”). This can be represented with a single channel image with values in the range of <script type="math/tex">[1, 2, 3, \cdots , K]</script>. <script type="math/tex">K =
+64</script> seems to work well but feel free to experiment. To visualize the texton map, you can try the <code class="highlighter-rouge">matplotlib.pyplot.imshow</code> command with proper scaling arguments.</p>
+
+<p><a name="brightness"></a></p>
+
+<h3 id="brightness-map-mathcalb">2.5. Brightness Map <script type="math/tex">\mathcal{B}</script></h3>
+
+<p>The concept of the brightness map is as simple as capturing the brightness changes in the image. Here, again we cluster the brightness values using kmeans clustering (grayscale equivalent of the color image) into a chosen number of clusters (16 clusters seems to work well, feel free to experiment). We call the clustered output as the brightness map <script type="math/tex">\mathcal{B}</script>.</p>
+
+<p><a name="color"></a></p>
+
+<h3 id="color-map-mathcalc">2.6. Color Map <script type="math/tex">\mathcal{C}</script></h3>
+
+<p>The concept of the color map is to capture the color changes or chrominance content in the image. Here, again we cluster the color values (you have 3 values per pixel if you have RGB color channels) using kmeans clustering (feel free to use alternative color spaces like YCbCr, HSV or Lab) into a chosen number of clusters (16 clusters seems to work well, feel free to experiment). We call the clustered output as the color map <script type="math/tex">\mathcal{C}</script>. Note that you can also cluster each color channel seprarately here. Feel free to experiment with different methods.</p>
+
+<p><a name="grad"></a></p>
+
+<h3 id="texture-brightness-and-color-gradients-mathcaltg-mathcalbg-mathcalcg">2.7. Texture, Brightness and Color Gradients <script type="math/tex">\mathcal{T}_g, \mathcal{B}_g, \mathcal{C}_g</script></h3>
+
+<p>To obtain <script type="math/tex">\mathcal{T}_g, \mathcal{B}_g, \mathcal{C}_g</script>, we need to compute differences of values across different shapes and sizes. This can be achieved very efficiently by the use of Half-disc masks.</p>
+
+<p>Let us first implement these Half-disc masks. Here’s an image of how these Half-disc masks look.</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/hw0/HalfDiskMasks.png" width="100%" />
+  <div class="figcaption">
+    Fig 4: Half disc masks at different scales and sizes.
+  </div>
+</div>
+
+<p>The half-disc masks are simply (pairs of) binary images of half-discs. This is very important because it will allow us to compute the <script type="math/tex">\chi^2</script> (chi-square) distances (finally obtain values of <script type="math/tex">\mathcal{T}_g, \mathcal{B}_g, \mathcal{C}_g</script>) using a filtering operation, which is much faster than looping over each pixel neighborhood and aggregating counts for histograms. Forming these masks is quite trivial. A sample set of masks (8 orientations, 3 scales) is shown in Fig. 4.</p>
+
+<p style="background-color:#ddd; padding:5px">
+<b>NOTE:</b> 
+The filter banks and masks only need to be defined once and then they will be used on all images.
+</p>
+
+<p><script type="math/tex">\mathcal{T}_g, \mathcal{B}_g, \mathcal{C}_g</script> encode how much the texture, brightness and color distributions are changing at a pixel. We compute <script type="math/tex">\mathcal{T}_g, \mathcal{B}_g, \mathcal{C}_g</script> by comparing the distributions in left/right half-disc pairs (opposing directions of filters at same scale, in Fig. 4, the left/right pairs are shown one after another, these are easy to create as you have control over the angle) centered at a pixel. If the distributions are the similar, the gradient should be small. If the distributions are dissimilar, the gradient should be large. Because our half-discs span multiple scales and orientations, we will end up with a series of local gradient measurements encoding how quickly the texture or brightness distributions are changing at different scales and angles.</p>
+
+<p>We will compare texton, brightness and color distributions with the <script type="math/tex">\chi^2</script> measure. The <script type="math/tex">\chi^2</script> distance is a frequently used metric for comparing two histograms. <script type="math/tex">\chi^2</script> distance between two histograms <script type="math/tex">g</script> and <script type="math/tex">h</script> with the same binning scheme is defined as follows</p>
+
+<script type="math/tex; mode=display">\chi^2(g,h) = \frac{1}{2} \sum_{i=1}^K {\frac{(g_i - h_i)^2}{g_i + h_i}}</script>
+
+<p>here, <script type="math/tex">K</script> indexes though the bins. Note that the numerator of this expression is simply the sum of squared difference between histogram elements. The denominator adds a “soft” normalization to each bin so that less frequent elements still contribute to the overall distance.</p>
+
+<p>To effciently compute <script type="math/tex">\mathcal{T}_g, \mathcal{B}_g, \mathcal{C}_g</script>, filtering can used to avoid nested loops over pixels. In addition, the linear nature of the formula above can be exploited. At a single orientation and scale, we can use a particular pair of masks to aggregate the counts in a histogram via a filtering operation, and compute the <script type="math/tex">\chi^2</script> distance (gradient) in one loop over the bins according to the following outline:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>chi_sqr_dist = img*0
+for i = 1:num_bins
+	tmp = 1 where img is in bin i and 0 elsewhere
+	g_i = convolve tmp with left_mask
+	h_i = convolve tmp with right_mask
+	update chi_sqr_dist
+end
+</code></pre>
+</div>
+
+<p>The above procedure should generate a 2D matrix of gradient values. Simply repeat this for all orientations and scales, you should end up with a 3D matrix of size <script type="math/tex">m \times n \times N</script>, where <script type="math/tex">(m,n)</script> are dimensions of the image and <script type="math/tex">N</script> is the number of filters.</p>
+
+<p><a name="sobelcanny"></a></p>
+
+<h3 id="sobel-and-canny-baselines">2.8. Sobel and Canny baselines</h3>
+
+<p><code class="highlighter-rouge">canny_pb</code> and <code class="highlighter-rouge">sobel_pb</code> baseline outputs are provided in <code class="highlighter-rouge">YourDirectoryID_hw0/Phase1/BSDS500/CannyBaseline/</code> and <code class="highlighter-rouge">YourDirectoryID_hw0/Phase1/BSDS500/SobelBaseline/</code>  respectively.</p>
+
+<p><a name="pbliteout"></a></p>
+
+<h3 id="pb-lite-output">2.9. Pb-lite Output</h3>
+
+<p>The final step is to combine information from the features with a baseline method (based on Sobel or Canny edge detection or an average of both) using a simple equation</p>
+
+<script type="math/tex; mode=display">PbEdges = \frac{(\mathcal{T}_g + \mathcal{B}_g +\mathcal{C}_g)}{3}\odot (w_1*cannyPb + w_2*sobelPb)</script>
+
+<p>Here, <script type="math/tex">\odot</script> is the Hadamard product operator. A simple choice for <script type="math/tex">w_1</script> and <script type="math/tex">w_2</script> would be 0.5 (they have to sum to 1). However, one could make these weights dynamic.</p>
+
+<p>The magnitude of the features represents the strength of boundaries, hence, a simple mean of the feature vector at location <script type="math/tex">i</script> should be somewhat proportional to pb. Of course, fancier ways to combine the features can be explored for better performance. As a starting point, you can simply use an element-wise product of the baseline output and the mean feature strength to form the final pb value, this should work reasonably well.</p>
+
+<p><a name="dl"></a></p>
+
+<h2 id="phase-2-deep-dive-on-deep-learning">3. Phase 2: Deep Dive on Deep Learning</h2>
+
+<p><a name="prob"></a></p>
+
+<h3 id="problem-statement">3.1. Problem Statement</h3>
+
+<p>For phase 2 of this homework, you’ll be implementing multiple neural network architectures and comparing them on various criterion like number of parameters, train and test set accuracies and provide detailed analysis of why one architecture works better than another one.</p>
+
+<p><a name="cifar10"></a></p>
+
+<h3 id="dataset">3.2. Dataset</h3>
+
+<p>CIFAR-10 is a dataset consisting of 60000, 32<script type="math/tex">\times</script>32 colour images in 10 classes, with 6000 images per class. There are 50000 training images and 10000 test images. More details about the datset can be found <a href="http://www.cs.toronto.edu/~kriz/cifar.html">here</a>.</p>
+
+<p>Sample images from each class of the CIFAR-10 dataset is shown below:</p>
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/hw0/cifar10.PNG" width="70%" />
+  <div class="figcaption">
+    Fig 5: Sample images from CIFAR-10 dataset.
+  </div>
+</div>
+
+<p>A randomized version of the CIFAR-10 dataset with 50000 training images and 10000 test images is given to you in the <code class="highlighter-rouge">CIFAR10</code> folder of your <code class="highlighter-rouge">hw0.zip</code> file. <code class="highlighter-rouge">CIFAR10</code> has two subfolders <code class="highlighter-rouge">Train</code> and <code class="highlighter-rouge">Test</code> for training and testing images respectively stored in <code class="highlighter-rouge">.png</code> format for ease of viewing and loading.</p>
+
+<p><a name="firstnn"></a></p>
+
+<h3 id="train-your-first-neural-network">3.3. Train your first neural network</h3>
+
+<p>The task in this part is to train a convolutional neural network on TensorFlow for the task of classification. The input is a single CIFAR-10 image and the output is the probabilities of 10 classes. The starter code given to you has <code class="highlighter-rouge">Train.py</code> file for training and <code class="highlighter-rouge">Test.py</code> for testing. Fill in the following files with respective details.<br />
+- <code class="highlighter-rouge">Optimizer</code> value with various parameters in <code class="highlighter-rouge">TrainOperation</code> function in <code class="highlighter-rouge">Train.py</code> file (Feel free to use any architecture and optimizer for this part)<br />
+- <code class="highlighter-rouge">loss function</code> in <code class="highlighter-rouge">TrainOperation</code> function in <code class="highlighter-rouge">Train.py</code> file (You’ll be using cross entropy loss for training)<br />
+- Network architecture in <code class="highlighter-rouge">CIFAR10Model</code> function in <code class="highlighter-rouge">Network/Network.py</code> file (We recommend using the <code class="highlighter-rouge">tf.layers</code> and <code class="highlighter-rouge">tf.nn</code> API for implementing layers)</p>
+
+<p>If you are super new to machine learning and deep learning, there are a lot of resources online to learn how to program a simple neural network, tune hyperparameters for CIFAR-10. A good starting point is the <a href="https://www.tensorflow.org/tutorials/images/deep_cnn">official Tensorflow tutorial</a> and <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials">this great tutorial by Hvass Labs</a>. If you are new to deep learning, we recommend reading up basics from <a href="http://cs231n.github.io/">CS231n course offered by Stanford University here</a>.</p>
+
+<p>The starter code given to you has Tensorboard code snippets built-in and displays training accuracy per batch and the loss value. You can run TensorBoard using the following command <code class="highlighter-rouge">tensorboard --logdir=path/to/log-directory</code>.</p>
+
+<p>Report the train accuracy over epochs (training accuracy over the whole train dataset not just minibatches as given to you!, you need to implement this), test accuracy over epochs (test accuracy over the whole test dataset!, you need to implement this), number of parameters in your model (code for this can be found in <code class="highlighter-rouge">Test.py</code> and snippet is also given next), plot of loss value over epochs (not over minibatches as given to you!, you need to sum up loss values for all iterations of an epoch to achieve this), your architecture, other hyperparameters chosen such as optimizer, learning rate and batch size. Also present a confusion matrix for both training and testing data (code in <code class="highlighter-rouge">Test.py</code>).</p>
+
+<p>You can use the following snippet of code to obtain the number of parameters in your model. This loads a model from the <code class="highlighter-rouge">ModelPath</code> and prints out the number of parameters.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>with tf.Session() as sess:
+        Saver.restore(sess, ModelPath)
+        print('Number of parameters in this model are %d ' % np.sum([np.prod(v.get_shape().as_list()) for v in tf.trainable_variables()]))
+</code></pre>
+</div>
+
+<p>Congratulations! You’ve just successfully trained your first neural network.</p>
+
+<p><a name="improveacc"></a></p>
+
+<h3 id="improving-accuracy-of-your-neural-network">3.4. Improving Accuracy of your neural network</h3>
+
+<p>Now that we have a baseline neural network working, let’s try to improve the accuracy by doing simple tricks.<br />
+1. Standardize your data input if you haven’t already. There are a lot of ways to do this. Feel free to search for different methods. A simple way is to scale data from [0,255] to [-1,1]. Fill in this code in the <code class="highlighter-rouge">GenerateBatch</code> function of <code class="highlighter-rouge">Train.py</code> file.<br />
+2. Decay your learning rate as you train or Increase your batch size as you train. Refer to <a href="https://arxiv.org/abs/1711.00489">this paper</a> for more details.<br />
+3. Augment your data to artificially make your dataset larger. Refer to <code class="highlighter-rouge">tf.image</code> API for nice data augmentation functions.<br />
+4. Add Batch Normalization between layers. <br />
+5. Change the hyperparameters in your architecture such as number of layers, number of neurons.</p>
+
+<p>Now, feel free to implement as many of these as possible and present a detailed analysis of your findings as before. Present the same details as before, train and test accuracy over epochs, number of parameters in your model, loss value over epochs, your architecture and details of other tricks you employed. Also present a confusion matrix for both training and testing data (code in <code class="highlighter-rouge">Test.py</code>).</p>
+
+<p><a name="otherarch"></a></p>
+
+<h3 id="resnet-resnext-densenet">3.5. ResNet, ResNeXt, DenseNet</h3>
+
+<p>Now, let’s make the architectures more efficient in-terms of memory usage (number of parameters), computation (number of operations) and accuracy. Read up the concepts from <a href="https://arxiv.org/abs/1512.03385">ResNet</a>, <a href="https://arxiv.org/abs/1611.05431">ResNeXt</a> and <a href="https://arxiv.org/abs/1608.06993">DenseNet</a> and implement all of these architectures with the parameters of your choice. <strong>DO NOT use any built-in or third party code for this</strong> apart from the API functions mentioned before.  Fill in the code in <code class="highlighter-rouge">Network/Network.py</code> as different functions.</p>
+
+<p>Present a detailed analysis of all these architectures with your earlier findings. Present the same details as before, train and test accuracy over epochs, number of parameters in your model, loss value over epochs, your architecture and details of other tricks you employed. Also present a confusion matrix for both training and testing data (code in <code class="highlighter-rouge">Test.py</code>).</p>
+
+<p><a name="sub"></a></p>
+
+<h2 id="submission-guidelines">4. Submission Guidelines</h2>
+
+<p><strong>If your submission does not comply with the following guidelines, you’ll be given ZERO credit.</strong></p>
+
+<p><a name="starter"></a></p>
+
+<h3 id="starter-code">4.1. Starter Code</h3>
+<p>Download the Starter Code for both Phase 1 and Phase 2 from <a href="https://drive.google.com/file/d/1vA3FdBt7qrq591AgYgfmTR6cjtADSO6s/view?usp=sharing">here</a>.</p>
+
+<p><a name="files"></a></p>
+
+<h3 id="file-tree-and-naming">4.2. File tree and naming</h3>
+
+<p>Your submission on ELMS/Canvas must be a <code class="highlighter-rouge">zip</code> file, following the naming convention <code class="highlighter-rouge">YourDirectoryID_hw0.zip</code>. If you email ID is <code class="highlighter-rouge">abc@umd.edu</code> or <code class="highlighter-rouge">abc@terpmail.umd.edu</code>, then your <code class="highlighter-rouge">DirectoryID</code> is <code class="highlighter-rouge">abc</code>. For our example, the submission file should be named <code class="highlighter-rouge">abc_hw0.zip</code>. The file <strong>must have the following directory structure</strong> because we’ll be autograding assignments. The file to run for your project should be called <code class="highlighter-rouge">YourDirectoryID_hw0/Phase1/Code/Wrapper.py</code> for Phase 1; <code class="highlighter-rouge">YourDirectoryID_hw0/Phase2/Code/Train.py</code> and <code class="highlighter-rouge">YourDirectoryID_hw0/Phase2/Code/Test.py</code> for Phase 2. You can have any helper functions in sub-folders as you wish, be sure to index them using relative paths and if you have command line arguments for your Wrapper codes, make sure to have default values too. Please provide detailed instructions on how to run your code in <code class="highlighter-rouge">README.md</code> file.</p>
+
+<p style="background-color:#ddd; padding:5px">
+<b>NOTE:</b> 
+Please <b>DO NOT</b> include data in your submission.
+</p>
+
+<p>The file tree of your submission <b>SHOULD</b> resemble this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>YourDirectoryID_hw0.zip
+|   Phase1 
+|   ├── Code
+|   |   ├── Wrapper.py
+|   |   ├── Any subfolders you want along with files
+|   Phase2
+|   ├── Code
+|   |   ├── Train.py
+|   |   ├── Test.py
+|   |   ├── Any subfolders you want along with files
+├── Report.pdf
+└── README.md
+
+</code></pre>
+</div>
+
+<p><a name="report"></a></p>
+
+<h3 id="report">4.3. Report</h3>
+
+<p>For each section of the homework, explain briefly what you did, and describe any interesting problems you encountered and/or solutions you implemented.  You must include the following details in your writeup:</p>
+
+<ul>
+  <li>Your report <strong>MUST</strong> be typeset in LaTeX in the IEEE Tran format provided to you in the <code class="highlighter-rouge">Draft</code> folder and should of a conference quality paper.</li>
+</ul>
+
+<p><b>Phase 1</b></p>
+
+<ul>
+  <li>Present a detailed explanation for Phase 1 along with outputs images of the filter banks (all of them with appropriate labels), <script type="math/tex">\mathcal{T}, \mathcal{B}, \mathcal{C}, \mathcal{T}_g, \mathcal{B}_g, \mathcal{C}_g</script>, sobel and canny baselines and the final pb-lite output for all the images provided. Provide a detailed analysis of the approach and why you think it’s better than the sobel and canny baselines.</li>
+</ul>
+
+<p><b>Phase 2</b></p>
+
+<ul>
+  <li><b>Section 3.3</b>
+    <ul>
+      <li>Plot of <code class="highlighter-rouge">Train_Accuracy</code> over <code class="highlighter-rouge">Epochs</code> (Not over Iterations)</li>
+      <li>Plot of <code class="highlighter-rouge">Test_Accuracy</code> over <code class="highlighter-rouge">Epochs</code>(Not over Iterations)</li>
+      <li>Number of Parameters in your model</li>
+      <li>Plot of <code class="highlighter-rouge">loss</code> over <code class="highlighter-rouge">Epochs</code> (Not over Iterations)</li>
+      <li>An Image of the architecture (a snapshot of tensorboard graph would work, if it has meaningful names)</li>
+      <li>Optimizer chosen with the specific hyperparameters (learning rate etc.)</li>
+      <li>Batch size chosen</li>
+      <li>Confusion Matrix of the trained model on training data</li>
+      <li>Confusion Matrix of the trained model on testing data</li>
+    </ul>
+  </li>
+  <li><b>Section 3.4</b>
+    <ul>
+      <li>Plot of <code class="highlighter-rouge">Train_Accuracy</code> over <code class="highlighter-rouge">Epochs</code> (Not over Iterations)</li>
+      <li>Plot of <code class="highlighter-rouge">Test_Accuracy</code> over <code class="highlighter-rouge">Epochs</code>(Not over Iterations)</li>
+      <li>Number of Parameters in your model</li>
+      <li>Plot of <code class="highlighter-rouge">loss</code> over <code class="highlighter-rouge">Epochs</code> (Not over Iterations)</li>
+      <li>An Image of the architecture (a snapshot of tensorboard graph would work, if it has meaningful names)</li>
+      <li>Optimizer chosen with the specific hyperparameters (learning rate etc.)</li>
+      <li>Batch size chosen</li>
+      <li>Confusion Matrix of the trained model on training data</li>
+      <li>Confusion Matrix of the trained model on testing data</li>
+      <li>A detailed analysis of all the tricks used</li>
+    </ul>
+  </li>
+  <li><b>Section 3.5</b><br />
+For each Architecture:
+    <ul>
+      <li>Plot of <code class="highlighter-rouge">Train_Accuracy</code> over <code class="highlighter-rouge">Epochs</code> (Not over Iterations)</li>
+      <li>Plot of <code class="highlighter-rouge">Test_Accuracy</code> over <code class="highlighter-rouge">Epochs</code>(Not over Iterations)</li>
+      <li>Number of Parameters in your model</li>
+      <li>Plot of <code class="highlighter-rouge">loss</code> over <code class="highlighter-rouge">Epochs</code> (Not over Iterations)</li>
+      <li>An Image of the architecture (a snapshot of tensorboard graph would work, if it has meaningful names)</li>
+      <li>Optimizer chosen with the specific hyperparameters (learning rate etc.)</li>
+      <li>Batch size chosen</li>
+      <li>Confusion Matrix of the trained model on training data</li>
+      <li>Confusion Matrix of the trained model on testing data</li>
+    </ul>
+  </li>
+  <li>Compare all the sections (3.3 - 3.5) and analyze why one works better than the other. Finally, present a comparison of number of parameters, final train and final test accuracy, inference run-time (test time per image after the TensorFlow graph is setup) and other competences of your choice in a tabular form for Sections 3.3, 3.4 and 3.5.</li>
+</ul>
+
+<p><a name="funcs"></a></p>
+
+<h2 id="allowed-and-disallowed-functions">5. Allowed and Disallowed functions</h2>
+
+<p><b> Allowed:</b></p>
+
+<ul>
+  <li>Any functions regarding reading, writing and displaying/plotting images in <code class="highlighter-rouge">cv2</code>, <code class="highlighter-rouge">matplotlib</code></li>
+  <li>Basic math utilities including convolution operations in <code class="highlighter-rouge">numpy</code> and <code class="highlighter-rouge">math</code></li>
+  <li><code class="highlighter-rouge">KMeans</code> clustering from <code class="highlighter-rouge">sklearn</code> or <code class="highlighter-rouge">scipy</code></li>
+  <li><code class="highlighter-rouge">tf.layers</code> and <code class="highlighter-rouge">tf.nn</code> API for implementing network architecture</li>
+  <li><code class="highlighter-rouge">tf.image</code> for data augmentation</li>
+  <li>Any functions for pretty plots</li>
+</ul>
+
+<p><b> Disallowed:</b></p>
+
+<ul>
+  <li>Any function that generates <code class="highlighter-rouge">gaussian</code> or any other <code class="highlighter-rouge">filter</code> / filter banks</li>
+  <li>Any third party code for implementing architecture or augmentation</li>
+  <li><code class="highlighter-rouge">Keras</code> or any other layer API</li>
+</ul>
+
+<p>If you have any doubts regarding allowed and disallowed functions, please drop a public post on <a href="https://piazza.com/umd/spring2019/cmsc733">Piazza</a>.</p>
+
+<p><a name="coll"></a></p>
+
+<h2 id="collaboration-policy">6. Collaboration Policy</h2>
+<p style="background-color:#ddd; padding:5px">
+<b>NOTE:</b> 
+You are <b>STRONGLY</b> encouraged to discuss the ideas with your peers. Treat the class as a big group/family and enjoy the learning experience. 
+</p>
+
+<p>However, the code should be your own, and should be the result of you exercising your own understanding of it. If you reference anyone else’s code in writing your project, you must properly cite it in your code (in comments) and your writeup. For the full honor code refer to the <a href="http://prg.cs.umd.edu/cmsc733">CMSC733 Spring 2019 website</a>.</p>
+
+<p><a name="ack"></a></p>
+
+<h2 id="acknowledgements">7. Acknowledgements</h2>
+
+<p>This fun homework was inspired by a similar project in  Brown University’s <a href="http://cs.brown.edu/courses/cs143/2011/proj2/">CS 143</a> (Introduction to Computer Vision).</p>
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        
+        
+        <li>
+          <a href="mailto:"></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- mathjax -->
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>

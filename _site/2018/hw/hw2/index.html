@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Image Features and Warping</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Course materials and notes for University of Maryland's class CMSC733: Computer Vision.">
+    <link rel="canonical" href="http://cmsc733.github.io/2018/hw/hw2/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+    <!-- Google tracking -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46895817-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap title-wrap">
+    <a class="site-title" href="/">CMSC733 Computer Vision</a>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>Image Features and Warping</h1>
+  </header>
+
+  <article class="post-content">
+  <p>Table of Contents:<br />
+- <a href="#due">Due Date</a><br />
+- <a href="#intro">Introduction</a><br />
+- <a href="#part1">Part 1: Coding</a><br />
+- <a href="#part2">Part 2: Short Answer</a><br />
+- <a href="#sub">Submission Guidelines</a><br />
+- <a href="#coll">Collaboration Policy</a></p>
+
+<p><a name="due"></a><br />
+## Due Date <br />
+10:59AM, Tuesday, October 2nd, 2018</p>
+
+<p><a name="intro"></a><br />
+## Introduction</p>
+
+<p>This homework reviews some important concepts related to Project 2 (Panorama Stitching).  It is composed<br />
+of a coding problem and two short answer questions.</p>
+
+<p><a name="part1"></a><br />
+## Part 1: Coding - Harris Corner Detection (50 pts)</p>
+
+<p>In Project 2, you’ll be using Matlab’s built-in corner detector, via the <code class="highlighter-rouge">cornermetric</code> function.  In this coding assignment, we’ll ask you to implement a simple corner detector yourself: the “Harris” corner detector.</p>
+
+<p>Check out <a href="http://www.cse.psu.edu/~rtc12/CSE486/lecture06.pdf">these slides from Penn State’s CSE486</a> for an excellent overview of how the Harris Corner<br />
+Detector works.</p>
+
+<h3 id="what-you-need-to-do">What you need to do.</h3>
+
+<p>Write a matlab function <code class="highlighter-rouge">corner_response=myharris(I, window_size, corner_thresh)</code> which implements Harris<br />
+corner detection.  To make things a bit easier, you don’t need to implement the final non-maximal suppression step.  So, it should return a heatmap of corner response, for a given image, window size, and corner threshold.</p>
+
+<p>See “Submission Guidelines” for instructions on what to include in your report.</p>
+
+<p><a name="part2"></a><br />
+## Part 2: Short Answer</p>
+
+<h3 id="question-1-harris-corner-detector-properties-15-pts">Question 1: Harris Corner Detector Properties (15 pts)</h3>
+
+<p>Corners are useful for matching features between different images of the same scene, which might have changes in lighting, viewpoint, etc.  Consider the following simple changes that we might expect to occur between two images of a given scene:</p>
+
+<ul>
+  <li>image rotation</li>
+  <li>image scaling</li>
+  <li>increment all pixel values by a constant.</li>
+  <li>multiply all pixel values by a constant.</li>
+</ul>
+
+<p>Based on your understaning of the Harris Corner Detector, how robust do you think it would be to each of these changes?  e.g., if an image were rotated, would the Harris corner detector identify the same corners before and after rotation?</p>
+
+<p>Answer briefly– two paragraphs or fewer.</p>
+
+<h3 id="question-2--image-warping-and-invertible-transformations-35-pts">Question 2:  Image Warping and Invertible Transformations (35 pts)</h3>
+<p>Given a digital image, and an invertible transformation <script type="math/tex">\tilde{\textbf{H}}</script> of the form<br />
+<script type="math/tex">\tilde{p}' \equiv \tilde{H} \tilde{p}</script><br />
+we would like to compute the warped image whereby each point in the original image is transformed to<br />
+its new location.</p>
+
+<p>This type of image warping is exactly what the Matlab <code class="highlighter-rouge">imwarp</code> function does, for<br />
+example.</p>
+
+<p>We could envision a somewhat straightforward algorithm for performing this image warp:<br />
+for each location <script type="math/tex">\tilde{p}</script> in the original image, compute the nearest pixel location of the<br />
+transformed point <script type="math/tex">\tilde{p}'</script> in the warped image, and copy the color found in <script type="math/tex">\tilde{p}</script> into the<br />
+warped image at location <script type="math/tex">\tilde{p}'</script>.</p>
+
+<p>However, the vastly preferable algorithm is to loop over the <em>destination</em> pixels<br />
+<script type="math/tex">\tilde{p}'</script> in the warped image, and use the inverse transformation <script type="math/tex">\tilde{H}^{-1}</script> to identify<br />
+the nearest pixel <script type="math/tex">\tilde{p}</script> in the source image and copy the color from that source pixel to the<br />
+destination.</p>
+
+<p>What is the difference between the two approaches? Why is the second one preferable?  Please answer<br />
+in no more than a paragraph.</p>
+
+<p><a name="sub"></a><br />
+## Submission Guidelines</p>
+
+<p><b> We will deduct points if your homework doesn’t follow these specifications. </b></p>
+
+<h3 id="file-tree-and-naming">File tree and naming</h3>
+
+<p>Your submission on Canvas must be a zip file, following the naming convention <strong>YourDirectoryID_hw2.zip</strong>.  For example, xyz123_hw2.zip.  The file <strong>must have the following directory structure</strong>, based on the starter files</p>
+
+<p>YourDirectoryID_hw2.zip/</p>
+
+<ul>
+  <li>myharris.m</li>
+  <li>report.pdf</li>
+</ul>
+
+<h3 id="report">Report</h3>
+
+<p>Please run your corner detector on <a href="https://drive.google.com/file/d/11MJ_qPpmQwQ-kgnTrxsnfGQAqmHvQqZ6/view?usp=sharing">these images</a> (also used in project 2), for several different window sizes and corner threshold values, and include these results in your report.</p>
+
+<p>Also include your responses to the short answer questions from part 2.</p>
+
+<p>As usual, your report must be full English sentences,<strong>not</strong> commented code.</p>
+
+<p><a name="coll"></a><br />
+## Collaboration Policy<br />
+You are encouraged to discuss the ideas with your peers. However, the code should be your own, and should be the result of you exercising your own understanding of it. If you reference anyone else’s code in writing your project, you must properly cite it in your code (in comments) and your writeup.  For the full honor code refer to the CMSC426 Fall 2018 website</p>
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        
+        
+        <li>
+          <a href="mailto:"></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- mathjax -->
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>
