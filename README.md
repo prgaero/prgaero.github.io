@@ -1,4 +1,4 @@
-# cmsc733.github.io
+# prgaero.github.io
 Course materials and notes for University of Maryland's class ENAE788M: Hands On Autonomous Aerial Robotics
 
 ## Project 1
