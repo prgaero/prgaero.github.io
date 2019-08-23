@@ -28,14 +28,14 @@ Often times you want to follow known trajectories to accomplish various tasks su
 
 <a name='init'></a>
 ## 3. PRGHusky Setup
-Familiarize yourself with the PRGHusky platform by using [``bebop_autonomy``](https://bebop-autonomy.readthedocs.io/en/latest/) package to control it. You might have to change the gains of the inner-loop PID and some sonar characteristics to get a more stable flight. Refer to the [``PRGHusky Wiki``]() on details for updating parameters (gains and sonar params). Also, you can find more advanced information here: [``UBHG``](https://github.com/nicknack70/bebop/blob/master/UBHG/UBHG1_7_3.pdf) 
+Familiarize yourself with the PRGHusky platform by using [``bebop_autonomy``](https://bebop-autonomy.readthedocs.io/en/latest/) package to control it. You might have to change the gains of the inner-loop PID and some sonar characteristics to get a more stable flight. Refer to the [``PRGHusky Wiki``]() on details for updating parameters (gains and sonar params). Also, you can find more advanced information here: [``UBHG``](https://github.com/nicknack70/bebop/blob/master/UBHG/UBHG1_7_3.pdf).
 
 <a name='helix'></a>
 ## 4. Trajectory 1: Helix
 The first trajectory is a Helix with radius of 1 m and has a minimum of 1 turn with pitch of 1 m (Refer to Fig. 1).
 
 <div class="fig fighighlight">
-  <img src="/assets/proj1/Helix.png" width="40%">
+  <img src="/assets/proj2/Helix.png" width="40%">
   <div class="figcaption">
     Figure 1: Helix Trajectory.
   </div>
@@ -48,7 +48,7 @@ The first trajectory is a Helix with radius of 1 m and has a minimum of 1 turn w
 The second trajectory is a Diamond (not a closed one) with it's corner points shown in Fig. 2.
 
 <div class="fig fighighlight">
-  <img src="/assets/proj1/Diamond.png" width="40%">
+  <img src="/assets/proj2/Diamond.png" width="40%">
   <div class="figcaption">
     Figure 2: Diamond Trajectory (Starts at A and ends at E).
   </div>
@@ -63,7 +63,7 @@ The second trajectory is a Diamond (not a closed one) with it's corner points sh
 The third  trajectory is a Staircase modulated on a straight line which goes from `(0,0,0) m` to `(3,3,3) m`. More details about the trajectory are shown in Fig. 3.
 
 <div class="fig fighighlight">
-  <img src="/assets/proj1/Staircase.png" width="40%">
+  <img src="/assets/proj2/Staircase.png" width="40%">
   <div class="figcaption">
     Figure 3: Staircase Trajectory.
   </div>
