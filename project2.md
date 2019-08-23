@@ -35,7 +35,7 @@ Familiarize yourself with the PRGHusky platform by using [``bebop_autonomy``](ht
 The first trajectory is a Helix with radius of 1 m and has a minimum of 1 turn with pitch of 1 m (Refer to Fig. 1).
 
 <div class="fig fighighlight">
-  <img src="/assets/proj2/Helix.png" width="40%">
+  <img src="/assets/p2/Helix.png" width="40%">
   <div class="figcaption">
     Figure 1: Helix Trajectory.
   </div>
@@ -48,7 +48,7 @@ The first trajectory is a Helix with radius of 1 m and has a minimum of 1 turn w
 The second trajectory is a Diamond (not a closed one) with it's corner points shown in Fig. 2.
 
 <div class="fig fighighlight">
-  <img src="/assets/proj2/Diamond.png" width="40%">
+  <img src="/assets/p2/Diamond.png" width="40%">
   <div class="figcaption">
     Figure 2: Diamond Trajectory (Starts at A and ends at E).
   </div>
@@ -63,7 +63,7 @@ The second trajectory is a Diamond (not a closed one) with it's corner points sh
 The third  trajectory is a Staircase modulated on a straight line which goes from `(0,0,0) m` to `(3,3,3) m`. More details about the trajectory are shown in Fig. 3.
 
 <div class="fig fighighlight">
-  <img src="/assets/proj2/Staircase.png" width="40%">
+  <img src="/assets/p2/Staircase.png" width="40%">
   <div class="figcaption">
     Figure 3: Staircase Trajectory.
   </div>
