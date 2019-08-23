@@ -1,7 +1,7 @@
 ---
 layout: page
 mathjax: true
-title: Trajectory\ Following
+title: Trajectory Following
 permalink: /2019/proj/p2/
 ---
 
