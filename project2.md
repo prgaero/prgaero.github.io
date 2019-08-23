@@ -63,7 +63,7 @@ The second trajectory is a Diamond (not a closed one) with it's corner points sh
 The third  trajectory is a Staircase modulated on a straight line which goes from `(0,0,0) m` to `(3,3,3) m`. More details about the trajectory are shown in Fig. 3.
 
 <div class="fig fighighlight">
-  <img src="/assets/2019/p2/Staircase.png" width="40%">
+  <img src="/assets/2019/p2/Staircase.png" width="80%">
   <div class="figcaption">
     Figure 3: Staircase Trajectory.
   </div>
