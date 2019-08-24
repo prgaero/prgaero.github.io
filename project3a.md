@@ -1,65 +1,30 @@
 ---
 layout: page
 mathjax: true
-title: Buildings built in minutes - An SfM Approach
-permalink: /2019/proj/p3/
+title: GapFlyt
+permalink: /2019/proj/p3a/
 ---
-
-**To be submitted in a group of two.**
 
 Table of Contents:
 - [1. Deadline](#due)
-- [2. Introduction](#intro)
-- [3. Phase 1: Traditional Approach](#trad)
-	- [3.1. Feature Matching](#featmatch)
-	- [3.2. Estimating Fundamental Matrix](#estfundmatrix)  
-		- [3.2.1. Epipolar Geometry](#epipole)
-		- [3.2.2. Fundamental Matrix](#fundmatrix)
-		- [3.2.3. Match Outlier Rejection using RANSAC](#ransac)
-
-	- [3.3. Estimate *Essential Matrix* from Fundamental Matrix](#estE)
-
-	- [3.4. Estimate Camera Pose from Essential Matrix](#essential)
-
-	- [3.5. Check for Cheirality Condition using Triangulation](#tri)
-		- [3.5.1. Non-Linear Triangulation](#nonlintri)
-	- [3.6. Perspective-$$n$$-points](#pnp)
-		- [3.6.1. Linear Camera Pose Estimation](#campose)
-		- [3.6.2. PnP RANSAC](#pnpransac)
-		- [3.6.3. NonLinear PnP](#nonpnp)
-	- [3.7. Bundle Adjustment](#ba)
-		- [3.7.1. Visibility Matrix](#vismatrix)
-		- [3.7.2. Bundle Adjustment](#sba)
-
-- [4. Putting the pipeline together](#combine)
-
-- [5. Notes about Data Set](#dataset)
-
-- [6. Submission Guidelines](#sub)
-	
-	- [6.1. File tree and naming](#files)
-	
-	- [6.2. Report](#report)
-	
-- [7. Collaboration Policy](#coll)
+- [2. PRGHusky Setup](#init)
+- [3. Problem Statement](#prob)
+- [4. Trajectory 1: Helix](#helix)
+- [5. Trajectory 2: Diamond](#diamond)
+- [6. Trajectory 3: Staircase](#staircase)
+- [7. Submission Guidelines](#sub)
+  - [7.1. Report](#report)
+  - [7.2. File tree and naming](#files)
+- [8. Allowed and Disallowed functions](#allowed)
+- [9. Collaboration Policy](#coll)
 
 <a name='due'></a>
 ## 1. Deadline 
-**11:59PM, Thursday, April 22, 2019.**
+**11:59PM, Thursday, October 17, 2019.**
 
 <a name='intro'></a>
-## 2. Introduction
-We have been playing with images for so long, mostly in 2D scene. Recall [project 1](/2019/proj/p1) where we stitched multiple images with about 30-50% common features between a couple of images. Now let's learn how to **reconstruct a 3D scene and simultaneously obtain the camera poses** of a monocular camera w.r.t. the given scene. This procedure is known as Structure from Motion (SfM). As the name suggests, you are creating the entire **rigid** structure from a set of images with different view points (or equivalently a camera in motion). A few years ago, Agarwal et. al published [Building Rome in a Day](http://grail.cs.washington.edu/rome/rome_paper.pdf) in which they reconstructed the entire city just by using a large collection of photos from the Internet. Ever heard of Microsoft [Photosynth?](https://en.wikipedia.org/wiki/Photosynth) _Facinating? isn't it!?_ There are a few open source SfM algorithm available online like [VisualSFM](http://ccwu.me/vsfm/). _Try them!_ 
-
-Let's learn how to recreate such algorithm. There are a few steps that collectively form SfM:
-
-- **Feature Matching** and Outlier rejection using **RANSAC**
-- Estimating **Fundamental Matrix**
-- Estimating **Essential Matrix** from Fundamental Matrix
-- Estimate **Camera Pose** from Essential Matrix
-- Check for **Cheirality Condition** using **Triangulation** 
-- **Perspective-n-Point**
-- **Bundle Adjustment**
+## 2. Problem Statement
+In this project, your aim is to navigate through colored window sequence of known sizes but unknown position and orientation. The windows are setup in the lab IRB 0108. Place the windows at any distance and orientation you desire. You'll need to implement 
 
 <a name='intradtro'></a>
 ## 3. Traditional Approach to the SfM problem
