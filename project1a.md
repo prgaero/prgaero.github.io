@@ -1,7 +1,7 @@
 ---
 layout: page
 mathjax: true
-title: "Magic" Madgwick Filter for Attitude Estimation 
+title: Madgwick Filter for Attitude Estimation 
 permalink: /2019/proj/p1a/
 ---
 
