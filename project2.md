@@ -78,7 +78,7 @@ The third  trajectory is a Staircase modulated on a straight line which goes fro
 <a name='report'></a>
 ### 7.1. Report
 
-For each section of the project, explain briefly what you did, and describe any interesting problems you encountered and/or solutions you implemented.  You **MUST** include the following details in your writeup:
+Explain in detail your approach to complete the project, and describe any interesting problems you encountered and/or solutions you implemented.  You **MUST** include the following details in your writeup:
 
 - Your report **MUST** be typeset in LaTeX in the IEEE Tran format provided to you in the ``Draft`` folder (Use the same draft folder from P1) and should of a conference quality paper.
 - Present Vicon plots for each trajectory followed with ideal trajectory overlaid in a different color with appropriate legends. (Show all three views ``X-Y``, ``X-Z`` and ``Y-Z``).
