@@ -67,7 +67,7 @@ Please <b>DO NOT</b> include data in your submission. Furthermore, the size of y
 The file tree of your submission <b>SHOULD</b> resemble this:
 
 ```
-YourDirectoryID_p1.zip
+YourDirectoryID_p1a.zip
 ├── Code
 |   ├── Wrapper.py
 |   └── Any subfolders you want along with files
