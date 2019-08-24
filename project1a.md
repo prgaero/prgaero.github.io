@@ -1,26 +1,26 @@
 ---
 layout: page
 mathjax: true
-title: MyAutoPano
+title: "Magic" Madgwick Filter for Attitude Estimation 
 permalink: /2019/proj/p1a/
 ---
 
 Table of Contents:
 - [1. Deadline](#due)
 - [2. Problem Statement](#prob)
-
-
-- [8. Submission Guidelines](#sub)
-  - [8.1. Starter Code](#starter)
-  - [8.2. File tree and naming](#files)
-  - [8.3. Report](#report)
-- [9. Allowed and Disallowed functions](#funcs)
-- [10. Collaboration Policy](#coll)
-- [11. Acknowledgements](#ack)
+- [3. Reading the data](#data)
+- [4. Sensor Calibration](#calib)
+- [5. Implementation](#implementation)
+- [6. Submission Guidelines](#sub)
+  - [6.1. File tree and naming](#files)
+  - [6.2. Report](#report)
+- [7. Allowed and Disallowed functions](#funcs)
+- [8. Collaboration Policy](#coll)
+- [9. Acknowledgements](#ack)
 
 <a name='due'></a>
 ## 1. Deadline 
-**11:59 PM, Thursday, February 21, 2019.**
+**11:59 PM, September 10, 2019.**
 
 <a name='prob'></a>
 ## 2. Problem Statement 
