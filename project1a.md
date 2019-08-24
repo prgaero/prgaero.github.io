@@ -1,7 +1,7 @@
 ---
 layout: page
 mathjax: true
-title: Madgwick Filter for Attitude Estimation 
+title: Magic Madgwick Filter for Attitude Estimation 
 permalink: /2019/proj/p1a/
 ---
 
@@ -108,7 +108,7 @@ If you have any doubts regarding allowed and disallowed functions, please drop a
 You are <b>STRONGLY</b> encouraged to discuss the ideas with your peers. Treat the class as a big group/family and enjoy the learning experience. 
 </p>
 
-However, the code should be your own, and should be the result of you exercising your own understanding of it. If you reference anyone else's code in writing your project, you must properly cite it in your code (in comments) and your writeup. For the full honor code refer to the [CMSC733 Fall 2019 website](http://prg.cs.umd.edu/enae788m).
+However, the code should be your own, and should be the result of you exercising your own understanding of it. If you reference anyone else's code in writing your project, you must properly cite it in your code (in comments) and your writeup. For the full honor code refer to the [ENAE Fall 2019 website](http://prg.cs.umd.edu/enae788m).
 
 <a name='ack'></a>
 
