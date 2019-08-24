@@ -1,8 +1,8 @@
 ---
 layout: page
 mathjax: true
-title: Mini Drone Race 
-permalink: /2019/proj/p3a/
+title: Circular Bullseye
+permalink: /2019/proj/p3b/
 ---
 
 Table of Contents:
@@ -18,23 +18,23 @@ Table of Contents:
 
 <a name='due'></a>
 ## 1. Deadline 
-**11:59PM, Thursday, October 17, 2019** for submission of the report and video.
+**11:59PM, Tuesday, October 29, 2019** for submission of the report and video.
 
 <a name='intro'></a>
 ## 2. Problem Statement
-In this project, your aim is to navigate through colored window sequence of known sizes but unknown position and orientation. The windows are setup in the lab IRB 0108. You need to collect data as a ROS bag/video capture while moving the monocular camera pointed at different angles (possible different illumination) of the window. Feel free to place the windows at any distance and orientation you desire for your testing. You'll need to implement the detection algorithm of windows using color or edges or whatever you desire. Note that you'll have to calibrate the camera to estimate the value of the camera matrix $$K$$. Also, you'll need to rectify the images before processing them. Once you've estimated the window pose in 3D, implement a trajectory planner and control algorithm to go through the window. 
+In this project, your aim is to find a circular bullseye and land on it. You are given the approximate co-ordinates (as a Gaussian distribution) of the bullseye from your starting point. The circular bullseye is setup in the lab IRB 0108. You need to collect data as a ROS bag/video capture while moving the monocular + stereo camera is pointed at different angles (possible different illumination) of the circular bullseye.
 
 <div class="fig fighighlight">
-  <img src="/assets/2019/p3/GapFlyt.png" width="80%">
+  <img src="/assets/2019/p3/CircularBullseye.png" width="80%">
   <div class="figcaption">
-    Figure 1: Three colored windows placed behind each other (random position and orinentation). The aim is to fly through the windows as fast as possible.
+    Figure 1: (a) Circular bullseye target, (b) Sample landing on circular bullseye.
   </div>
   <div style="clear:both;"></div>
 </div>
 
 <a name='test'></a>
 ## 3. Testing
-On the day of the deadline, each team will be given a 15 minute slot for demoing their code in action to the instructors. The instructors will place the windows as they wish (position, orientation and order of color). The task is the fly through the windows as fast as possible.  
+On the day of the deadline, each team will be given a 15 minute slot for demoing their code in action to the instructors. The instructors will place the circular bullseye as they wish (position with gaussian given). The task is to land on the circular target.
 
 
 <a name='sub'></a>
@@ -48,14 +48,14 @@ On the day of the deadline, each team will be given a 15 minute slot for demoing
 Explain in detail your approach to complete the project, and describe any interesting problems you encountered and/or solutions you implemented.  You **MUST** include the following details in your writeup:
 
 - Your report **MUST** be typeset in LaTeX in the IEEE Tran format provided to you in the ``Draft`` folder (Use the same draft folder from P1) and should of a conference quality paper.
-- Present Vicon plots for each trajectory followed along with the estimated 3D window position overlaid on the same plot. (Show all three views ``X-Y``, ``X-Z`` and ``Y-Z``).
-- Present the output videos for trajectory following along with the window estimates in real-time as ``Outputs/GapFlyt.mp4``. Be sure to use appropriate colors to plot the windows in ``rviz``, for eg., blue color for a blue window and so on.
+- Present Vicon plots for each trajectory followed along with the estimated 3D bullseye center position overlaid on the same plot. (Show all three views ``X-Y``, ``X-Z`` and ``Y-Z``).
+- Present the output videos for trajectory following along with the 3D bullseye center position estimates in real-time as ``Outputs/Bullseye.mp4``. 
 
 
 <a name='files'></a>
 ### 4.2. File tree and naming
 
-Your submission on ELMS/Canvas must be a ``zip`` file, following the naming convention ``TeamYourTeamNumber_p3a.zip``. If you email ID is ``1``, then the submission file should be named ``Team1_p3a.zip``. You can have any helper functions in sub-folders as you wish, be sure to index them using relative paths and if you have command line arguments for your Wrapper codes, make sure to have default values too. Please provide detailed instructions on how to run your code in ``README.md`` file. Please **DO NOT** include data in your submission.
+Your submission on ELMS/Canvas must be a ``zip`` file, following the naming convention ``TeamYourTeamNumber_p3b.zip``. If you email ID is ``1``, then the submission file should be named ``Team1_p3b.zip``. You can have any helper functions in sub-folders as you wish, be sure to index them using relative paths and if you have command line arguments for your Wrapper codes, make sure to have default values too. Please provide detailed instructions on how to run your code in ``README.md`` file. Please **DO NOT** include data in your submission.
 
 ```
 TeamYourTeamNumber_p3a.zip
@@ -63,7 +63,7 @@ TeamYourTeamNumber_p3a.zip
 |   Your Code files 
 |   ├── Any subfolders you want along with files 
 |   Outputs
-|   └──  GapFlyt.mp4
+|   └──  Bullseye.mp4
 └── Report.pdf
 ```
 
@@ -81,13 +81,11 @@ Any functions regarding reading, writing and displaying/plotting images and wind
 - Basic math utilities including convolution operations in `numpy` and `math`.
 - Any functions for pretty plots.
 - ``bebop_autonomy`` packages for controlling the PRGHusky.
-- Functions for color thresholding including GMM.
-- Functions for line fitting and corner detection.
-
 
 <b> Disallowed:
 - Any function that implements trajectory interpolation.
 - Any function that directly detects the window.
+- Functions for contour fitting.
 
 
 <a name='coll'></a>
