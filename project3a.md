@@ -1,7 +1,7 @@
 ---
 layout: page
 mathjax: true
-title: GapFlyt
+title: Mini Drone Race 
 permalink: /2019/proj/p3a/
 ---
 
@@ -12,6 +12,7 @@ Table of Contents:
 - [4. Submission Guidelines](#sub)
   - [4.1. Report](#report)
   - [4.2. File tree and naming](#files)
+- [5. Debugging Tips](#debug)
 - [5. Allowed and Disallowed functions](#allowed)
 - [6. Collaboration Policy](#coll)
 
@@ -21,7 +22,15 @@ Table of Contents:
 
 <a name='intro'></a>
 ## 2. Problem Statement
-In this project, your aim is to navigate through colored window sequence of known sizes but unknown position and orientation. The windows are setup in the lab IRB 0108. You need to collect data as a ROS bag/video capture while moving the camera pointed at different angles (possible different illumination) of the window. Feel free to place the windows at any distance and orientation you desire for your testing. You'll need to implement the detection algorithm of windows using color or edges or whatever you desire.  
+In this project, your aim is to navigate through colored window sequence of known sizes but unknown position and orientation. The windows are setup in the lab IRB 0108. You need to collect data as a ROS bag/video capture while moving the camera pointed at different angles (possible different illumination) of the window. Feel free to place the windows at any distance and orientation you desire for your testing. You'll need to implement the detection algorithm of windows using color or edges or whatever you desire. Note that you'll have to calibrate the camera to estimate the value of the camera matrix $$K$$. Also, you'll need to rectify the images before processing them.  
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p3/GapFlyt.png" width="80%">
+  <div class="figcaption">
+    Figure 1: Three colored windows placed behind each other (random position and orinentation). The aim is to fly through the windows as fast as possible.
+  </div>
+  <div style="clear:both;"></div>
+</div>
 
 <a name='test'></a>
 ## 3. Testing
@@ -58,6 +67,10 @@ TeamYourTeamNumber_p3a.zip
 └── Report.pdf
 ```
 
+<a name='debug'></a>
+## 5. Debugging Tips
+- To verify if your detections are working correctly, plot the corners of the window on the image, they should align with the true window corners. 
+- To verify if your pose estimation is correct, re-project the estimated 3D corners of the window onto the image. They should be very close to the detected corners.
 
 <a name='allowed'></a>
 ## 5. Allowed and Disallowed functions
