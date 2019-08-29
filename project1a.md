@@ -24,19 +24,38 @@ Table of Contents:
 
 <a name='prob'></a>
 ## 2. Problem Statement 
-In this project, you will implement a Madgwick filter to track three dimensional orientation. Given IMU sensor readings from gyroscopes and accelerometers, you will estimate the underlying 3D orientation and compare it with the ground truth data given by a Vicon motion capture system. 
+In this project, you will implement a Madgwick filter to track three dimensional orientation. Given IMU sensor readings from a 3-axis gyroscope and a 3-axis accelerometer (6-DoF IMU), you will estimate the underlying 3D orientation and compare it with the ground truth data given by a [Vicon motion capture system](https://www.vicon.com/). 
 
 <a name='data'></a>
 ## 3. Reading the Data
-You will find a set of IMU data, another set of data that gives the corresponding tracking information from the Vicon motion capture system.
-Dowload the data from [here](Data-Link). The files are given in a `.mat` format. In order to read these files in Python:
+The `Data` folder has two subfolders, one which has the raw IMU data `Data\IMU` and aonther one which has the Vicon data `Data\Vicon`. The data in each folder is numbered for correspondence, i.e., `Data\IMU\imuRaw1.mat` corresponds to `Data\Vicon\viconRot1.mat`. Download the data from [here](Data-Link). These data files are given in a `.mat` format. In order to read these files in Python:
 
 ```
 >>> from scipy import io
 >>> x = io.loadmat("filename.mat")
 ```
 
-This will return in a dictionary format. Please disregard the following keys and corresponding values: `__version__`, `__header__`, `__global__`. The keys: `vals` and `ts` are the main data you need to use. `ts` are the timestamps and `vals` are values from the IMU in the specific order: `a_x`, `a_y`, `a_z`, \\\omega_x\\, \\\omega_y\\, \\\omega_z\\. 
+This will return in a dictionary format. Please disregard the following keys and corresponding values: `__version__`, `__header__`, `__global__`. The keys: `vals` and `ts` are the main data you need to use. `ts` are the timestamps and `vals` are values from the IMU in the specific order: $$a_x$$, $$a_y$$, $$a_z$$, $$\omega_z$$, $$\omega_x$$, $$\omega_y$$. Note that these values are not in physical units and need to undergo a convertion. 
+
+To convert the acceleration values to $$ms^{-2}$$, follow these steps. 
+
+$$  
+\tilde{a_x} = \frac{a_x - b_{a,x}}{s_x} \\
+$$
+
+Follow the same steps for $$a_y$$ and $$a_z$$. Here $$\tilde{a_x}$$ represents the value of $$a_x$$ in physical units, $$b_{a,x}$$ is the bias and $$s_x$$ is the scale factor. 
+
+To read accelerometer bias and scale paramteres, load the `IMUParams.mat` file. `IMUParams` is a `2 \times 3` vector where the first row denotes the scale values $$\begin{bmatrix} s_x & s_y & s_z \end{bmatrix}$$. The second row denotes the biases (computed as the average biases of all sequences using vicon) $$\begin{bmatrix} b_{a, x} & b_{a, y} & b_{a, z} \end{bmatrix}$$. 
+
+
+
+To convert $$\omega$$ to $$rads^{-1}$$, 
+
+$$
+\tilde{\omega} = \frac{3300}{1023} \times \frac{\pi}{180} \times 0.3 \times \left(\omega - b_{g}\right)
+$$
+
+Here, $$\tilde{\omega}$$ representes the value of $$\omega$$ in physical units and $$b_g$$ is the bias.
 
 <a name='calib'></a>
 ## 4. Sensor Calibration
