@@ -25,11 +25,11 @@ Table of Contents:
 
 <a name='prob'></a>
 ## 2. Problem Statement 
-In this project, you will implement a Madgwick filter to estimate the three dimensional orientation/attitude. You are given data from a six degree of freedom Inertial Measurement Unit (6-DoF IMU) sensor i.e. readings from a 3-axis gyroscope and a 3-axis accelerometer. You will estimate the underlying 3D orientation and compare it with the ground truth data given by a [Vicon motion capture system](https://www.vicon.com/).
+In this project, you will implement a Madgwick filter to estimate the three dimensional orientation/attitude. You are given data from an [ArduIMU+ V2](https://www.sparkfun.com/products/retired/9956) six degree of freedom Inertial Measurement Unit (6-DoF IMU) sensor i.e. readings from a 3-axis gyroscope and a 3-axis accelerometer. You will estimate the underlying 3D orientation and compare it with the ground truth data given by a [Vicon motion capture system](https://www.vicon.com/).
 
 <a name='data'></a>
 ## 3. Reading the Data
-The `Data` folder has two subfolders, one which has the raw IMU data `Data\IMU` and another one which has the Vicon data `Data\Vicon`. The data in each folder is numbered for correspondence, i.e., `Data\IMU\imuRaw1.mat` corresponds to `Data\Vicon\viconRot1.mat`. Download the data from [here](Data-Link). These data files are given in a `.mat` format. In order to read these files in Python, use the snippet provided below:
+The `Data` folder has two subfolders, one which has the raw IMU data `Data\Train\IMU` and another one which has the Vicon data `Data\Train\Vicon`. The data in each folder is numbered for correspondence, i.e., `Data\Train\IMU\imuRaw1.mat` corresponds to `Data\Train\Vicon\viconRot1.mat`. Download the data from [here](https://drive.google.com/file/d/1yTf0jlU_NXKX2spt-S1mSG1jNc6k49jl/view?usp=sharing). These data files are given in a `.mat` format. In order to read these files in Python, use the snippet provided below:
 
 ```
 >>> from scipy import io
@@ -55,6 +55,19 @@ $$
 $$
 
 Here, $$\tilde{\omega}$$ representes the value of $$\omega$$ in physical units and $$b_g$$ is the bias. $$b_g$$ is calculated as the average of first few hundred samples (assuming that the IMU is at rest in the beginning). 
+
+From the Vicon data, you will need the following 2 keys: `ts` and `rots`. `ts` is the timestamps of size $$1 \times N$$ as before and `rots` is a $$3\times 3\times  N$$ matrix denoting the `Z-Y-X` Euler Angles rotation matrix estimated by Vicon. 
+
+An image of the rig used for data collection is shown below:
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p1/IMURig.png" width="80%">
+  <div class="figcaption">
+    Figure 1: IMU Rig used for data collection.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
 
 <a name='calib'></a>
 ## 4. Sensor Calibration
@@ -110,7 +123,10 @@ YourDirectoryID_p1a.zip
 
 For each section of the project, explain briefly what you did, and describe any interesting problems you encountered and/or solutions you implemented. You must include the following details in your writeup:
 
-- Your report **MUST** be typeset in LaTeX in the IEEE Tran format provided to you in the ``Draft`` folder and should of a conference quality paper.
+- Your report **MUST** be typeset in LaTeX in the IEEE Tran format provided to you in the ``Draft`` folder and should of a conference quality paper. Feel free to use any online tool to edit such as [Overleaf](https://www.overleaf.com) or install LaTeX on your local machine.
+- Link to the `rotplot` videos comparing attitude estimation using Gyro Integration, Accelerometer Estimation, Madgwick Filter and Vicon. Sample video can be seen [here](https://www.youtube.com/watch?feature=player_embedded&v=iCe3o-9moUM).
+- Plots for all the train and test sets. In each plot have the angles estimated from gyro only, accelerometer only, madgwick filter and Vicon along with proper legend.  
+- A sample report for a similar project is given in the `.zip` file given to you with the name `SampleReport.pdf`. Treat this report as the benchmark or gold standard which we'll compare your reports to for grading.
 
 <a name='funcs'></a>
 
@@ -139,12 +155,12 @@ If you have any doubts regarding allowed and disallowed functions, please drop a
 You are <b>STRONGLY</b> encouraged to discuss the ideas with your peers. Treat the class as a big group/family and enjoy the learning experience. 
 </p>
 
-However, the code should be your own, and should be the result of you exercising your own understanding of it. If you reference anyone else's code in writing your project, you must properly cite it in your code (in comments) and your writeup. For the full honor code refer to the [ENAE Fall 2019 website](http://prg.cs.umd.edu/enae788m).
+However, the code should be your own, and should be the result of you exercising your own understanding of it. If you reference anyone else's code in writing your project, you must properly cite it in your code (in comments) and your writeup. For the full honor code refer to the [ENAE 788M Fall 2019 website](http://prg.cs.umd.edu/enae788m).
 
 <a name='ack'></a>
 
 ## 10. Acknowledgements
 
-This fun project was inspired by our research in <a href="http://prg.cs.umd.edu/">Perception and Robotics Group</a> at University of Maryland, College Park.
+This data for this fun project was obtained by the ESE 650: Learning In Robotics course at the University of Pennsylvania. 
 
 ***
