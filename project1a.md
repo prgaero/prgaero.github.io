@@ -11,12 +11,13 @@ Table of Contents:
 - [3. Reading the data](#data)
 - [4. Sensor Calibration](#calib)
 - [5. Implementation](#implementation)
-- [6. Submission Guidelines](#sub)
-  - [6.1. File tree and naming](#files)
-  - [6.2. Report](#report)
-- [7. Allowed and Disallowed functions](#funcs)
-- [8. Collaboration Policy](#coll)
-- [9. Acknowledgements](#ack)
+- [6. Notes About Test Set](#testset)
+- [7. Submission Guidelines](#sub)
+  - [7.1. File tree and naming](#files)
+  - [7.2. Report](#report)
+- [8. Allowed and Disallowed functions](#funcs)
+- [9. Collaboration Policy](#coll)
+- [10. Acknowledgements](#ack)
 
 <a name='due'></a>
 ## 1. Deadline 
@@ -59,28 +60,31 @@ Here, $$\tilde{\omega}$$ representes the value of $$\omega$$ in physical units a
 ## 4. Sensor Calibration
 Note that the registation between the IMU coordinate system and Vicon global coordinate system might not be aligned at start. You might have to align them. 
 
+The Vicon and IMU data are exactly synced, although the timestamps `ts` of the respective data are correct. Use `ts` as the reference while plotting the orientation from Vicon and IMU. 
 
 ALSO TIME SYNC!!!!!
 
 <a name='implementation'></a>
 ## 5. Implementation
-WRITE AS STEPS!!!!!
 
 You will write a function that computes orientation only based on gyro data (using integration, assume that you know the initial orientation from Vicon), and another function that computes orientation only based on accelerometer data (assume that the IMU is only rotating). You should check that each function works well before you try to integrate them into a single filter. This is very important!
 
 Then you will write a function for madgwick filter that computes orientation based on gyroscope and accelerometer data only. Make sure you plot the orientation in all axis and compare with Vicon plots.
 
-WRITE ABOUT TEST SET!!!!
+In the starter code, a function called `rotplot.py` is also included. Use this function to visualize the orientation of your output. To plot the orientation, you need to give a $$3 \times 3$$ rotation matrix as an input.
 
-TALK ABOUT ROTPLOT!!!!!
+
+<a name='testset'></a>
+## 6. Notes About Test Set
+A test set will be released 24 hours before the deadline. You can download the test set from <b>here</b>. Your report MUST include the output from both the train and test sets. 
 
 <a name='sub'></a>
 
-## 6. Submission Guidelines
+## 7. Submission Guidelines
 
 **If your submission does not comply with the following guidelines, you'll be given ZERO credit.**
 
-### 6.1. File tree and naming
+### 7.1. File tree and naming
 
 Your submission on ELMS/Canvas must be a ``zip`` file, following the naming convention ``YourDirectoryID_p1a.zip``. If you email ID is ``abc@umd.edu`` or ``abc@terpmail.umd.edu``, then your ``DirectoryID`` is ``abc``. For our example, the submission file should be named ``abc_p1a.zip``. The file **must have the following directory structure**. The file to run for your project should be called ``YourDirectoryID_p1a/Code/Wrapper.py``. You can have any helper functions in sub-folders as you wish, be sure to index them using relative paths and if you have command line arguments for your Wrapper codes, make sure to have default values too. Please provide detailed instructions on how to run your code in ``README.md`` file. 
 
@@ -102,7 +106,7 @@ YourDirectoryID_p1a.zip
 
 <a name='report'></a>
 
-### 6.2. Report
+### 7.2. Report
 
 For each section of the project, explain briefly what you did, and describe any interesting problems you encountered and/or solutions you implemented. You must include the following details in your writeup:
 
@@ -110,24 +114,26 @@ For each section of the project, explain briefly what you did, and describe any 
 
 <a name='funcs'></a>
 
-## 7. Allowed and Disallowed functions
+## 8. Allowed and Disallowed functions
 
-<b> Allowed:
+<b> Allowed:</b>
 
 - Any functions regarding reading, writing and displaying/plotting images in `cv2`, `matplotlib`
 - Basic math utitlies including convolution operations in `numpy` and `math`
 - Any functions for pretty plots
-- Any functions for filtering and implementing gaussian blur
+- Quaternion libraries
+- Any library that perform tranformation between various representations of attitude
 
-<b> Disallowed:
+<b> Disallowed:</b>
 
-- *Add disallowed* functions!
+- Any function that implements in-part or full Madgwick filter
 
 If you have any doubts regarding allowed and disallowed functions, please drop a public post on [Piazza](https://piazza.com/umd/fall2019/enae788m). 
 
 <a name='coll'></a>
 
-## 10. Collaboration Policy
+## 9. Collaboration Policy
+
 <p style="background-color:#ddd; padding:5px">
 <b>NOTE:</b> 
 You are <b>STRONGLY</b> encouraged to discuss the ideas with your peers. Treat the class as a big group/family and enjoy the learning experience. 
@@ -137,7 +143,7 @@ However, the code should be your own, and should be the result of you exercising
 
 <a name='ack'></a>
 
-## 11. Acknowledgements
+## 10. Acknowledgements
 
 This fun project was inspired by our research in <a href="http://prg.cs.umd.edu/">Perception and Robotics Group</a> at University of Maryland, College Park.
 
