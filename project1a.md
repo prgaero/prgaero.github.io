@@ -40,14 +40,12 @@ This will return in a dictionary format. Please disregard the following keys and
 To convert the acceleration values to $$ms^{-2}$$, follow these steps. 
 
 $$  
-\tilde{a_x} = \frac{a_x - b_{a,x}}{s_x} \\
+\tilde{a_x} = \frac{a_x + b_{a,x}}{s_x} \\
 $$
 
 Follow the same steps for $$a_y$$ and $$a_z$$. Here $$\tilde{a_x}$$ represents the value of $$a_x$$ in physical units, $$b_{a,x}$$ is the bias and $$s_x$$ is the scale factor. 
 
-To read accelerometer bias and scale paramteres, load the `IMUParams.mat` file. `IMUParams` is a `2 \times 3` vector where the first row denotes the scale values $$\begin{bmatrix} s_x & s_y & s_z \end{bmatrix}$$. The second row denotes the biases (computed as the average biases of all sequences using vicon) $$\begin{bmatrix} b_{a, x} & b_{a, y} & b_{a, z} \end{bmatrix}$$. 
-
-
+To read accelerometer bias and scale paramteres, load the `Data\IMUParams.mat` file. `IMUParams` is a $$2 \times 3$$ vector where the first row denotes the scale values $$\begin{bmatrix} s_x & s_y & s_z \end{bmatrix}$$. The second row denotes the biases (computed as the average biases of all sequences using vicon) $$\begin{bmatrix} b_{a, x} & b_{a, y} & b_{a, z} \end{bmatrix}$$. 
 
 To convert $$\omega$$ to $$rads^{-1}$$, 
 
@@ -59,14 +57,22 @@ Here, $$\tilde{\omega}$$ representes the value of $$\omega$$ in physical units a
 
 <a name='calib'></a>
 ## 4. Sensor Calibration
-Note that the biases and scale factors of the IMU sensors are unknown as well as the registation between the IMU coordinate system and Vicon global coordinate system. You will have to figure them out.
+Note that the registation between the IMU coordinate system and Vicon global coordinate system might not be aligned at start. You might have to align them. 
 
+
+ALSO TIME SYNC!!!!!
 
 <a name='implementation'></a>
 ## 5. Implementation
-You will write a function that computes orientation only based on gyro data, and another function that computes orientation only based on accelerometer data. You should check that each function works well before you try to integrate them into a single filter. This is very important!
+WRITE AS STEPS!!!!!
+
+You will write a function that computes orientation only based on gyro data (using integration, assume that you know the initial orientation from Vicon), and another function that computes orientation only based on accelerometer data (assume that the IMU is only rotating). You should check that each function works well before you try to integrate them into a single filter. This is very important!
+
 Then you will write a function for madgwick filter that computes orientation based on gyroscope and accelerometer data only. Make sure you plot the orientation in all axis and compare with Vicon plots.
 
+WRITE ABOUT TEST SET!!!!
+
+TALK ABOUT ROTPLOT!!!!!
 
 <a name='sub'></a>
 
