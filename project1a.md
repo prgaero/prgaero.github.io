@@ -61,7 +61,7 @@ From the Vicon data, you will need the following 2 keys: `ts` and `rots`. `ts` i
 An image of the rig used for data collection is shown below:
 
 <div class="fig fighighlight">
-  <img src="/assets/2019/p1/IMURig.png" width="80%">
+  <img src="/assets/2019/p1/IMURig.png" width="100%">
   <div class="figcaption">
     Figure 1: IMU Rig used for data collection.
   </div>
