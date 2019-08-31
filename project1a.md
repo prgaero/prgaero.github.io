@@ -29,7 +29,7 @@ In this project, you will implement a Madgwick filter to estimate the three dime
 
 <a name='data'></a>
 ## 3. Reading the Data
-The `Data` folder has two subfolders, one which has the raw IMU data `Data\Train\IMU` and another one which has the Vicon data `Data\Train\Vicon`. The data in each folder is numbered for correspondence, i.e., `Data\Train\IMU\imuRaw1.mat` corresponds to `Data\Train\Vicon\viconRot1.mat`. Download the data from [here](https://drive.google.com/file/d/1yTf0jlU_NXKX2spt-S1mSG1jNc6k49jl/view?usp=sharing). These data files are given in a `.mat` format. In order to read these files in Python, use the snippet provided below:
+The `Data` folder has two subfolders, one which has the raw IMU data `Data\Train\IMU` and another one which has the Vicon data `Data\Train\Vicon`. The data in each folder is numbered for correspondence, i.e., `Data\Train\IMU\imuRaw1.mat` corresponds to `Data\Train\Vicon\viconRot1.mat`. Download the data from [here](https://drive.google.com/file/d/14iIGleYdRmsQFgz5P0feKpW_tkLJ1r9m/view?usp=sharing). These data files are given in a `.mat` format. In order to read these files in Python, use the snippet provided below:
 
 ```
 >>> from scipy import io
