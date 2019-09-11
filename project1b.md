@@ -8,15 +8,13 @@ permalink: /2019/proj/p1b/
 Table of Contents:
 - [1. Deadline](#due)
 - [2. Problem Statement](#prob)
-- [3. Reading the data](#data)
-- [4. Sensor Calibration](#calib)
-- [5. Implementation](#implementation)
-- [6. Submission Guidelines](#sub)
-  - [6.1. File tree and naming](#files)
-  - [6.2. Report](#report)
-- [7. Allowed and Disallowed functions](#funcs)
-- [8. Collaboration Policy](#coll)
-- [9. Acknowledgements](#ack)
+- [3. Implementation](#implementation)
+- [4. Submission Guidelines](#sub)
+  - [4.1. File tree and naming](#files)
+  - [4.2. Report](#report)
+- [5. Allowed and Disallowed functions](#funcs)
+- [6. Collaboration Policy](#coll)
+- [7. Acknowledgements](#ack)
 
 <a name='due'></a>
 ## 1. Deadline 
@@ -30,22 +28,22 @@ Follow the steps 3 to 4 from [Project 1a](https://prgaero.github.io/2019/proj/p1
 
 
 <a name='implementation'></a>
-## 5. Implementation
+## 3. Implementation
 You estimated the orientation using a Madgick Filter in Project 1a, now it's time to implement a non-linear filter - UKF. Follow [this paper](https://ieeexplore.ieee.org/document/1257247) by Edgar Kraft for more details.  You can compare your resulting orientation estimate with the “ground truth” estimate from the Vicon. A simple plotting function is provided in “rotplot.py.” This function provides basic visualization and can be modified as you see fit. 
 Make sure you plot the orientation in all axis and compare with Vicon plots.
 
 <a name='testset'></a>
-## 6. Notes About Test Set
+## 4. Notes About Test Set
 A test set will be released 24 hours before the deadline. You can download the test set from <b>here</b>. Your report MUST include the output from both the train and test sets. 
 
 
 <a name='sub'></a>
 
-## 6. Submission Guidelines
+## 5. Submission Guidelines
 
 **If your submission does not comply with the following guidelines, you'll be given ZERO credit.**
 
-### 6.1. File tree and naming
+### 5.1. File tree and naming
 
 Your submission on ELMS/Canvas must be a ``zip`` file, following the naming convention ``YourDirectoryID_p1b.zip``. If you email ID is ``abc@umd.edu`` or ``abc@terpmail.umd.edu``, then your ``DirectoryID`` is ``abc``. For our example, the submission file should be named ``abc_p1b.zip``. The file **must have the following directory structure**. The file to run for your project should be called ``YourDirectoryID_p1b/Code/Wrapper.py``. You can have any helper functions in sub-folders as you wish, be sure to index them using relative paths and if you have command line arguments for your Wrapper codes, make sure to have default values too. Please provide detailed instructions on how to run your code in ``README.md`` file. 
 
@@ -67,7 +65,7 @@ YourDirectoryID_p1b.zip
 
 <a name='report'></a>
 
-### 6.2. Report
+### 5.2. Report
 
 For each section of the project, explain briefly what you did, and describe any interesting problems you encountered and/or solutions you implemented. You must include the following details in your writeup:
 
@@ -79,9 +77,9 @@ For each section of the project, explain briefly what you did, and describe any 
 
 <a name='funcs'></a>
 
-## 7. Allowed and Disallowed functions
+## 6. Allowed and Disallowed functions
 
-<b> Allowed:
+<b> Allowed:</b>
 
 - Any functions regarding reading, writing and displaying/plotting images in `cv2`, `matplotlib`
 - Basic math utitlies including convolution operations in `numpy` and `math`
@@ -89,7 +87,7 @@ For each section of the project, explain briefly what you did, and describe any 
 - Quaternion libraries
 - Any library that perform tranformation between various representations of attitude
 
-<b> Disallowed:
+<b> Disallowed:</b>
 
 - Any function that implements in-part or full UKF
 
@@ -97,7 +95,7 @@ If you have any doubts regarding allowed and disallowed functions, please drop a
 
 <a name='coll'></a>
 
-## 10. Collaboration Policy
+## 7. Collaboration Policy
 <p style="background-color:#ddd; padding:5px">
 <b>NOTE:</b> 
 You are <b>STRONGLY</b> encouraged to discuss the ideas with your peers. Treat the class as a big group/family and enjoy the learning experience. 
@@ -107,7 +105,7 @@ However, the code should be your own, and should be the result of you exercising
 
 <a name='ack'></a>
 
-## 11. Acknowledgements
+## 8. Acknowledgements
 
 This data for this fun project was obtained by the ESE 650: Learning In Robotics course at the University of Pennsylvania. 
 
