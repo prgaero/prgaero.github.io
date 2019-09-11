@@ -26,28 +26,17 @@ Table of Contents:
 ## 2. Problem Statement 
 In this project, you will implement an Unscented Kalman Filter (UKF) to track three dimensional orientation. Given IMU sensor readings from gyroscopes and accelerometers, you will estimate the underlying 3D orientation and compare it with the ground truth data given by a Vicon motion capture system. 
 
-<a name='data'></a>
-## 3. Reading the Data
-You will find a set of IMU data, another set of data that gives the corresponding tracking information from the Vicon motion capture system (same as Madgwick filter, Project 1a).
-Dowload the data from [here](Data-Link). The files are given in a `.mat` format. In order to read these files in Python:
-
-```
->>> from scipy import io
->>> x = io.loadmat("filename.mat")
-```
-
-This will return in a dictionary format. Please disregard the following keys and corresponding values: `__version__`, `__header__`, `__global__`. The keys: `vals` and `ts` are the main data you need to use. `ts` are the timestamps and `vals` are values from the IMU in the specific order: `a_x`, `a_y`, `a_z`, \\\omega_x\\, \\\omega_y\\, \\\omega_z\\. 
-
-<a name='calib'></a>
-## 4. Sensor Calibration
-Note that the biases and scale factors of the IMU sensors are unknown as well as the registation between the IMU coordinate system and Vicon global coordinate system. You will have to figure them out.
+Follow the steps 3 to 4 from [Project 1a](https://prgaero.github.io/2019/proj/p1a/) for instructions on reading the data and sensor calibration.
 
 
 <a name='implementation'></a>
 ## 5. Implementation
-You will write a function that computes orientation only based on gyro data, and another function that computes orientation only based on accelerometer data. You should check that each function works well before you try to integrate them into a single filter. This is very important!
-You will write a filter to process this data and track the orientation of the platform. You have to implement an UKF to accomplish this.  You can compare your resulting orientation estimate with the “ground truth” estimate from the Vicon. A simple plotting function is provided in “rotplot.py.” This function provides basic visualization and can be modified as you see fit. 
+You estimated the orientation using a Madgick Filter in Project 1a, now it's time to implement a non-linear filter - UKF. Follow [this paper](https://ieeexplore.ieee.org/document/1257247) by Edgar Kraft for more details.  You can compare your resulting orientation estimate with the “ground truth” estimate from the Vicon. A simple plotting function is provided in “rotplot.py.” This function provides basic visualization and can be modified as you see fit. 
 Make sure you plot the orientation in all axis and compare with Vicon plots.
+
+<a name='testset'></a>
+## 6. Notes About Test Set
+A test set will be released 24 hours before the deadline. You can download the test set from <b>here</b>. Your report MUST include the output from both the train and test sets. 
 
 
 <a name='sub'></a>
@@ -82,7 +71,11 @@ YourDirectoryID_p1b.zip
 
 For each section of the project, explain briefly what you did, and describe any interesting problems you encountered and/or solutions you implemented. You must include the following details in your writeup:
 
-- Your report **MUST** be typeset in LaTeX in the IEEE Tran format provided to you in the ``Draft`` folder and should of a conference quality paper.
+- Your report **MUST** be typeset in LaTeX in the IEEE Tran format provided to you in the ``Draft`` folder and should of a conference quality paper. Feel free to use any online tool to edit such as [Overleaf](https://www.overleaf.com) or install LaTeX on your local machine.
+- Link to the `rotplot` videos comparing attitude estimation using Madgwick Filter from Project 1a, UKF and Vicon. Sample video can be seen [here](https://www.youtube.com/watch?feature=player_embedded&v=iCe3o-9moUM).
+- Plots for all the train and test sets. In each plot have the angles estimated from madgwick filter, UKF and Vicon along with proper legend.  
+- A sample report for a similar project is given in the `.zip` file given to you with the name `SampleReport.pdf`. Treat this report as the benchmark or gold standard which we'll compare your reports to for grading.
+
 
 <a name='funcs'></a>
 
@@ -93,11 +86,12 @@ For each section of the project, explain briefly what you did, and describe any 
 - Any functions regarding reading, writing and displaying/plotting images in `cv2`, `matplotlib`
 - Basic math utitlies including convolution operations in `numpy` and `math`
 - Any functions for pretty plots
-- Any functions for filtering and implementing gaussian blur
+- Quaternion libraries
+- Any library that perform tranformation between various representations of attitude
 
 <b> Disallowed:
 
-- *Add disallowed* functions!
+- Any function that implements in-part or full UKF
 
 If you have any doubts regarding allowed and disallowed functions, please drop a public post on [Piazza](https://piazza.com/umd/fall2019/enae788m). 
 
@@ -115,6 +109,6 @@ However, the code should be your own, and should be the result of you exercising
 
 ## 11. Acknowledgements
 
-This fun project was inspired by our research in <a href="http://prg.cs.umd.edu/">Perception and Robotics Group</a> at University of Maryland, College Park.
+This data for this fun project was obtained by the ESE 650: Learning In Robotics course at the University of Pennsylvania. 
 
 ***
