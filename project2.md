@@ -21,13 +21,16 @@ Table of Contents:
 
 <a name='due'></a>
 ## 1. Deadline 
-**11:59PM, Thursday, October 03, 2019.** for the report and videos.
+**11:59PM, Thursday, October 03, 2019 for the report and videos.**
+
+**In class, Thursday, October 03, 2019 for the live demo.**
+
 
 <a name='prob'></a>
 ## 2. Problem Statement
 Often times you want to follow known trajectories to accomplish various tasks such as obstacle avoidance, pursuit or cinematography. In a general aerial robot, you obtain a path from a path planner such as Dijkstra's algorithm or A* or RRT and so on. These paths have to then be converted into feasible motion trajectories which take into account the dynamics of the system. Finally, once the feasible motion trajectory is obtained, one has to implement a controller to follow the trajectory. 
 
-In your case, you are given trajectory specifications which need to be time parametrized, then a controller (outer loop) has to be written to follow the desired trajectory on the PRG Husky.
+In your case, you are given trajectory specifications which need to be time parametrized, then a controller (outer loop) has to be written to follow the desired trajectory on the PRG Husky. You are required to write a node (not just a shell script) to time parametrize the given trajectory (feel free to have a different node for every different trajectory), compute the control commands and publish it to the required topic. You need to plot in real-time the current transform being executed in rviz. Refer [to this rviz tf page](http://wiki.ros.org/rviz/DisplayTypes/TF) for an example output. You are also required to write a launch file to launch all the nodes required along with the rviz visualization (you can save the rviz config to do this). 
 
 <a name='init'></a>
 ## 3. PRGHusky Setup
