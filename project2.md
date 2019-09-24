@@ -15,20 +15,23 @@ Table of Contents:
 - [7. Submission Guidelines](#sub)
   - [7.1. Report](#report)
   - [7.2. File tree and naming](#files)
-- [8. Allowed and Disallowed functions](#allowed)
-- [9. Collaboration Policy](#coll)
+- [8. Live Demo](#livedemo)
+- [9. Allowed and Disallowed functions](#allowed)
+- [10. Collaboration Policy](#coll)
 
 <a name='due'></a>
 ## 1. Deadline 
-**11:59PM, Thursday, October 03, 2019.**
+**11:59PM, Thursday, October 03, 2019.** for the report and videos.
 
 <a name='prob'></a>
 ## 2. Problem Statement
-Often times you want to follow known trajectories to accomplish various tasks such as obstacle avoidance, pursuit or cinematography. In a general aerial robot, you obtain a path from a path planner such as Dijkstra's algorithm or A* or RRT and so on. These paths have to then be converted into feasible motion trajectories which take into account the dynamics of the system. Finally, once the feasible motion trajectory is obtained, one has to implement a controller to follow the trajectory on the PRG Husky.
+Often times you want to follow known trajectories to accomplish various tasks such as obstacle avoidance, pursuit or cinematography. In a general aerial robot, you obtain a path from a path planner such as Dijkstra's algorithm or A* or RRT and so on. These paths have to then be converted into feasible motion trajectories which take into account the dynamics of the system. Finally, once the feasible motion trajectory is obtained, one has to implement a controller to follow the trajectory. 
+
+In your case, you are given trajectory specifications which need to be time parametrized, then a controller (outer loop) has to be written to follow the desired trajectory on the PRG Husky.
 
 <a name='init'></a>
 ## 3. PRGHusky Setup
-Familiarize yourself with the PRGHusky platform by using [``bebop_autonomy``](https://bebop-autonomy.readthedocs.io/en/latest/) package to control it. You might have to change the gains of the inner-loop PID and some sonar characteristics to get a more stable flight. Refer to the [``PRGHusky Wiki``]() on details for updating parameters (gains and sonar params). Also, you can find more advanced information here: [``UBHG``](https://github.com/nicknack70/bebop/blob/master/UBHG/UBHG1_7_3.pdf).
+Familiarize yourself with the PRGHusky platform by using [``bebop_autonomy``](https://bebop-autonomy.readthedocs.io/en/latest/) package to control it. You might have to change the gains of the inner-loop PID and some sonar characteristics to get a more stable flight. Refer to the [``PRGHusky Wiki``](https://github.com/prgumd/PRGFlyt/wiki/PRG-Husky-Shell) on details for updating parameters (gains and sonar params). Also, you can find more advanced information here: [``UBHG``](https://github.com/nicknack70/bebop/blob/master/UBHG/UBHG1_7_3.pdf).
 
 <a name='helix'></a>
 ## 4. Trajectory 1: Helix
@@ -54,7 +57,6 @@ The second trajectory is a Diamond (not a closed one) with it's corner points sh
   </div>
   <div style="clear:both;"></div>
 </div>
-
 
 
 <a name='staircase'></a>
@@ -101,9 +103,14 @@ TeamYourTeamNumber_p2.zip
 |   └── Traj3.mp4
 └── Report.pdf
 ```
+<a name='livedemo'></a>
+## 8. Live Demo 
+
+On Thursday, October 03, 2019, the class will be held in the IRB 0108 lab where each team will show a live demo of all the three trajectories in action. Each time will be given 10 minutes to setup and demo all the three trajectories.  
+
 
 <a name='allowed'></a>
-## 8. Allowed and Disallowed functions
+## 9. Allowed and Disallowed functions
 
 <b> Allowed:
 
@@ -118,7 +125,7 @@ Any functions regarding reading, writing and displaying/plotting images in `cv2`
 
 
 <a name='coll'></a>
-## 9. Collaboration Policy
+## 10. Collaboration Policy
 You are encouraged to discuss the ideas with your peers. However, the code should be your own team's, and should be the result of you exercising your own understanding of it. If you reference anyone else's code in writing your project, you must properly cite it in your code (in comments) and your writeup. For the full honor code refer to the ENAE788M Fall 2019 website.
 
 
