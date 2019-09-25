@@ -1,9 +1,9 @@
 # Site settings
-title: CMSC733 Computer Vision
+title: ENAE788M
 #email: yiannis@cs.umd.edu
-description: "Course materials and notes for University of Maryland's class CMSC733: Computer Vision."
+description: "Course materials and notes for University of Maryland's class ENAE788M."
 baseurl: ""
-url: "http://cmsc733.github.io"
+url: "http://prgaero.github.io"
 #github_username:  cmsc733
 
 # Build settings
