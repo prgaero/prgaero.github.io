@@ -112,7 +112,7 @@ TeamYourTeamNumber_p2.zip
 <a name='livedemo'></a>
 ## 8. Live Demo 
 
-On Thursday, October 03, 2019, the class will be held in the IRB 0108 lab where each team will show a live demo of all the three trajectories in action. Each time will be given 10 minutes to setup and demo all the three trajectories.  
+On Thursday, October 03, 2019, the class will be held in the lab from 3 p.m. where each team will show a live demo of all the three trajectories in action. Each time will be given 10 minutes to setup and demo all the three trajectories.  
 
 <a name='labinstructions'></a>
 ## 9. Lab Instructions
