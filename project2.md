@@ -120,42 +120,58 @@ On Thursday, October 03, 2019, the class will be held in the IRB 0108 lab where 
 **Make sure all of your batteries are FULLY CHARGED before coming to the lab session.**
 
 <a name='upboard'></a>
-### 9.1 UP board
+### 9.1 Up board
 You are expected to run these two code snippets (and show the outputs to the instructors):
 ```
 # For Testing Ubuntu Version in Up-Board
 lsb_release -a
+wget https://docs.opencv.org/3.3.0/opencv_screenshot.jpg
 ```
 ```
-# For Testing OpenCV Version in Up-Board and run a sample output
+# For Testing OpenCV and Numpy Version in Up-Board and run a sample output
 import numpy as np
 import cv2
-from matplotlib import pyplot as plt
 print('Numpy version:', np.__version__)
 print('OpenCV version:', cv2.__version__)
-print('MatplotLib version:', plt.__version__)
-wget https://docs.opencv.org/3.3.0/opencv_screenshot.jpg -o messi5.jpg
 # Load an color image in grayscale
-img = cv2.imread('messi5.jpg',0)
+img = cv2.imread('opencv_screenshot.jpg',0)
 cv2.imshow('image',img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 ```
 
+To run these, you will provided a monitor with HDMI, Mouse and a Keyboard. You will power your Up board using Husky's power ONLY. Also, if you don't have internet access in the Up board, you won't be able to run the above `wget` command; so please download [this image](https://docs.opencv.org/3.3.0/opencv_screenshot.jpg) and copy the image to the Up board to some specific location from where you will be running the script in-class. Make sure the file name remains `opencv_screenshot.jpg`.
 
 <a name='viconsetup'></a>
 ### 9.2 Vicon Setup
-You will be provided with a shield
+You will be provided with a shield with vicon markers (shown below) that you will replace with your Up board. You are going to unscrew the Up board from the PRG Husky platform and screw-in the vicon marker shield.
 
-- Vicon sample
-- Vicon is calibrated; else remind us.
-- Mount the vicon marker shield. 
-- 15 mins total. 5 mins to setup. 10 mins to run.
-- Run [this python script] (to run imread, imwrite etc) and display the output to the instructors. We'll check OpenCV version.
-- Show us the output of `lsb_release -a` from the UP Board.
-- ROS_MASTER_URI, IP address, WiFi name and Password instructions. 
-- Follow [this lab instruction and safety manual] else you will be forced to be disqualified.
+The first thing you need to do is to connect your laptop/linux machine (not Up board) is to connect to ARC lab WiFi. The SSID of the network will be `Drone_Lab`. The password will be provided during the lab session! Make sure you have a secure connection to this WiFi (and not eduroam or anything else as the Vicon runs on this network).
+Before running the experiment, make sure you bag the vicon outputs which will be published at 100Hz. In your `~/.bashrc` file, you MUST add the following snippet at the last of your file:
+```
+export ROS_MASTER_URI=http://192.168.1.251
+export ROS_IP=<"YOUR_UP">
+```
+The ROS Master will be running on the Vicon PC. To get your ROS_IP, do `ifconfig` on your system and check for your wireless `inet addr`. 
+To record the `rosbag` on your laptop, simply run 
+```
+rosbag record -O rosbag_husky_vicon_rig /vicon/vicon_mount_husky
+```
+We HIGHLY recommend to play the `rosbag` everytime you finish your run/experiment. You can run your `rosbag` using:
+```
+rosbag play -l rosbag_husky_vicon_rig.bag
+```
+`-l` flag is to run the bag in an infinite loop.
+A reference Vicon plot is given in the bag file [here](https://drive.google.com/open?id=1hHp0xSXolp1t2_8y5rTDkWeYMtgI4iSg). You can read the node as `/vicon/vicon_mount_husky`.
 
+Another thing to note is the calibration. Vicons will be well calibrated before but a little physical nudge to the Vicon or the even the wall might change the orientation/position of the Vicon cameras. In which case, the LEDs on the Vicon cameras will change from Blue to Red and we would need to recalibrate them again. It is the team's responsibility to notice the calibration and inform the instructors.
+
+Furthermore, you need to follow the instruction and safety manual for the lab. It is the same one you had signed before. If you do not comply with the instructions, we would be forced to disqualify the team. You can find a copy of the manual [here](). 
+
+**Finally, YOU WILL BE GIVEN a TOTAL of 15 MINS for the lab session. So, please prepare before and use your lab time wisely. We recommend to spare at least 8-10 mins for the Trajectory experiment. Try to finish everything else under 5 mins. Parallelize the work load between the team members. 
+**
+
+GOOD LUCK!!!
 
 
 <a name='allowed'></a>
