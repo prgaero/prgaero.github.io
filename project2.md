@@ -86,7 +86,7 @@ The third  trajectory is a Staircase modulated on a straight line which goes fro
 Explain in detail your approach to complete the project, and describe any interesting problems you encountered and/or solutions you implemented.  You **MUST** include the following details in your writeup:
 
 - Your report **MUST** be typeset in LaTeX in the IEEE Tran format provided to you in the ``Draft`` folder (Use the same draft folder from P1) and should of a conference quality paper.
-- Present Vicon plots for each trajectory followed with ideal trajectory overlaid in a different color with appropriate legends. (Show all three views ``X-Y``, ``X-Z`` and ``Y-Z``).
+- Present Vicon plots for each trajectory followed with ideal trajectory overlaid in a different color with appropriate legends. (Show all three views ``X-Y``, ``X-Z`` and ``Y-Z``). A reference Vicon plot is given in the bag file [here](https://drive.google.com/open?id=1hHp0xSXolp1t2_8y5rTDkWeYMtgI4iSg). You can play the ROS Bag using `rosbag play -l rosbag_husky_vicon_rig.bag`. You can read the node as `/vicon/vicon_mount_husky`.
 - Present the output videos for trajectory following for each trajectory on the PRGHusky as ``Outputs/Traj1.mp4``, ``Outputs/Traj2.mp4`` and ``Outputs/Traj3.mp4``.
 
 
