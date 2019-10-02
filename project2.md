@@ -150,9 +150,9 @@ The first thing you need to do is to connect your laptop/linux machine (not Up b
 Before running the experiment, make sure you bag the vicon outputs which will be published at 100Hz. In your `~/.bashrc` file, you MUST add the following snippet at the last of your file:
 ```
 export ROS_MASTER_URI=http://192.168.1.251
-export ROS_IP=<"YOUR_UP">
+export ROS_IP=<"YOUR_IP">
 ```
-The ROS Master will be running on the Vicon PC. To get your ROS_IP, do `ifconfig` on your system and check for your wireless `inet addr`. 
+The ROS Master will be running on the Vicon PC. To get your ROS_IP (your laptop IP), do `ifconfig` on your system and check for your wireless `inet addr`. 
 To record the `rosbag` on your laptop, simply run 
 ```
 rosbag record -O rosbag_husky_vicon_rig /vicon/vicon_mount_husky
@@ -162,7 +162,7 @@ We HIGHLY recommend to play the `rosbag` everytime you finish your run/experimen
 rosbag play -l rosbag_husky_vicon_rig.bag
 ```
 `-l` flag is to run the bag in an infinite loop.
-A reference Vicon plot is given in the bag file [here](https://drive.google.com/open?id=1hHp0xSXolp1t2_8y5rTDkWeYMtgI4iSg). You can read the node as `/vicon/vicon_mount_husky`.
+A sample Vicon recording is given in the bag file [here](https://drive.google.com/open?id=1hHp0xSXolp1t2_8y5rTDkWeYMtgI4iSg). You can read the node as `/vicon/vicon_mount_husky`.
 
 Another thing to note is the calibration. Vicons will be well calibrated before but a little physical nudge to the Vicon or the even the wall might change the orientation/position of the Vicon cameras. In which case, the LEDs on the Vicon cameras will change from Blue to Red and we would need to recalibrate them again. It is the team's responsibility to notice the calibration and inform the instructors.
 
