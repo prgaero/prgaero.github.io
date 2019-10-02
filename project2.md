@@ -112,7 +112,7 @@ TeamYourTeamNumber_p2.zip
 <a name='livedemo'></a>
 ## 8. Live Demo 
 
-On Thursday, October 03, 2019, the class will be held in the lab from 3 p.m. where each team will show a live demo of all the three trajectories in action. Each time will be given 10 minutes to setup and demo all the three trajectories.
+On Thursday, October 03, 2019, the class will be held in the lab from 3 p.m. where each team will show a live demo of all the three trajectories in action. Each time will be given 15 minutes to setup and demo all the three trajectories.
 
 <a name='labinstructions'></a>
 ## 9. Lab Instructions
@@ -181,9 +181,11 @@ A sample Vicon recording is given in the bag file [here](https://drive.google.co
 
 Another thing to note is the calibration. Vicons will be well calibrated before but a little physical nudge to the Vicon or the even the wall might change the orientation/position of the Vicon cameras. In which case, the LEDs on the Vicon cameras will change from Blue to Red and we would need to recalibrate them again. It is the team's responsibility to notice the calibration and inform the instructors.
 
+Also, record a video of the quadrotor during the experiments and upload them with your submissions in the `Output/` folder as mentioned in the section 7.1. 
+
 Furthermore, you need to follow the instruction and safety manual for the lab. It is the same one you had signed before. If you do not comply with the instructions, we would be forced to disqualify the team. You can find a copy of the manual [here](Reports/IRB_Brin_Lab_Safety_Manual.pdf). 
 
-**Finally, YOU WILL BE GIVEN a TOTAL of 15 mins for the lab session. So, please prepare before and use your lab time wisely. We recommend sparing at least 8-10 mins for the Trajectory experiment. Try to finish everything else under 5 mins. Parallelize the work load between the team members.**
+**Finally, YOU WILL BE GIVEN a TOTAL of 15 mins for the lab session. So, please prepare before and use your lab time wisely. We recommend sparing at least 8-10 mins for the Trajectory experiment. Try to finish everything else under 5 mins. Parallelize the work load between the team members. You can run the experiments for any number of trials. Upload the best run in your report. You can discard all other experimetns if you want. They will not be graded**
 
 _GOOD LUCK!!!_
 
