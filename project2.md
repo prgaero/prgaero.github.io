@@ -179,6 +179,9 @@ rosbag play -l rosbag_husky_vicon_rig.bag
 `-l` flag is to run the bag in an infinite loop.
 A sample Vicon recording is given in the bag file [here](https://drive.google.com/open?id=1hHp0xSXolp1t2_8y5rTDkWeYMtgI4iSg). You can read the node as `/vicon/vicon_mount_husky`.
 
+
+Or you can also record the `.csv` file from Vicon directly. The instructors will record this for you in Project 2. You need to inform the instructors when to start and end the recording sequence. A sample '.csv' file is given [here](https://drive.google.com/open?id=1AB58mcHjPmQXmeoCtTvM4wby51lhw2v4).
+
 Another thing to note is the calibration. Vicons will be well calibrated before but a little physical nudge to the Vicon or the even the wall might change the orientation/position of the Vicon cameras. In which case, the LEDs on the Vicon cameras will change from Blue to Red and we would need to recalibrate them again. It is the team's responsibility to notice the calibration and inform the instructors.
 
 Also, record a video of the quadrotor during the experiments and upload them with your submissions in the `Output/` folder as mentioned in the section 7.1. 
