@@ -168,7 +168,7 @@ Another thing to note is the calibration. Vicons will be well calibrated before 
 
 Furthermore, you need to follow the instruction and safety manual for the lab. It is the same one you had signed before. If you do not comply with the instructions, we would be forced to disqualify the team. You can find a copy of the manual [here](Reports/IRB_Brin_Lab_Safety_Manual.pdf). 
 
-**Finally, YOU WILL BE GIVEN a TOTAL of 15 MINS for the lab session. So, please prepare before and use your lab time wisely. We recommend to spare at least 8-10 mins for the Trajectory experiment. Try to finish everything else under 5 mins. Parallelize the work load between the team members.**
+**Finally, YOU WILL BE GIVEN a TOTAL of 15 mins for the lab session. So, please prepare before and use your lab time wisely. We recommend to spare at least 8-10 mins for the Trajectory experiment. Try to finish everything else under 5 mins. Parallelize the work load between the team members.**
 
 GOOD LUCK!!!
 
