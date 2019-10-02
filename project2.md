@@ -16,8 +16,9 @@ Table of Contents:
   - [7.1. Report](#report)
   - [7.2. File tree and naming](#files)
 - [8. Live Demo](#livedemo)
-- [9. Allowed and Disallowed functions](#allowed)
-- [10. Collaboration Policy](#coll)
+- [9. Lab Instructions](#labinstructions)
+- [10. Allowed and Disallowed functions](#allowed)
+- [11. Collaboration Policy](#coll)
 
 <a name='due'></a>
 ## 1. Deadline 
@@ -83,6 +84,8 @@ The third  trajectory is a Staircase modulated on a straight line which goes fro
 <a name='report'></a>
 ### 7.1. Report
 
+- A sample report can be found [here](Reports/Project2/P2SampleReport_Nitin.pdf).
+
 Explain in detail your approach to complete the project, and describe any interesting problems you encountered and/or solutions you implemented.  You **MUST** include the following details in your writeup:
 
 - Your report **MUST** be typeset in LaTeX in the IEEE Tran format provided to you in the ``Draft`` folder (Use the same draft folder from P1) and should of a conference quality paper.
@@ -111,24 +114,66 @@ TeamYourTeamNumber_p2.zip
 
 On Thursday, October 03, 2019, the class will be held in the IRB 0108 lab where each team will show a live demo of all the three trajectories in action. Each time will be given 10 minutes to setup and demo all the three trajectories.  
 
+<a name='labinstructions'></a>
+## 9. Lab Instructions
+
+**Make sure all of your batteries are FULLY CHARGED before coming to the lab session.**
+
+<a name='upboard'></a>
+### 9.1 UP board
+You are expected to run these two code snippets (and show the outputs to the instructors):
+```
+# For Testing Ubuntu Version in Up-Board
+lsb_release -a
+```
+```
+# For Testing OpenCV Version in Up-Board and run a sample output
+import numpy as np
+import cv2
+from matplotlib import pyplot as plt
+print('Numpy version:', np.__version__)
+print('OpenCV version:', cv2.__version__)
+print('MatplotLib version:', plt.__version__)
+wget https://docs.opencv.org/3.3.0/opencv_screenshot.jpg -o messi5.jpg
+# Load an color image in grayscale
+img = cv2.imread('messi5.jpg',0)
+cv2.imshow('image',img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+
+<a name='viconsetup'></a>
+### 9.2 Vicon Setup
+You will be provided with a shield
+
+- Vicon sample
+- Vicon is calibrated; else remind us.
+- Mount the vicon marker shield. 
+- 15 mins total. 5 mins to setup. 10 mins to run.
+- Run [this python script] (to run imread, imwrite etc) and display the output to the instructors. We'll check OpenCV version.
+- Show us the output of `lsb_release -a` from the UP Board.
+- ROS_MASTER_URI, IP address, WiFi name and Password instructions. 
+- Follow [this lab instruction and safety manual] else you will be forced to be disqualified.
+
+
 
 <a name='allowed'></a>
-## 9. Allowed and Disallowed functions
+## 10. Allowed and Disallowed functions
 
 <b> Allowed:
 
 Any functions regarding reading, writing and displaying/plotting images in `cv2`, `matplotlib`, `ROS`.
 - Basic math utilities including convolution operations in `numpy` and `math`.
 - Any functions for pretty plots.
-- ``bebop_autonomy`` packages for controlling the PRGHusky.
-
+- `bebop_autonomy` packages for controlling the PRGHusky.
 
 <b> Disallowed:
 - Any function that implements trajectory interpolation.
 
 
 <a name='coll'></a>
-## 10. Collaboration Policy
+## 11. Collaboration Policy
 You are encouraged to discuss the ideas with your peers. However, the code should be your own team's, and should be the result of you exercising your own understanding of it. If you reference anyone else's code in writing your project, you must properly cite it in your code (in comments) and your writeup. For the full honor code refer to the ENAE788M Fall 2019 website.
 
 
