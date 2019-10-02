@@ -112,7 +112,7 @@ TeamYourTeamNumber_p2.zip
 <a name='livedemo'></a>
 ## 8. Live Demo 
 
-On Thursday, October 03, 2019, the class will be held in the lab from 3 p.m. where each team will show a live demo of all the three trajectories in action. Each time will be given 10 minutes to setup and demo all the three trajectories.  
+On Thursday, October 03, 2019, the class will be held in the lab from 3 p.m. where each team will show a live demo of all the three trajectories in action. Each time will be given 10 minutes to setup and demo all the three trajectories.
 
 <a name='labinstructions'></a>
 ## 9. Lab Instructions
@@ -142,9 +142,24 @@ cv2.destroyAllWindows()
 
 To run these, you will provided a monitor with HDMI, Mouse and a Keyboard. You will power your Up board using Husky's power ONLY. Also, if you don't have internet access in the Up board, you won't be able to run the above `wget` command; so please download [this image](https://docs.opencv.org/3.3.0/opencv_screenshot.jpg) and copy the image to the Up board to some specific location from where you will be running the script in-class. Make sure the file name remains `opencv_screenshot.jpg`.
 
+<div class="fig fighighlight">
+  <img src="/assets/2019/p2/ViconPlate.png" width="40%">
+  <div class="figcaption">
+    Figure 4: Vicon Marker Shield.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
 <a name='viconsetup'></a>
 ### 9.2 Vicon Setup
-You will be provided with a shield with vicon markers (shown below) that you will replace with your Up board. You are going to unscrew the Up board from the PRG Husky platform and screw-in the vicon marker shield.
+You will be provided with a shield with vicon markers (shown below) that you will replace with your Up board. You are going to unscrew (M3 nuts) the Up board from the PRG Husky platform and screw-in the vicon marker shield. 
+<div class="fig fighighlight">
+  <img src="/assets/2019/p2/ViconPlate.png" width="40%">
+  <div class="figcaption">
+    Figure 5: Up board/Vicon shield mounting bolts.
+  </div>
+  <div style="clear:both;"></div>
+</div>
 
 The first thing you need to do is to connect your laptop/linux machine (not Up board) is to connect to ARC lab WiFi. The SSID of the network will be `Drone_Lab`. The password will be provided during the lab session! Make sure you have a secure connection to this WiFi (and not eduroam or anything else as the Vicon runs on this network).
 Before running the experiment, make sure you bag the vicon outputs which will be published at 100Hz. In your `~/.bashrc` file, you MUST add the following snippet at the last of your file:
