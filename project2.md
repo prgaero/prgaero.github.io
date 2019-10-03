@@ -185,7 +185,7 @@ Or you can also record the `.csv` file from Vicon directly. The instructors will
 Another thing to note is the calibration. Vicons will be well calibrated before but a little physical nudge to the Vicon or the even the wall might change the orientation/position of the Vicon cameras. In which case, the LEDs on the Vicon cameras will change from Blue to Red (as shown in the figure below) and we would need to recalibrate them again. It is the team's responsibility to notice the calibration and inform the instructors.
 
 <div class="fig fighighlight">
-  <img src="/assets/2019/p2/ViconStates.jpg" width="40%">
+  <img src="/assets/2019/p2/ViconStates.jpg" width="80%">
   <div class="figcaption">
     Figure 6: Vicon States.
   </div>
