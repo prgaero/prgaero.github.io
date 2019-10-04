@@ -34,7 +34,7 @@ In this project, your aim is to navigate through colored window sequence of know
 
 <a name='test'></a>
 ## 3. Testing
-On the day of the deadline, each team will be given a 15 minute slot for demoing their code in action to the instructors. The instructors will place the windows as they wish (position, orientation and order of color). The task is the fly through the windows as fast as possible.  
+On the day of the deadline, each team will be given a 15 minute slot for demonstrating their code in action to the instructors. The instructors will place the windows as well as the PRG Husky quadrotor as they wish (position, orientation and order of color). The instructors will make sure that the window is in the visible region as seen from the first frame. The task is the fly through the windows as fast as possible.  
 
 
 <a name='sub'></a>
