@@ -142,8 +142,7 @@ On the day of the deadline, each team will be given a 15 minute slot for demonst
 Explain in detail your approach to complete the project, and describe any interesting problems you encountered and/or solutions you implemented.  You **MUST** include the following details in your writeup:
 
 - Your report **MUST** be typeset in LaTeX in the IEEE Tran format provided to you in the ``Draft`` folder (Use the same draft folder from P1) and should of a conference quality paper.
-- Present Vicon plots for each trajectory followed along with the estimated 3D window position overlaid on the same plot. (Show all three views ``X-Y``, ``X-Z`` and ``Y-Z``).
-- Present the output videos for trajectory following along with the window estimates in real-time as ``Outputs/GapFlyt.mp4``. Be sure to use appropriate colors to plot the windows in ``rviz``, for eg., blue color for a blue window and so on.
+- Present the output videos for trajectory following along with the window corner detections overlaid on the video, rviz visualization of 3D window pose estimates in real-time as ``Outputs/GapFlyt.mp4``. Be sure to use appropriate colors to plot the windows in ``rviz``, for eg., yellow color for a yellow window and violet color for violet window.
 
 
 <a name='files'></a>
@@ -175,13 +174,16 @@ Any functions regarding reading, writing and displaying/plotting images and wind
 - Basic math utilities including convolution operations in `numpy` and `math`.
 - Any functions for pretty plots.
 - ``bebop_autonomy`` packages for controlling the PRGHusky.
-- Functions for color thresholding including GMM.
-- Functions for line fitting and corner detection.
-
+- Morphological operations.
+- Linear and non-linear least squares.
+- Functions for corner detection and tracking.
+- Functions for sensor fusion including Kalman Filters.
 
 <b> Disallowed:
 - Any function that implements trajectory interpolation.
 - Any function that directly detects the window.
+- Functions for color thresholding including GMM.
+- Functions for line fitting including hough transform and `cv2.fitLine`.
 
 
 <a name='coll'></a>
