@@ -56,7 +56,7 @@ In this project, your aim is to navigate through a colored window (Fig. 1) of kn
 <a name='window'></a>
 ## 3. Window Statistics
 
-The window measures (length and breadth) are shown in the figure 3. Note that the height of the windows are unknown. Also, the windows may or may not be exactly rectangular as shown in the figure 3. The thickness of these windows are 6.2 cm. 
+The window measures (length and breadth) are shown in the figure 3. Note that the height of the windows are unknown. Also, the windows may or may not be exactly rectangular as shown in the figure 3. The windows are made of white PVC pipes of diamemer 6.2 cm and are spray pained in yellow and or violet.
 
 <div class="fig fighighlight">
   <img src="/assets/2019/p3/Windows2.png" width="80%">
