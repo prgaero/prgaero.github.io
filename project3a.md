@@ -10,15 +10,17 @@ Table of Contents:
 - [2. Problem Statement](#prob)
 - [3. Window Statistics](#window)
 - [4. Implementation](#implementation)
-  - [4.1 ROS Nodes](#node)
-  - [4.2 Launch File](#launch)
-  - [4.3 Rviz visualization](#rviz)
-  - [4.4 Color Segmentation](#seg)
-    - [4.4.1 Color Segmentation Using Thresholding](#thresh)
-    - [4.4.2 Color Segmentation Using Single Gaussian](#gauss)
-    - [4.4.3 Color Segmentation Using a Gaussian Mixture Model (GMM)](#gmm)
-    - [4.4.4 Line/Shape Fitting](#fit)
-    - [4.4.5 Final Filtering](#filter)
+  - [4.1. ROS Nodes](#node)
+  - [4.2. Launch File](#launch)
+  - [4.3. Rviz visualization](#rviz)
+  - [4.4. Color Segmentation](#seg)
+    - [4.4.1. Color Segmentation Using Thresholding](#thresh)
+    - [4.4.2. Color Segmentation Using Single Gaussian](#gauss)
+    - [4.4.3. Color Segmentation Using a Gaussian Mixture Model (GMM)](#gmm)
+    - [4.4.4. Line/Shape Fitting](#fit)
+    - [4.4.5. Final Filtering](#filter)
+  - [4.5. Camera Intrinsic and Color Calibration](#calib)
+  - [4.6. Camera/Window Pose](#pose)
 - [5. Test Set](#test)
 - [6. Live Demo](#live)
 - [7. Submission Guidelines](#sub)
@@ -73,15 +75,15 @@ The window measures (length and breadth) are shown in the figure 3. Note that th
 The instructors will place the quadrotor and the window at a certain orientation and position, making sure that the part of the window is visible in the first frame on take off. Your job is to detect the window and go through. There will be ONLY one window and that can be of either yellow or purple (you will informed only a minute before flying) and of some arbitrary height. You need to implement the following:
 
 <a name='node'></a>
-### 4.1 ROS Nodes
+### 4.1. ROS Nodes
 You need to create multiple ROS nodes to run your algorithm: one for vision, another for the control or one which does both. You can have any number of nodes as you desire.
 
 <a name='launch'></a>
-### 4.2 Launch File
+### 4.2. Launch File
 All the above ROS nodes must be called using a single `launch` file.
 
 <a name='rviz'></a>
-### 4.3 Rviz visualization
+### 4.3. Rviz visualization
 You need to plot the window in `rviz` along with the trajectory (and pose i.e. both position and orientation) of your quadrotor. The `rviz` visualization must show the correct color: either purple or yellow. A sample visualization is shown in Fig. 4. Be sure to fix your window in some arbitrarily chosen world frame and plot your camera's (quadrotor's) pose with respect to it.
 
 <div class="fig fighighlight">
@@ -93,34 +95,67 @@ You need to plot the window in `rviz` along with the trajectory (and pose i.e. b
 </div>
 
 <a name='seg'></a>
-### 4.4 Color Segmentation
+### 4.4. Color Segmentation
 
 <a name='thresh'></a>
-#### 4.4.1 Color Segmentation Using Thresholding
+#### 4.4.1. Color Segmentation Using Thresholding
 
 Implement color thresholding without using any built-in or third party code for color thresholding. Include your outputs (as a video) for the Test set. Feel free to use any color space you desire, you can use built-in or third party code for color conversions.
 
 <a name='gauss'></a>
-#### 4.4.2 Color Segmentation Using Single Gaussian
+#### 4.4.2. Color Segmentation Using Single Gaussian
 
 Implement color thresholding without using any built-in or third party code for color segmentation using a single gaussian. Include your outputs (as a video) for the Test set. Feel free to use any color space you desire, you can use built-in or third party code for color conversions and dataset labelling. 
 
 <a name='gmm'></a>
-#### 4.4.3 Color Segmentation Using a Gaussian Mixture Model (GMM)
+#### 4.4.3. Color Segmentation Using a Gaussian Mixture Model (GMM)
 
 Implement color thresholding without using any built-in or third party code for color segmentation using a GMM (use more than 1 gaussian).  Include your outputs (as a video) for the Test set. Feel free to use any color space you desire, you can use built-in or third party code for color conversions and dataset labelling. 
 
 <a name='fit'></a>
-#### 4.4.4 Line/Shape Fitting
+#### 4.4.4. Line/Shape Fitting
 
 Implement an algorithm to fit a line to the detected color without using any built-in or  third party code. You are allowed to use code for linear and non-linear optimizers, however any piece of code which fits a line directly is not allowed.
 
 <a name='filter'></a>
-#### 4.4.5 Final Filtering
+#### 4.4.5. Final Filtering
 
 Use any built-in and third party morphoplogical operation for this.
 
-_Be sure to cite any third party code you use._
+**Be sure to cite any third party code you use.**
+
+
+<a name='calib'></a>
+### 4.5. Camera Intrinsic and Color Calibration 
+Camera Intrinsic calibration entails with estimating the camera calibration matrix $$K$$ which includes the focal length and the principal point and the distortion parameters. You'll need to use the awesome calibration package developed by ETHZ [Kalibr](https://github.com/ethz-asl/kalibr/wiki/multiple-camera-calibration) to do this. You'll need either a checkerboard or an april grid to calibrate the camera. We found that using the April grid gave us superior results. Feel free to print one (don't forget to turn off autoscaling or scaling of any sort before printing). Bigger april grids or checkerboard in general give more accurate results. A large april grid is located in IRB 3237 (Fig. 4) which you are free to use if you don't want to print your own.
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p3/AprilGrid.jpg" width="40%">
+  <div class="figcaption">
+    Figure 5: April Grid in IRB 3237.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+
+A simple way to color calibrate a camera is to use a color calibration grid as shown in Fig. 6. It has different standard colors which you'll match up visually. Another simple way is to capture a scene with "gray" color and make sure that it looks gray. Note that your results will vary based on your monitor's color calibration as well. Color calibration is important so that the complete dynamic range of all channels are used when converting from bayer to RGB image.
+
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p3/ColorGrid.jpg" width="40%">
+  <div class="figcaption">
+    Figure 6: Color Calibration Target.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+
+<a name='pose'></a>
+### 4.6. Camera/Window Pose
+
+Once the four or eight corners of the window have been detected, you'll need to recover the camera pose with respect to the window. Here we assume that the window is fixed and the camera is moving, hence the window is in some known co-ordinates in an arbitrarily chosen world frame. The choice of the world frame could be as simple as one of the window corners as origin. Use the function `cv2.solvePnP` to estimate camera pose given corresponding image co-ordinates of the corners and world points, $$K$$ matrix and distrotion coefficients.  
+
+
 
 <a name='test'></a>
 ## 5. Test Set
@@ -178,6 +213,7 @@ Any functions regarding reading, writing and displaying/plotting images and wind
 - Linear and non-linear least squares.
 - Functions for corner detection and tracking.
 - Functions for sensor fusion including Kalman Filters.
+- `cv2.solvePnP` for estimating camera pose given image-world point correspondences.
 
 <b> Disallowed:
 - Any function that implements trajectory interpolation.
