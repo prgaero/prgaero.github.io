@@ -41,24 +41,31 @@ In this project, your aim is to navigate through a colored window of known size 
 <div class="fig fighighlight">
   <img src="/assets/2019/p3/Windows.png" width="80%">
   <div class="figcaption">
-    Figure 1: The same window looks very different under different orientation and lighting/illumination settings.
+    Figure 2: The same window looks very different under different orientation and lighting/illumination settings.
   </div>
   <div style="clear:both;"></div>
 </div>
 
+<a name='window'></a>
+## 3. Window Statistics
 
-<a name='test'></a>
-## 3. Testing
-On the day of the deadline, each team will be given a 15 minute slot for demonstrating their code in action to the instructors. The instructors will place the windows as well as the PRG Husky quadrotor as they wish (position, orientation and order of color). The instructors will make sure that the window is in the visible region as seen from the first frame. The task is the fly through the windows as fast as possible.  
+
+<a name='testset'></a>
+## 4. Test Set
+A test set will be released 24 hours before the deadline. The test set will either be in the form of a ROS bag or a mp4 video showing one of the colored windows from different orientation, position and illumination. You have to output the detected corners of the window overlayed on each frame and export this to an mp4 video which you need to include in your report. You also need to display the pose the camera with respect to the window as numbers overlayed on the same video (please define your coordinate axes and origin in your report so we can make sense of your numbers).
+
+<a name='live'></a>
+## 4. Live Demo
+On the day of the deadline, each team will be given a 15 minute slot for demonstrating their code in action to the instructors. The instructors will place the windows as well as the PRG Husky quadrotor as they wish (position, orientation and choice of colored window at different heights). The instructors will make sure that atleast a part of the window is in the visible region as seen from the first frame (note that it is not guarenteed that the complete window will be visible in the first frame). The task is the fly through the windows as fast as possible. You also need to show us a live visualization of your detection (corners of the window overlaid on the image) along with the 3D visualization of the window with the relative camera pose overlaid in rviz.
 
 
 <a name='sub'></a>
-## 4. Submission Guidelines
+## 5. Submission Guidelines
 
 <b> If your submission does not comply with the following guidelines, you'll be given ZERO credit </b>
 
 <a name='report'></a>
-### 4.1. Report
+### 5.1. Report
 
 Explain in detail your approach to complete the project, and describe any interesting problems you encountered and/or solutions you implemented.  You **MUST** include the following details in your writeup:
 
@@ -68,7 +75,7 @@ Explain in detail your approach to complete the project, and describe any intere
 
 
 <a name='files'></a>
-### 4.2. File tree and naming
+### 5.2. File tree and naming
 
 Your submission on ELMS/Canvas must be a ``zip`` file, following the naming convention ``TeamYourTeamNumber_p3a.zip``. If you email ID is ``1``, then the submission file should be named ``Team1_p3a.zip``. You can have any helper functions in sub-folders as you wish, be sure to index them using relative paths and if you have command line arguments for your Wrapper codes, make sure to have default values too. Please provide detailed instructions on how to run your code in ``README.md`` file. Please **DO NOT** include data in your submission.
 
@@ -83,12 +90,12 @@ TeamYourTeamNumber_p3a.zip
 ```
 
 <a name='debug'></a>
-## 5. Debugging Tips
+## 6. Debugging Tips
 - To verify if your detections are working correctly, plot the corners of the window on the image, they should align with the true window corners. 
 - To verify if your pose estimation is correct, re-project the estimated 3D corners of the window onto the image. They should be very close to the detected corners.
 
 <a name='allowed'></a>
-## 5. Allowed and Disallowed functions
+## 7. Allowed and Disallowed functions
 
 <b> Allowed:
 
