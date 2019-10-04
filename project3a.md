@@ -82,7 +82,7 @@ All the above ROS nodes must be called using a single `launch` file.
 
 <a name='rviz'></a>
 ### 4.3 Rviz visualization
-You need to plot the window in `rviz` along with the trajectory (and pose i.e. both position and orientation) of your quadrotor. The `rviz` visualization must show the correct color: either purple or yellow. A sample visualization is shown in fig. 4.  
+You need to plot the window in `rviz` along with the trajectory (and pose i.e. both position and orientation) of your quadrotor. The `rviz` visualization must show the correct color: either purple or yellow. A sample visualization is shown in Fig. 4. Be sure to fix your window in some arbitrarily chosen world frame and plot your camera's (quadrotor's) pose with respect to it.
 
 <div class="fig fighighlight">
   <img src="/assets/2019/p3/windowRviz.gif" width="80%">
