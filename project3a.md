@@ -24,11 +24,6 @@ Table of Contents:
 ## 2. Problem Statement
 In this project, your aim is to navigate through a colored window of known size but unknown position and orientation. Windows of two different colors (yellow and purple) are setup in the lab IRB 0108. You need to collect data as a ROS bag/video capture while moving the monocular camera pointed at different angles and different illumination of the window (sample images are shown in Fig. 2). Feel free to place the windows at any distance and orientation you desire for your testing. You'll need to implement the detection algorithm of windows using color or edges or whatever you desire. Note that you'll have to calibrate the camera to estimate the value of the camera matrix $$K$$. Also, you'll need to rectify the images before processing them. Once you've estimated the window pose in 3D, implement a trajectory planner and control algorithm to go through the window. 
 
-
-- Node implm
-- launch file
-- rviz viz of window and quad pose wrt window (arori's video here)
-
 <div class="fig fighighlight">
   <img src="/assets/2019/p3/GapFlyt.png" width="80%">
   <div class="figcaption">
@@ -48,6 +43,39 @@ In this project, your aim is to navigate through a colored window of known size 
 
 <a name='window'></a>
 ## 3. Window Statistics
+
+The window measures (length and breath) are shown in the figure 3. Note that the height of the windows are unknown. Also, the windows may or may not be exactly rectangular as shown in the figure 3. The thickness of these windows are 6.2 cm. 
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p3/Windows2.png" width="80%">
+  <div class="figcaption">
+    Figure 3: Rviz Visualization of the detected windows.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+
+<a name='implementation'></a>
+## 4. Implementation
+
+The instructors will place the quadrotor and the window at a certain orientation and position, making sure that the part of the window is visible in the first frame on take off. Your job is to detect the window and go through. There will be ONLY one window and that can be of either yellow or purple (you will informed only a minute before flying) and of some arbitrary height. You need to implement the following:
+
+### ROS Nodes
+You need to create multiple ROS nodes to run your algorithm: one for vision, another for the control. You can have more than two nodes if you need. 
+
+### Launch File
+All the above ROS nodes must be called using a single `launch` file.
+
+### Rviz visualization
+You need to plot the window in `rviz` along with the trajectory (and pose i.e. both position and orientation) of your quadrotor. The `rviz` visualization must show the correct color: either purple or yellow. A sample visualization is shown in fig. 4.  
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p3/windowRviz.gif" width="80%">
+  <div class="figcaption">
+    Figure 4: Rviz Visualization of the detected windows.
+  </div>
+  <div style="clear:both;"></div>
+</div>
 
 
 <a name='testset'></a>
