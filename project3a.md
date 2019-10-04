@@ -22,7 +22,12 @@ Table of Contents:
 
 <a name='intro'></a>
 ## 2. Problem Statement
-In this project, your aim is to navigate through colored window sequence of known sizes but unknown position and orientation. The windows are setup in the lab IRB 0108. You need to collect data as a ROS bag/video capture while moving the monocular camera pointed at different angles (possible different illumination) of the window. Feel free to place the windows at any distance and orientation you desire for your testing. You'll need to implement the detection algorithm of windows using color or edges or whatever you desire. Note that you'll have to calibrate the camera to estimate the value of the camera matrix $$K$$. Also, you'll need to rectify the images before processing them. Once you've estimated the window pose in 3D, implement a trajectory planner and control algorithm to go through the window. 
+In this project, your aim is to navigate through a colored window of known size but unknown position and orientation. Windows of two different colors (yellow and purple) are setup in the lab IRB 0108. You need to collect data as a ROS bag/video capture while moving the monocular camera pointed at different angles and different illumination of the window (sample images are shown in Fig. 2). Feel free to place the windows at any distance and orientation you desire for your testing. You'll need to implement the detection algorithm of windows using color or edges or whatever you desire. Note that you'll have to calibrate the camera to estimate the value of the camera matrix $$K$$. Also, you'll need to rectify the images before processing them. Once you've estimated the window pose in 3D, implement a trajectory planner and control algorithm to go through the window. 
+
+
+- Node implm
+- launch file
+- rviz viz of window and quad pose wrt window (arori's video here)
 
 <div class="fig fighighlight">
   <img src="/assets/2019/p3/GapFlyt.png" width="80%">
@@ -31,6 +36,16 @@ In this project, your aim is to navigate through colored window sequence of know
   </div>
   <div style="clear:both;"></div>
 </div>
+
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p3/Windows.png" width="80%">
+  <div class="figcaption">
+    Figure 1: The same window looks very different under different orientation and lighting/illumination settings.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
 
 <a name='test'></a>
 ## 3. Testing
