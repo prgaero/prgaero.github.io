@@ -74,7 +74,7 @@ The instructors will place the quadrotor and the window at a certain orientation
 
 <a name='node'></a>
 ### 4.1 ROS Nodes
-You need to create multiple ROS nodes to run your algorithm: one for vision, another for the control. You can have more than two nodes if you need. 
+You need to create multiple ROS nodes to run your algorithm: one for vision, another for the control or one which does both. You can have any number of nodes as you desire.
 
 <a name='launch'></a>
 ### 4.2 Launch File
