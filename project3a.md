@@ -61,7 +61,7 @@ The window measures (length and breadth) are shown in the figure 3. Note that th
 <div class="fig fighighlight">
   <img src="/assets/2019/p3/Windows2.png" width="80%">
   <div class="figcaption">
-    Figure 3: Rviz Visualization of the detected windows.
+    Figure 3: Window dimensions.
   </div>
   <div style="clear:both;"></div>
 </div>
