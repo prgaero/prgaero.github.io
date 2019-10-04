@@ -8,13 +8,25 @@ permalink: /2019/proj/p3a/
 Table of Contents:
 - [1. Deadline](#due)
 - [2. Problem Statement](#prob)
-- [3. Testing](#test)
-- [4. Submission Guidelines](#sub)
-  - [4.1. Report](#report)
-  - [4.2. File tree and naming](#files)
-- [5. Debugging Tips](#debug)
-- [5. Allowed and Disallowed functions](#allowed)
-- [6. Collaboration Policy](#coll)
+- [3. Window Statistics](#window)
+- [4. Implementation](#implementation)
+  - [4.1 ROS Nodes](#node)
+  - [4.2 Launch File](#launch)
+  - [4.3 Rviz visualization](#rviz)
+  - [4.4 Color Segmentation](#seg)
+    - [4.4.1 Color Segmentation Using Thresholding](#thresh)
+    - [4.4.2 Color Segmentation Using Single Gaussian](#gauss)
+    - [4.4.3 Color Segmentation Using a Gaussian Mixture Model (GMM)](#gmm)
+    - [4.4.4 Line/Shape Fitting](#fit)
+    - [4.4.5 Final Filtering](#filter)
+- [5. Test Set](#test)
+- [6. Live Demo](#live)
+- [7. Submission Guidelines](#sub)
+  - [7.1. Report](#report)
+  - [7.2. File tree and naming](#files)
+- [8. Debugging Tips](#debug)
+- [9. Allowed and Disallowed functions](#allowed)
+- [10. Collaboration Policy](#coll)
 
 <a name='due'></a>
 ## 1. Deadline 
@@ -60,12 +72,15 @@ The window measures (length and breath) are shown in the figure 3. Note that the
 
 The instructors will place the quadrotor and the window at a certain orientation and position, making sure that the part of the window is visible in the first frame on take off. Your job is to detect the window and go through. There will be ONLY one window and that can be of either yellow or purple (you will informed only a minute before flying) and of some arbitrary height. You need to implement the following:
 
+<a name='node'></a>
 ### 4.1 ROS Nodes
 You need to create multiple ROS nodes to run your algorithm: one for vision, another for the control. You can have more than two nodes if you need. 
 
+<a name='launch'></a>
 ### 4.2 Launch File
 All the above ROS nodes must be called using a single `launch` file.
 
+<a name='rviz'></a>
 ### 4.3 Rviz visualization
 You need to plot the window in `rviz` along with the trajectory (and pose i.e. both position and orientation) of your quadrotor. The `rviz` visualization must show the correct color: either purple or yellow. A sample visualization is shown in fig. 4.  
 
@@ -77,31 +92,37 @@ You need to plot the window in `rviz` along with the trajectory (and pose i.e. b
   <div style="clear:both;"></div>
 </div>
 
+<a name='seg'></a>
 ### 4.4 Color Segmentation
 
+<a name='thresh'></a>
 #### 4.4.1 Color Segmentation Using Thresholding
 
 Implement color thresholding without using any built-in or third party code for color thresholding. Include your outputs (as a video) for the Test set. Feel free to use any color space you desire, you can use built-in or third party code for color conversions.
 
+<a name='gauss'></a>
 #### 4.4.2 Color Segmentation Using Single Gaussian
 
 Implement color thresholding without using any built-in or third party code for color segmentation using a single gaussian. Include your outputs (as a video) for the Test set. Feel free to use any color space you desire, you can use built-in or third party code for color conversions and dataset labelling. 
 
+<a name='gmm'></a>
 #### 4.4.3 Color Segmentation Using a Gaussian Mixture Model (GMM)
 
 Implement color thresholding without using any built-in or third party code for color segmentation using a GMM (use more than 1 gaussian).  Include your outputs (as a video) for the Test set. Feel free to use any color space you desire, you can use built-in or third party code for color conversions and dataset labelling. 
 
+<a name='fit'></a>
 #### 4.4.4 Line/Shape Fitting
 
 Implement an algorithm to fit a line to the detected color without using any built-in or  third party code. You are allowed to use code for linear and non-linear optimizers, however any piece of code which fits a line directly is not allowed.
 
+<a name='filter'></a>
 #### 4.4.5 Final Filtering
 
 Use any built-in and third party morphoplogical operation for this.
 
 _Be sure to cite any third party code you use._
 
-<a name='testset'></a>
+<a name='test'></a>
 ## 5. Test Set
 A test set will be released 24 hours before the deadline. The test set will either be in the form of a ROS bag or a mp4 video showing one of the colored windows from different orientation, position and illumination. You have to output the detected corners of the window overlayed on each frame and export this to an mp4 video which you need to include in your report. You also need to display the pose the camera with respect to the window as numbers overlayed on the same video (please define your coordinate axes and origin in your report so we can make sense of your numbers).
 
