@@ -60,13 +60,13 @@ The window measures (length and breath) are shown in the figure 3. Note that the
 
 The instructors will place the quadrotor and the window at a certain orientation and position, making sure that the part of the window is visible in the first frame on take off. Your job is to detect the window and go through. There will be ONLY one window and that can be of either yellow or purple (you will informed only a minute before flying) and of some arbitrary height. You need to implement the following:
 
-### ROS Nodes
+### 4.1 ROS Nodes
 You need to create multiple ROS nodes to run your algorithm: one for vision, another for the control. You can have more than two nodes if you need. 
 
-### Launch File
+### 4.2 Launch File
 All the above ROS nodes must be called using a single `launch` file.
 
-### Rviz visualization
+### 4.3 Rviz visualization
 You need to plot the window in `rviz` along with the trajectory (and pose i.e. both position and orientation) of your quadrotor. The `rviz` visualization must show the correct color: either purple or yellow. A sample visualization is shown in fig. 4.  
 
 <div class="fig fighighlight">
@@ -77,23 +77,46 @@ You need to plot the window in `rviz` along with the trajectory (and pose i.e. b
   <div style="clear:both;"></div>
 </div>
 
+### 4.4 Color Segmentation
+
+#### 4.4.1 Color Segmentation Using Thresholding
+
+Implement color thresholding without using any built-in or third party code for color thresholding. Include your outputs (as a video) for the Test set. Feel free to use any color space you desire, you can use built-in or third party code for color conversions.
+
+#### 4.4.2 Color Segmentation Using Single Gaussian
+
+Implement color thresholding without using any built-in or third party code for color segmentation using a single gaussian. Include your outputs (as a video) for the Test set. Feel free to use any color space you desire, you can use built-in or third party code for color conversions and dataset labelling. 
+
+#### 4.4.3 Color Segmentation Using a Gaussian Mixture Model (GMM)
+
+Implement color thresholding without using any built-in or third party code for color segmentation using a GMM (use more than 1 gaussian).  Include your outputs (as a video) for the Test set. Feel free to use any color space you desire, you can use built-in or third party code for color conversions and dataset labelling. 
+
+#### 4.4.4 Line/Shape Fitting
+
+Implement an algorithm to fit a line to the detected color without using any built-in or  third party code. You are allowed to use code for linear and non-linear optimizers, however any piece of code which fits a line directly is not allowed.
+
+#### 4.4.5 Final Filtering
+
+Use any built-in and third party morphoplogical operation for this.
+
+_Be sure to cite any third party code you use._
 
 <a name='testset'></a>
-## 4. Test Set
+## 5. Test Set
 A test set will be released 24 hours before the deadline. The test set will either be in the form of a ROS bag or a mp4 video showing one of the colored windows from different orientation, position and illumination. You have to output the detected corners of the window overlayed on each frame and export this to an mp4 video which you need to include in your report. You also need to display the pose the camera with respect to the window as numbers overlayed on the same video (please define your coordinate axes and origin in your report so we can make sense of your numbers).
 
 <a name='live'></a>
-## 4. Live Demo
+## 6. Live Demo
 On the day of the deadline, each team will be given a 15 minute slot for demonstrating their code in action to the instructors. The instructors will place the windows as well as the PRG Husky quadrotor as they wish (position, orientation and choice of colored window at different heights). The instructors will make sure that atleast a part of the window is in the visible region as seen from the first frame (note that it is not guarenteed that the complete window will be visible in the first frame). The task is the fly through the windows as fast as possible. You also need to show us a live visualization of your detection (corners of the window overlaid on the image) along with the 3D visualization of the window with the relative camera pose overlaid in rviz.
 
 
 <a name='sub'></a>
-## 5. Submission Guidelines
+## 7. Submission Guidelines
 
 <b> If your submission does not comply with the following guidelines, you'll be given ZERO credit </b>
 
 <a name='report'></a>
-### 5.1. Report
+### 7.1. Report
 
 Explain in detail your approach to complete the project, and describe any interesting problems you encountered and/or solutions you implemented.  You **MUST** include the following details in your writeup:
 
@@ -103,7 +126,7 @@ Explain in detail your approach to complete the project, and describe any intere
 
 
 <a name='files'></a>
-### 5.2. File tree and naming
+### 7.2. File tree and naming
 
 Your submission on ELMS/Canvas must be a ``zip`` file, following the naming convention ``TeamYourTeamNumber_p3a.zip``. If you email ID is ``1``, then the submission file should be named ``Team1_p3a.zip``. You can have any helper functions in sub-folders as you wish, be sure to index them using relative paths and if you have command line arguments for your Wrapper codes, make sure to have default values too. Please provide detailed instructions on how to run your code in ``README.md`` file. Please **DO NOT** include data in your submission.
 
@@ -118,12 +141,12 @@ TeamYourTeamNumber_p3a.zip
 ```
 
 <a name='debug'></a>
-## 6. Debugging Tips
+## 8. Debugging Tips
 - To verify if your detections are working correctly, plot the corners of the window on the image, they should align with the true window corners. 
 - To verify if your pose estimation is correct, re-project the estimated 3D corners of the window onto the image. They should be very close to the detected corners.
 
 <a name='allowed'></a>
-## 7. Allowed and Disallowed functions
+## 9. Allowed and Disallowed functions
 
 <b> Allowed:
 
@@ -141,5 +164,5 @@ Any functions regarding reading, writing and displaying/plotting images and wind
 
 
 <a name='coll'></a>
-## 6. Collaboration Policy
+## 10. Collaboration Policy
 You are encouraged to discuss the ideas with your peers. However, the code should be your own team's, and should be the result of you exercising your own understanding of it. If you reference anyone else's code in writing your project, you must properly cite it in your code (in comments) and your writeup. For the full honor code refer to the ENAE788M Fall 2019 website.
