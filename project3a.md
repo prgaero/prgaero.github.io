@@ -34,7 +34,7 @@ In this project, your aim is to navigate through a colored window of known size 
 
 
 <div class="fig fighighlight">
-  <img src="/assets/2019/p3/Windows.png" width="80%">
+  <img src="/assets/2019/p3/Windows.png" width="100%">
   <div class="figcaption">
     Figure 2: The same window looks very different under different orientation and lighting/illumination settings.
   </div>
