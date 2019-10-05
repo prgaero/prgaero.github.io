@@ -8,9 +8,9 @@ permalink: /2019fall/proj/p1a-results/
 
 <!-- Gold -->
 <p style="background-color:#f4c842; padding:5px">
-<b>khoi-sgteja</b><br>
-<a href="/assets/2019/p1/results/pdf/khoi_sgteja_p1-min.pdf"> 
-<img src="/assets/2019/p1/results/jpg/khoi_sgteja_p1.jpg" height="170"></a>
+<b><b><text>sudo rm -rf *</text></b><br>
+</b><a href="/Reports/p1b/rehmnicholas.pdf"> 
+<img src="/Reports/p1b/rehmnicholas.jpg" height="170"></a>
 <b>(Gold Submission)<br>
 
 <!-- Other Submissions -->
@@ -24,7 +24,27 @@ permalink: /2019fall/proj/p1a-results/
 
 <font color="black">
 
-<b><b>kanu-srinidhi</b><br>
-</b><a href="/assets/2019/p1/results/pdf/jdkanu_p1-min.pdf"> 
-<img src="/assets/2019/p1/results/jpg/jdkanu_p1.jpg" height="170"></a>
+<b>Bouncing Rainbow Zebras</b><br>
+<a href="/Reports/p1b/holumerik.pdf"> 
+<img src="/Reports/p1b/holumerik.jpg" height="170"></a>
+<br><br>
+
+<b><b>Quadminator</b><br>
+</b><a href="/Reports/p1b/carrilloestefany.pdf"> 
+<img src="/Reports/p1b/carrilloestefany.jpg" height="170"></a>
+<br><br>
+
+<b><b>Dronacharaya</b><br>
+</b><a href="/Reports/p1b/dorbalavishnu.pdf"> 
+<img src="/Reports/p1b/dorbalavishnu.jpg" height="170"></a>
+<br><br>
+
+<b><b>Autonomous Flying Pigs</b><br>
+</b><a href="/Reports/p1b/lumbaravi.pdf"> 
+<img src="/Reports/p1b/lumbaravi.jpg" height="170"></a>
+<br><br>
+
+<b><b>DMC</b><br>
+</b><a href="/Reports/p1b/semenovilya.pdf"> 
+<img src="/Reports/p1b/semenovilya.jpg" height="170"></a>
 <br><br>
