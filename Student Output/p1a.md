@@ -10,7 +10,7 @@ permalink: /2019fall/proj/p1a-results/
 <p style="background-color:#f4c842; padding:5px">
 <b><b><text>sudo rm -rf *</text></b><br>
 </b><a href="/Reports/p1b/rehmnicholas.pdf"> 
-<img src="/Reports/p1b/rehmnicholas.jpg" height="170"></a>
+<img src="/Reports/p1b/rehmnicholas.jpg" height="170"></a><br>
 <b>(Gold Submission)<br>
 
 <!-- Other Submissions -->
