@@ -231,7 +231,7 @@ Any functions regarding reading, writing and displaying/plotting images and wind
 
 <a name='wifi'></a>
 ### 10.1 WiFi Driver
-You will be using EDUP DB1607 WiFi module with Intel Up board. You can clone the [rt8812au](git clone https://github.com/chahatdeep/rtl8812au-wifi-driver) driver repo.
+You will be using EDUP DB1607 WiFi module with Intel Up board. You can clone the [rt8812au](https://github.com/chahatdeep/rtl8812au-wifi-driver) driver repo.
 Do
 ```
 git clone https://github.com/chahatdeep/rtl8812au-wifi-driver
