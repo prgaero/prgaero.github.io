@@ -28,7 +28,11 @@ Table of Contents:
   - [7.2. File tree and naming](#files)
 - [8. Debugging Tips](#debug)
 - [9. Allowed and Disallowed functions](#allowed)
-- [10. Collaboration Policy](#coll)
+- [10. Hardware Tips](#hardware)
+  - [10.1 WiFi Driver](#wifi)
+  - [10.2 Leopard Imaging M021 Camera](#leopard)
+  - [10.3 Calibrating RGB Channels in Leopard Driver](#colorcalibration)
+- [11. Collaboration Policy](#coll)
 
 <a name='due'></a>
 ## 1. Deadline 
@@ -165,7 +169,6 @@ A test set will be released 24 hours before the deadline. The test set will eith
 ## 6. Live Demo
 On the day of the deadline, each team will be given a 15 minute slot for demonstrating their code in action to the instructors. The instructors will place the windows as well as the PRG Husky quadrotor as they wish (position, orientation and choice of colored window at different heights). The instructors will make sure that atleast a part of the window is in the visible region as seen from the first frame (note that it is not guarenteed that the complete window will be visible in the first frame). The task is the fly through the windows as fast as possible. You also need to show us a live visualization of your detection (corners of the window overlaid on the image) along with the 3D visualization of the window with the relative camera pose overlaid in rviz.
 
-
 <a name='sub'></a>
 ## 7. Submission Guidelines
 
@@ -223,7 +226,39 @@ Any functions regarding reading, writing and displaying/plotting images and wind
 - Any function that directly detects the window.
 - Functions for color thresholding including GMM.
 
+<a name='hardware'></a>
+## 10. Hardware Tips
+
+<a name='wifi'></a>
+### 10.1 WiFi Driver
+You will be using EDUP DB1607 WiFi module with Intel Up board. You can clone the [rt8812au]() driver repo.
+Do
+```
+git clone https://github.com/chahatdeep/rtl8812au-wifi-driver
+```
+And follow the `README.md` instructions from the above repo.
+
+Once you install this driver, you would need to restart your Up board and everything should work!
+
+In case it doesn't work, there is a chance you have to reinstall the Ubuntu that you currently have (depending if your tried installing some random drivers on your own).
+
+<a name='leopard'></a>
+### 10.2 Leopard Imaging M021 Camera
+
+To download and run the leopard imaging camera driver on your Up board, please use the following link:
+```
+https://github.com/chahatdeep/ubuntu-for-robotics/tree/master/Drivers/Leopard-Imaging-Camera
+```
+
+You will be using the Linux driver. There is a windows driver available as well. You can use that to quickly visualize and maybe tune the gains easily. We officially support `python` and `python3` code which you can find in `m021v4l2/opencv`. There is `C++` code available as well. In `python` and `python3` folder, you can run the python code by running `run-capture.py` or run the `ros` node directly by running `ros-capture.py`.
+
+The driver has been tested in Up board. So, the driver has a little issue. It by default tries to read `/dev/video0` which could your webcam in case of your laptop. So directly try to use the driver on the Up board itself and do not plug any other video device. 
+
+<a name='colorcalibration'></a>
+### 10.3 Calibrating RGB Channels in Leopard Driver
+
+Edit the `__init__.py` file. You can find the file in the `python/m021v4l2` folder. Depending on which resolution class you're calling in your `run-capture.py` file, you can alter the `bcorrect`, `gcorrect`, `rcorrect` variables. 
 
 <a name='coll'></a>
-## 10. Collaboration Policy
+## 11. Collaboration Policy
 You are encouraged to discuss the ideas with your peers. However, the code should be your own team's, and should be the result of you exercising your own understanding of it. If you reference anyone else's code in writing your project, you must properly cite it in your code (in comments) and your writeup. For the full honor code refer to the ENAE788M Fall 2019 website.
