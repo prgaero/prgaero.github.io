@@ -115,7 +115,7 @@ Implement color thresholding without using any built-in or third party code for 
 <a name='fit'></a>
 #### 4.4.4. Line/Shape Fitting
 
-Implement an algorithm to fit a line to the detected color without using any built-in or  third party code. You are allowed to use code for linear and non-linear optimizers, however any piece of code which fits a line directly is not allowed.
+Implement an algorithm to fit lines to the detected color using any built-in or third party code. 
 
 <a name='filter'></a>
 #### 4.4.5. Final Filtering
@@ -215,12 +215,13 @@ Any functions regarding reading, writing and displaying/plotting images and wind
 - Functions for corner detection and tracking.
 - Functions for sensor fusion including Kalman Filters.
 - `cv2.solvePnP` for estimating camera pose given image-world point correspondences.
+- Functions for line fitting including hough transform and `cv2.fitLine`.
+
 
 <b> Disallowed:
 - Any function that implements trajectory interpolation.
 - Any function that directly detects the window.
 - Functions for color thresholding including GMM.
-- Functions for line fitting including hough transform and `cv2.fitLine`.
 
 
 <a name='coll'></a>
