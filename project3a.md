@@ -182,6 +182,7 @@ Explain in detail your approach to complete the project, and describe any intere
 - Your report **MUST** be typeset in LaTeX in the IEEE Tran format provided to you in the ``Draft`` folder (Use the same draft folder from P1) and should of a conference quality paper.
 - Present the output videos for trajectory following along with the window corner detections overlaid on the video, rviz visualization of 3D window pose estimates in real-time as ``Outputs/GapFlyt.mp4``. Be sure to use appropriate colors to plot the windows in ``rviz``, for eg., yellow color for a yellow window and violet color for violet window.
 
+A sample report for a related project can be found [here](/assets/2019/p3/GMMReportNitin.pdf). Treat this report as the benchmark or gold standard which we'll compare your reports to for grading.
 
 <a name='files'></a>
 ### 7.2. File tree and naming
