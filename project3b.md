@@ -52,7 +52,7 @@ Explain in detail your approach to complete the project, and describe any intere
 - Your report **MUST** be typeset in LaTeX in the IEEE Tran format provided to you in the ``Draft`` folder (Use the same draft folder from P1) and should of a conference quality paper.
 - Present the output videos for trajectory following along with the 3D bullseye center position estimates in real-time as ``Outputs/Bullseye.mp4``.
 - Tag detection (plotted on the image plane) in every frame as seen from Duo camera: `bullseye-duo.mp4`. You can use any one or both the downfacing camera from DUO.  
-- Tag detection (3D pose) plotted in `rviz`: `bullseye-rviz.mp4`.
+- Tag detection (3D pose) plotted in `rviz`: `bullseye-rviz.mp4`. You are required to plot the circular bull's eye [image](assets/2019/p3/CircularTag.png) on the ground (you can assume the center of the tag as the world frame origin) in `rviz` and plot you the PRG Husky pose relative to the tag using rviz tf like you did in the previous projects. A sample video for an april tag is shown [here](https://www.youtube.com/watch?v=rLcJFse74X4). Feel free to use the display code base from [here](https://github.com/berndpfrommer/tagslam_viz) and modify it to meet your needs.
 
 <a name='files'></a>
 ### 4.2. File tree and naming
