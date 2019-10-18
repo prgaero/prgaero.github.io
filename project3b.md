@@ -48,9 +48,9 @@ Specifically, the team will place their PRG Husky at the corner of the flying sp
 Explain in detail your approach to complete the project, and describe any interesting problems you encountered and/or solutions you implemented.  You **MUST** include the following details in your writeup:
 
 - Your report **MUST** be typeset in LaTeX in the IEEE Tran format provided to you in the ``Draft`` folder (Use the same draft folder from P1) and should of a conference quality paper.
-- Present Vicon plots for each trajectory followed along with the estimated 3D bullseye center position overlaid on the same plot. (Show all three views ``X-Y``, ``X-Z`` and ``Y-Z``).
 - Present the output videos for trajectory following along with the 3D bullseye center position estimates in real-time as ``Outputs/Bullseye.mp4``.
-
+- Tag detection (plotted on the image plane) in every frame as seen from Duo camera: `bullseye-duo.mp4`. You can use any one or both the downfacing camera from DUO.  
+- Tag detection (3D pose) plotted in `rviz`: `bullseye-rviz.mp4`.
 
 <a name='files'></a>
 ### 4.2. File tree and naming
@@ -69,8 +69,7 @@ TeamYourTeamNumber_p3a.zip
 
 <a name='debug'></a>
 ## 5. Debugging Tips
-- To verify if your detections are working correctly, plot the corners of the window on the image, they should align with the true window corners. 
-- To verify if your pose estimation is correct, re-project the estimated 3D corners of the window onto the image. They should be very close to the detected corners.
+- To verify if your detections are working correctly, plot the pose of the tag on the image.
 
 <a name='allowed'></a>
 ## 5. Allowed and Disallowed functions
@@ -81,11 +80,10 @@ Any functions regarding reading, writing and displaying/plotting images and wind
 - Basic math utilities including convolution operations in `numpy` and `math`.
 - Any functions for pretty plots.
 - ``bebop_autonomy`` packages for controlling the PRGHusky.
+- Hough Circles and `cv2.fitellipse` or any other function for contour fitting.
 
 <b> Disallowed:
-- Any function that implements trajectory interpolation.
-- Any function that directly detects the window.
-- Functions for contour fitting.
+- Any function that directly implements the pose of the ellipse in 3D.
 
 
 <a name='coll'></a>
