@@ -34,8 +34,8 @@ In this project, your aim is to find a circular bullseye and land on it. You are
 
 <a name='test'></a>
 ## 3. Testing
-On the day of the deadline, each team will be given a 15 minute slot for demoing their code in action to the instructors. The instructors will place the circular bullseye as they wish (position with gaussian given). The task is to land on the circular target.
-
+On the day of the deadline, each team will be given a 15 minute slot for demoing their code in action to the instructors. The instructors will place the circular bullseye as they wish (position with gaussian given). The task is to land on the circular target. 
+Specifically, the team will place their PRG Husky at the corner of the flying space and then the instructors will place the circular bull's eye tag at \((X,Y)\) relative to the PRG Husky initial position with a covariance \((\Sigma_x, Sigma_y)\). Your task is to take off, adjust your position according to the position of tag and then land on the tag.
 
 <a name='sub'></a>
 ## 4. Submission Guidelines
@@ -49,7 +49,7 @@ Explain in detail your approach to complete the project, and describe any intere
 
 - Your report **MUST** be typeset in LaTeX in the IEEE Tran format provided to you in the ``Draft`` folder (Use the same draft folder from P1) and should of a conference quality paper.
 - Present Vicon plots for each trajectory followed along with the estimated 3D bullseye center position overlaid on the same plot. (Show all three views ``X-Y``, ``X-Z`` and ``Y-Z``).
-- Present the output videos for trajectory following along with the 3D bullseye center position estimates in real-time as ``Outputs/Bullseye.mp4``. 
+- Present the output videos for trajectory following along with the 3D bullseye center position estimates in real-time as ``Outputs/Bullseye.mp4``.
 
 
 <a name='files'></a>
