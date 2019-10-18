@@ -35,7 +35,7 @@ In this project, your aim is to find a circular bullseye and land on it. You are
 <a name='test'></a>
 ## 3. Testing
 On the day of the deadline, each team will be given a 10 minute slot for demoing their code in action to the instructors. The instructors will place the circular bullseye as they wish (position with gaussian given). The task is to land on the circular target. 
-Specifically, the team will place their PRG Husky at the corner of the flying space and then the instructors will place the circular bull's eye tag at $$(X,Y)$$ relative to the PRG Husky initial position with a covariance $$(Sigma_x, Sigma_y)$$. Your task is to take off, adjust your position according to the position of tag and then land on the tag.
+Specifically, the team will place their PRG Husky at the corner of the flying space and then the instructors will place the circular bull's eye tag at $$(X,Y)$$ relative to the PRG Husky initial position with a covariance $$\Sigma$$. Your task is to take off, adjust your position according to the position of tag and then land on the tag.
 
 The tag is glossy and the camera will suffer from glares and reflection. So, your algorithm has to take into that account.
 
