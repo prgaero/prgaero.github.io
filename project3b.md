@@ -142,7 +142,7 @@ Any functions regarding reading, writing and displaying/plotting images and wind
 
 <a name='duo'></a>
 ### 8.1. Duo3D Camera Driver
-Follow the steps from [this repo]() to install the Duo3D camera driver.
+Follow the steps from [this repo](https://github.com/NitinJSanket/Duo3D-Setup) to install the Duo3D camera driver.
 
 <a name='calibration'></a>
 ### 8.2. Camera Calibration
