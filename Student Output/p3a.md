@@ -29,11 +29,6 @@ permalink: /2019fall/proj/p3b-results/
 <img src="/Reports/p3a/carrilloestefany.jpg" height="170"></a>
 <br><br>
 
-<b><b>Dronacharaya</b><br>
-</b><a href="/Reports/p3a/dorbalavishnu.pdf"> 
-<img src="/Reports/p3a/dorbalavishnu.jpg" height="170"></a>
-<br><br>
-
 <b><b>Autonomous Flying Pigs</b><br>
 </b><a href="/Reports/p3a/lumbaravi.pdf"> 
 <img src="/Reports/p3a/lumbaravi.jpg" height="170"></a>
@@ -46,6 +41,6 @@ permalink: /2019fall/proj/p3b-results/
 
 
 <b><b>DMC</b><br>
-</b><a href="/Reports/p3a/semenovilya.pdf"> 
-<img src="/Reports/p3a/semenovilya.jpg" height="170"></a>
+</b><a href="/Reports/p3a/kurtiaktimothy.pdf"> 
+<img src="/Reports/p3a/kurtiaktimothy.jpg" height="170"></a>
 <br><br>
