@@ -39,8 +39,12 @@ permalink: /2019fall/proj/p3b-results/
 <img src="/Reports/p3a/rehmnicholas.jpg" height="170"></a>
 <br><br>
 
+<b><b>Noob Quaternion</b><br>
+</b><a href="/Reports/p3a/aroraprateek.pdf"> 
+<img src="/Reports/p3a/aroraprateek.jpg" height="170"></a>
+<br><br>
 
-<b><b>DMC</b><br>
+<b><b>DDMC</b><br>
 </b><a href="/Reports/p3a/kurtiaktimothy.pdf"> 
 <img src="/Reports/p3a/kurtiaktimothy.jpg" height="170"></a>
 <br><br>
