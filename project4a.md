@@ -75,20 +75,20 @@ You should now get a good estimate of linear and angular velocities which can be
 
 <a name='rosnodes'></a>
 ### 3.1. ROS Nodes
-You need to create one ROS node to run your algorithm for pose estimation. You have to publish instantaneous velocities as `twist_msg` and trajectory as `odom_msg` (accumulated instantaneous camera pose).
+You need to create one or multiple ROS node(s) to run your algorithm for pose estimation. You have to publish instantaneous velocities as `geometry_msgs/Twist` and trajectory as `nav_msgs/Odometry` (accumulated instantaneous camera pose).
 
 <a name='launch'></a>
 ### 3.2. Launch File
-All the above ROS nodes must be called using a single `launch` file.
+All the above ROS node(s) must be called using a single `launch` file.
 
 <a name='rviz'></a>
 ### 3.3. Rviz visualization
-You are required to plot your estimated 3D camera pose in `rviz` along with the odometry (`odom`) from the PRG Husky using rviz tf like you did in the previous projects.
+You are required to plot your estimated 3D camera pose in `rviz` along with the odometry (`nav_msgs/Odometry`) from the PRG Husky using rviz tf like you did in the previous projects.
 
 <a name='sub'></a>
 ## 5. Submission Guidelines
 
-<b> If your submission does not comply with the following guidelines, you'll be given ZERO credit </b>
+<b> If your submission does not comply with the following guidelines, you'll be given ZERO credit. </b>
 
 <a name='report'></a>
 ### 5.1. Report
@@ -117,7 +117,7 @@ TeamYourTeamNumber_p4a.zip
 
 <a name='debug'></a>
 ## 6. Debugging Tips
-- To verify if your detections are working correctly, plot the circles/ellipses detected or pose of the tag on the image.
+- To verify if your detections are working correctly, you can re-project the features using the estimated pose onto the next frame (they should be close to the tracked features).
 
 <a name='allowed'></a>
 ## 7. Allowed and Disallowed functions
@@ -128,9 +128,9 @@ Any functions regarding reading, writing and displaying/plotting images and wind
 - Basic math utilities including convolution operations in `numpy` and `math`.
 - Any functions for pretty plots.
 - ``bebop_autonomy`` packages for controlling the PRGHusky.
-- Any function that computes features/corners
-- Any function that matches feature correspondences
-- Any function that performs KLT or any other tracker
+- Any function that computes features/corners.
+- Any function that matches feature correspondences.
+- Any function that performs KLT or any other feature tracker.
 
 <b> Disallowed:
 - Any function that computes sparse or dense optical flow.
@@ -145,8 +145,7 @@ Follow the steps from [this repo](https://github.com/NitinJSanket/Duo3D-Setup) t
 
 <a name='calibration'></a>
 ### 8.2. Camera Calibration
-The Duo3D camera comes calibrated out of the factory and gives only the calibrated images. To calibrate the extrinsics between the Duo3D stereo camera and front facing leopard imaging camera use the [Kalibr](https://github.com/ethz-asl/kalibr/wiki/camera-imu-calibration) package from ETH-Z and calibrate using the IMU from the Duo and the front camera since there is no common field of view between the two cameras to calibrate them directly. 
-
+The Duo3D camera comes calibrated out of the factory and gives only the calibrated images. You can also use the [Kalibr](https://github.com/ethz-asl/kalibr/wiki/camera-imu-calibration) package from ETH-Z to re-calibrate the duo cameras if needed.
 
 <a name='coll'></a>
 ## 9. Collaboration Policy
