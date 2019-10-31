@@ -40,10 +40,7 @@ You need to run the Helix trajectory from [Project 2](https://prgaero.github.io/
 
 From one of the camera, say the left camera for an instance, you will be detecting features in the 'current frame'. You can use Harris, SIFT, FAST, SURF or any other feature detectors. You can use any open source code for feature detecting. For all the corners in the image, you will then compute the sparse optical flow between two consecutive frames using Kanade-Lucas-Tomasi Tracker (KLT). Feel free to use any open source code for KLT or any other tracker. If you are feeling extra enthusiastic, you can implement a tracker on your own. In your ROS bag, you will get the image frames along with the ROS timestamps. Using timestamps and sparse optical flow, you will get the $$[\dot{x}, \dot{y}]^T$$ in the calibrated image coordinates. Although, these timestamps are NOT perfect and may have high frequency noise. Assuming that the images are taken at a constant rate, you can simply use a low-pass filter on the $$\Delta t$$ to get better results.
 
-- Feature Detection
-- Feature Matching between stereo pair
-- 
-
+Now, given a corner in the calibrated image coordinates $$[x,y]^T$$ and its optical flow $$[\dot{x},\dot{y}]^T$$, you can solve for the linear and angular velocities of the camera:
 
 
 $$
@@ -66,10 +63,13 @@ V_z \\
 \Omega_z \\
 \end{bmatrix} $$
 
+where $$[V_x, V_y, V_z, \Omega_x, \Omega_y, \Omega_z]^T$$ are the linear and angular velocities are to be estimated. The functions $$\mathbf{f_1(\cdot), f_1(\cdot)}$$ are $$1\times 6 vectors$$. $$Z$$ is the depth of the corner/pixel. You can estimate $$Z$$ or 'camera-$$Z$$' using the stereo pair by feature matching. Again, you are allowed to use any off-the-shelf feature matching algorithm but you need to compute $$Z$$ from matched features on your own. Note that this is the camera $$Z$$ which may or may not be equal to the height of the quadrotor due to non-zero roll and pitch angle. 
 
+#### RANSAC
 
+Optical flow computation are prone to outliers and you will need to reject them using RANSAC. Three sets of constraints are required to solve the above linear equation and thus you can perform a 3-point RANSAC for outlier rejection.
 
-
+You should now get a good estimate of linear and angular velocities which can be integrated (using $$\delta t$$ ROS timestamps) to compute position and orientation.
 
 
 <a name='rosnodes'></a>
