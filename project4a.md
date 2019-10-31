@@ -96,24 +96,22 @@ You are required to plot your estimated 3D camera pose in `rviz` along with the 
 Explain in detail your approach to complete the project, and describe any interesting problems you encountered and/or solutions you implemented.  You **MUST** include the following details in your writeup:
 
 - Your report **MUST** be typeset in LaTeX in the IEEE Tran format provided to you in the ``Draft`` folder (Use the same draft folder from P1) and should of a conference quality paper.
-- Present the output videos for trajectory following along with the 3D bullseye center position estimates in real-time as ``Outputs/Bullseye.mp4``.
-- Tag detection (plotted on the image plane) in every frame as seen from Duo camera: `Bullseye-duo.mp4`. You can use any one or both the downfacing camera(s) from DUO.  
-- Tag detection (3D pose) plotted in `rviz`: `Bullseye-rviz.mp4`. You are required to plot the circular bull's eye [image](assets/2019/p3/CircularTag.png) on the ground (you can assume the center of the tag as the world frame origin) in `rviz` and plot you the PRG Husky pose relative to the tag using rviz tf like you did in the previous projects. A sample video for an april tag is shown [here](https://www.youtube.com/watch?v=rLcJFse74X4). Feel free to use the display code base from [here](https://github.com/berndpfrommer/tagslam_viz) and modify it to meet your needs.
+- Present the output videos for your estimated trajectory (for both cases: Helix and straight line) following along with the odometry output from PRG Husky, stereo (both left and right) frames as ``Outputs/StereoVO.mp4``.
+- Present the output videos for your estimated trajectory (for both cases: Helix and straight line) in `rviz` along with the detected features in the world frame as ``Output/StereoVO-Features.mp4``.
 
 <a name='files'></a>
 ### 5.2. File tree and naming
 
-Your submission on ELMS/Canvas must be a ``zip`` file, following the naming convention ``TeamYourTeamNumber_p3b.zip``. If you email ID is ``1``, then the submission file should be named ``Team1_p3b.zip``. You can have any helper functions in sub-folders as you wish, be sure to index them using relative paths and if you have command line arguments for your Wrapper codes, make sure to have default values too. Please provide detailed instructions on how to run your code in ``README.md`` file. Please **DO NOT** include data in your submission.
+Your submission on ELMS/Canvas must be a ``zip`` file, following the naming convention ``TeamYourTeamNumber_p4a.zip``. If you email ID is ``1``, then the submission file should be named ``Team1_p4a.zip``. You can have any helper functions in sub-folders as you wish, be sure to index them using relative paths and if you have command line arguments for your Wrapper codes, make sure to have default values too. Please provide detailed instructions on how to run your code in ``README.md`` file. Please **DO NOT** include data in your submission `zip` file.
 
 ```
-TeamYourTeamNumber_p3a.zip
+TeamYourTeamNumber_p4a.zip
 │   README.md
 |   Your Code files 
 |   ├── Any subfolders you want along with files 
 |   Outputs
-|   ├──  Bullseye-duo.mp4
-|   ├──  Bullseye-rviz.mp
-|   └──  Bullseye.mp4
+|   ├── StereoVO.mp4
+|   └── StereoVO-Features.mp4
 └── Report.pdf
 ```
 
@@ -130,10 +128,13 @@ Any functions regarding reading, writing and displaying/plotting images and wind
 - Basic math utilities including convolution operations in `numpy` and `math`.
 - Any functions for pretty plots.
 - ``bebop_autonomy`` packages for controlling the PRGHusky.
-- Hough Circles and `cv2.fitellipse` or any other function for contour fitting.
+- Any function that computes features/corners
+- Any function that matches feature correspondences
+- Any function that performs KLT or any other tracker
 
 <b> Disallowed:
-- Any function that directly estimates the pose of the ellipse in 3D.
+- Any function that computes sparse or dense optical flow.
+- Any function that computes RANSAC. Although, you can use any least square solver.
 
 <a name='hw'></a>
 ## 8. Hardware Tips
