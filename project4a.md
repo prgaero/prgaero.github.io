@@ -63,7 +63,7 @@ V_z \\
 \Omega_z \\
 \end{bmatrix} $$
 
-where $$[V_x, V_y, V_z, \Omega_x, \Omega_y, \Omega_z]^T$$ are the linear and angular velocities to be estimated. The functions $$\mathbf{f_1(\cdot)$$, $$f_2(\cdot)}$$ are $$1\times 6$$ vectors. The above equation is nothing but the optical flow equation in a much more compressed form. $$Z$$ is the depth of the corner/pixel. You can estimate $$Z$$ or 'camera-$$Z$$' using the stereo pair by feature matching. Again, you are allowed to use any off-the-shelf feature matching algorithm but you need to compute $$Z$$ from the matched features on your own. Note that this is the camera $$Z$$ which may or may not be equal to the height of the quadrotor due to non-zero roll and pitch angle.
+where $$[V_x, V_y, V_z, \Omega_x, \Omega_y, \Omega_z]^T$$ are the linear and angular velocities to be estimated. The functions $$\mathbf{f_1(\cdot)}$$, $$\mathbf{f_2(\cdot)}$$ are $$1\times 6$$ vectors. The above equation is nothing but the optical flow equation in a much more compressed form. $$Z$$ is the depth of the corner/pixel. You can estimate $$Z$$ or 'camera-$$Z$$' using the stereo pair by feature matching. Again, you are allowed to use any off-the-shelf feature matching algorithm but you need to compute $$Z$$ from the matched features on your own. Note that this is the camera $$Z$$ which may or may not be equal to the height of the quadrotor due to non-zero roll and pitch angle.
 **YOU ARE NOT ALLOWED TO USE THE HEIGHT MEASUREMENT OF THE SONAR!**
 
 #### RANSAC
