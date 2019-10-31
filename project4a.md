@@ -12,19 +12,15 @@ Table of Contents:
 	- [3.1. ROS Nodes](#rosnodes)
 	- [3.2. Launch File](#launch)
 	- [3.3. Rviz visualization](#rviz)
-	- [3.4. Tag Detection](#tagdetection)
-	- [3.5. Ellipse Fitting](#ellipsefit)
-	- [3.6. Tag Pose](#pose)
-- [4. Testing](#test)
-- [5. Submission Guidelines](#sub)
-  - [5.1. Report](#report)
-  - [5.2. File tree and naming](#files)
-- [6. Debugging Tips](#debug)
-- [7. Allowed and Disallowed functions](#allowed)
-- [8. Hardware Tips](#hw)
-	- [8.1. Duo3D Camera Driver](#duo)
-	- [8.2. Camera Calibration](#calibration)
-- [9. Collaboration Policy](#coll)
+- [4. Submission Guidelines](#sub)
+  - [4.1. Report](#report)
+  - [4.2. File tree and naming](#files)
+- [5. Debugging Tips](#debug)
+- [6. Allowed and Disallowed functions](#allowed)
+- [7. Hardware Tips](#hw)
+	- [7.1. Duo3D Camera Driver](#duo)
+	- [7.2. Camera Calibration](#calibration)
+- [8. Collaboration Policy](#coll)
 
 <a name='due'></a>
 ## 1. Deadline 
@@ -86,12 +82,12 @@ All the above ROS node(s) must be called using a single `launch` file.
 You are required to plot your estimated 3D camera pose in `rviz` along with the odometry (`nav_msgs/Odometry`) from the PRG Husky using rviz tf like you did in the previous projects.
 
 <a name='sub'></a>
-## 5. Submission Guidelines
+## 4. Submission Guidelines
 
 <b> If your submission does not comply with the following guidelines, you'll be given ZERO credit. </b>
 
 <a name='report'></a>
-### 5.1. Report
+### 4.1. Report
 
 Explain in detail your approach to complete the project, and describe any interesting problems you encountered and/or solutions you implemented.  You **MUST** include the following details in your writeup:
 
@@ -100,7 +96,7 @@ Explain in detail your approach to complete the project, and describe any intere
 - Present the output videos for your estimated trajectory (for both cases: Helix and straight line) in `rviz` along with the detected features in the world frame as ``Output/StereoVO-Features.mp4``.
 
 <a name='files'></a>
-### 5.2. File tree and naming
+### 4.2. File tree and naming
 
 Your submission on ELMS/Canvas must be a ``zip`` file, following the naming convention ``TeamYourTeamNumber_p4a.zip``. If you email ID is ``1``, then the submission file should be named ``Team1_p4a.zip``. You can have any helper functions in sub-folders as you wish, be sure to index them using relative paths and if you have command line arguments for your Wrapper codes, make sure to have default values too. Please provide detailed instructions on how to run your code in ``README.md`` file. Please **DO NOT** include data in your submission `zip` file.
 
@@ -116,11 +112,11 @@ TeamYourTeamNumber_p4a.zip
 ```
 
 <a name='debug'></a>
-## 6. Debugging Tips
+## 5. Debugging Tips
 - To verify if your detections are working correctly, you can re-project the features using the estimated pose onto the next frame (they should be close to the tracked features).
 
 <a name='allowed'></a>
-## 7. Allowed and Disallowed functions
+## 6. Allowed and Disallowed functions
 
 <b> Allowed:
 
@@ -137,16 +133,16 @@ Any functions regarding reading, writing and displaying/plotting images and wind
 - Any function that computes RANSAC. Although, you can use any least square solver.
 
 <a name='hw'></a>
-## 8. Hardware Tips
+## 7. Hardware Tips
 
 <a name='duo'></a>
-### 8.1. Duo3D Camera Driver
+### 7.1. Duo3D Camera Driver
 Follow the steps from [this repo](https://github.com/NitinJSanket/Duo3D-Setup) to install the Duo3D camera driver.
 
 <a name='calibration'></a>
-### 8.2. Camera Calibration
+### 7.2. Camera Calibration
 The Duo3D camera comes calibrated out of the factory and gives only the calibrated images. You can also use the [Kalibr](https://github.com/ethz-asl/kalibr/wiki/camera-imu-calibration) package from ETH-Z to re-calibrate the duo cameras if needed.
 
 <a name='coll'></a>
-## 9. Collaboration Policy
+## 8. Collaboration Policy
 You are encouraged to discuss the ideas with your peers. However, the code should be your own team's, and should be the result of you exercising your own understanding of it. If you reference anyone else's code in writing your project, you must properly cite it in your code (in comments) and your writeup. For the full honor code refer to the ENAE788M Fall 2019 website.
