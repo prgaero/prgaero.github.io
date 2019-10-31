@@ -38,7 +38,35 @@ In this project, your aim is to compute the 3D camera poses of a stereo sensor. 
 ## 3. Implementation
 You need to run the Helix trajectory from [Project 2](https://prgaero.github.io/2019/proj/p2/) and a straight line trajectory; and record a ROS Bag. The entire class can have one common data if you want. Team BRZ had the smoothest trajectory in Project 2. Feel free to use their quadrotor/data. Make sure your stereo calibration is correct. You need to record both camera data (and IMU if you want to). DUO-Camera SDK gives both raw IMU values as well as filtered attitude. Feel free to use it if you want.
 
-You will be implementing PnP
+
+- Feature Detection
+- Feature Matching between stereo pair
+- 
+
+
+
+$$
+\begin{bmatrix}
+\dot{x} \\
+\dot{y}
+\end{bmatrix} = 
+
+\begin{bmatrix}
+\mathbf{f_1}(x,y,Z)\\
+\mathbf{f_2}(x,y,Z)
+\end{bmatrix}
+
+\begin{bmatrix}
+V_x \\
+V_y \\
+V_z \\
+\Omega_x \\
+\Omega_y \\
+\Omega_z \\
+\end{bmatrix} $$
+
+
+
 
 
 
