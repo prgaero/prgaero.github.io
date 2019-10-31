@@ -32,15 +32,20 @@ Table of Contents:
 
 <a name='intro'></a>
 ## 2. Problem Statement
-In this project, your aim is to compute the 3D camera poses of a stereo sensor. Imagine your stereo sensor - DUO Camera is on a quadrotor facing downwards. You can assume that the ground that the camera sees is <b>planar</b>. You need to collect data as a ROS bag/video while moving the sensor manually by hand or by flying the PRG Husky platform. You can use the carpets in lab IRB 0108. Feel free to change the illumination of the room. Define the coordinates as $$(0, 0, 0)$$ as the starting pose (the first frame). 
+In this project, your aim is to compute the 3D camera poses of a stereo sensor. Imagine your stereo sensor (DUO Camera) is on a quadrotor facing downwards. You can assume that the ground that the camera sees is <b>planar</b>. You need to collect data as a ROS bag/video flying the PRG Husky platform. You can use the carpets in lab IRB 0108. Feel free to change the illumination of the room. Define the coordinates as $$(0, 0, 0)$$ as the starting pose (the first frame). 
 
 <a name='implementation'></a>
 ## 3. Implementation
-You'll need to implement the following:
+You need to run the Helix trajectory from [Project 2](https://prgaero.github.io/2019/proj/p2/) and a straight line trajectory; and record a ROS Bag. The entire class can have one common data if you want. Team BRZ had the smoothest trajectory in Project 2. Feel free to use their quadrotor/data. Make sure your stereo calibration is correct. You need to record both camera data (and IMU if you want to). DUO-Camera SDK gives both raw IMU values as well as filtered attitude. Feel free to use it if you want.
+
+You will be implementing PnP
+
+
+
 
 <a name='rosnodes'></a>
 ### 3.1. ROS Nodes
-You need to create multiple ROS nodes to run your algorithm: one for pose estimation, another for filtering or one which does both. You can have any number of nodes as you desire.
+You need to create one ROS node to run your algorithm for pose estimation. You can have any number of nodes as you desire.
 
 <a name='launch'></a>
 ### 3.2. Launch File
