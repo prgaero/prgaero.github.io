@@ -10,6 +10,7 @@ import glob
 import zipfile
 from fnmatch import fnmatch
 from tqdm import tqdm
+import shutil
 
 
 def ExtractPDFsAndConvertToImg(ZipFilePath, SavePath):
@@ -31,6 +32,7 @@ def ExtractPDFsAndConvertToImg(ZipFilePath, SavePath):
             for name in files:
                 if name == 'Report.pdf':
                     PDFFileNameNow = FileName
+                    shutil.copyfile(path + '/' + name, SavePath + PDFFileNameNow + '.pdf')
                     PDF2Img(path + '/' + name, PDFFileNameNow, SavePath)
 
 def PDF2Img(PDFPath, FileName, SavePath):
