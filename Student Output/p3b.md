@@ -10,7 +10,7 @@ permalink: /2019fall/proj/p3b-results/
 <p style="background-color:#f4c842; padding:5px">
 <b>Noob Quaternion</b><br>
 <a href="/Reports/p3b/aroraprateek.pdf"> 
-<img src="/Reports/p3b/aroraprateek.jpg" height="170"></a>
+<img src="/Reports/p3b/aroraprateek.jpg" height="170"></a><br>
 <b>(Gold Submission)<br>
 
 <!-- Other Submissions -->
