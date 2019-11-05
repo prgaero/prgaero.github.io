@@ -2,7 +2,7 @@
 layout: page
 mathjax: true
 title: Project 3b - Bullseye - Results
-permalink: /2019fall/proj/p3a-results/
+permalink: /2019fall/proj/p3b-results/
 ---
 
 
