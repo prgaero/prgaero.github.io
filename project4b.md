@@ -33,52 +33,43 @@ In this project, you have two tasks: <br>
 <i>(ii)</i> Detect the wall infront of your quadrotor and go through above or below the wall, depending on the height of the wall.<br>
 Let's understand the problem statement in depth.
 
-Your PRG Husky platform is equipped with a front facing RGB camera, a down facing stereo grayscale and an IMU. For the first task, you are in a space with a thin river-like band of blue sheet. Only a small region has a ladder
+Your PRG Husky platform is equipped with a front facing RGB camera, a down facing stereo grayscale and an IMU. For the first task, you are in a space with a thin river-like band of blue sheet on the floor. Only a small region has a ladder/bridge on the top of the river. Your aim is to avoid the blue river and cross it above the bridge. But there's a catch, your bottom facing camera is grayscale. You need to detect textures of the river in order to avoid it. Or you can simply detect where the bridge is and go above it. Refer fig. 1.
 
-compute the 3D camera trajectory of a stereo sensor. Imagine your stereo sensor (DUO Camera) is on a quadrotor facing downwards. You can assume that the ground that the camera sees is <b>planar</b>. You need to collect data as a ROS bag/video flying the PRG Husky platform. You can use the carpets in lab IRB 0108. Feel free to change the illumination of the room. Define the coordinates as $$(0, 0, 0)$$ as the starting pose (the first frame). 
+<div class="fig fighighlight">
+  <img src="/assets/2019/p4/river-ladder.png" width="80%">
+  <div class="figcaption">
+    Figure 1: Task 1 - A sample scene with bridge and river.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+
+For your second task, you are given a wall of certain length and breadth which is placed at a some unknown distance infront of the PRG Husky. You are going to do some version of odometry/PnP to estimate the distance and position of the wall in some arbitrary units. To get it to metric scale, use the down-facing camera estimates which are in absolute or metric scale. Once you have estimated the position and the distance of the wall w.r.t. PRG Husky, your task is to go above or below depending on the position of the wall. Refer fig. 2 for the two possible cases that you will encounter.
+
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p4/wall.png" width="80%">
+  <div class="figcaption">
+    Figure 1: Task 2 - Two possible scenerios for the wall placements.
+  </div>
+  <div style="clear:both;"></div>
+</div>
+
+Note that you cannot go left or right of the metal bars. You are restricted to a height of 2.5 meters for this project. If you fly above 2.5m, your task will be counted as unsuccessful. Also, the wall is equiped with a lot of visual features so you can detect it easily.
+
+You can collect data as a ROS bag/video from the downfacing and frontfacing cameras of the river-bridge scene and the wall in IRB lab 0108. Feel free to change the illumination of the room. Define the coordinates as $$(0, 0, 0)$$ as the starting pose (the first frame).
 
 <a name='implementation'></a>
 ## 3. Implementation
-You need to run the Helix trajectory from [Project 2](https://prgaero.github.io/2019/proj/p2/) and a straight line trajectory (from $$[0,0,0]m$$ to $$[2,2,2]m$$; and record a ROS Bag. The entire class can have the common data if you want. Team BRZ had the best trajectory following in Project 2. Work with team BRZ to get the data. Make sure your stereo calibration is correct. You need to record both camera data (and IMU if you want to). If you experience frame drops while bagging, reduce the frame rate using ROS `throttle` DUO-Camera SDK gives both raw IMU values as well as filtered attitude. Feel free to use it if you want.
+This project it totally open! You can use any open-source code available online to solve any part of the problem. Make sure you cite them. You can also learn the textures on the floor to distinguish between the river and the bridge. A sample texture is available in the lab. 
 
-From one of the camera, say the left camera for an instance, you will be detecting features in the 'current frame'. You can use Harris, SIFT, FAST, SURF or any other feature detector. You can use any open source code for feature detection. For all the corners in the image, you will then compute the sparse optical flow between two consecutive frames using Kanade-Lucas-Tomasi Tracker (KLT). Feel free to use any open source code for KLT or any other feature tracker. If you are feeling extra enthusiastic, you can implement a tracker on your own. In your ROS bag, you will get the image frames along with the ROS timestamps. Using timestamps and sparse optical flow, you will get the $$[\dot{x}, \dot{y}]^T$$ in the calibrated image coordinates. Although, these timestamps are **NOT** perfect and may have high frequency noise. Assuming that the images are taken at a constant rate, you can simply use a low-pass filter on the $$\Delta t$$ to get better results. You can do `rostopic hz` to get the publish rate.
-
-Now, given a corner in the calibrated image coordinates $$[x,y]^T$$ and its corresponding optical flow $$[\dot{x},\dot{y}]^T$$, you can solve for the linear and angular velocities of the camera:
-
-
-$$
-\begin{bmatrix}
-\dot{x} \\
-\dot{y}
-\end{bmatrix} = 
-
-\begin{bmatrix}
-\mathbf{f_1}(x,y,Z)\\
-\mathbf{f_2}(x,y,Z)
-\end{bmatrix}
-
-\begin{bmatrix}
-V_x \\
-V_y \\
-V_z \\
-\Omega_x \\
-\Omega_y \\
-\Omega_z \\
-\end{bmatrix} $$
-
-where $$[V_x, V_y, V_z, \Omega_x, \Omega_y, \Omega_z]^T$$ are the linear and angular velocities to be estimated. The functions $$\mathbf{f_1(\cdot)}$$, $$\mathbf{f_2(\cdot)}$$ are $$1\times 6$$ vectors. The above equation is nothing but the optical flow equation in a much more compressed form. $$Z$$ is the depth of the corner/pixel. You can estimate $$Z$$ or 'camera-$$Z$$' using the stereo pair by feature matching. Again, you are allowed to use any off-the-shelf feature matching algorithm but you need to compute $$Z$$ from the matched features on your own. Note that this is the camera $$Z$$ which may or may not be equal to the height of the quadrotor due to non-zero roll and pitch angle.
-**YOU ARE NOT ALLOWED TO USE THE HEIGHT MEASUREMENT OF THE SONAR!**
-
-#### RANSAC
-
-Optical flow computation are prone to outliers and you will need to reject them using RANSAC. Three sets of constraints are required to solve the above linear equation and thus you can perform a 3-point RANSAC for outlier rejection.
-
-You should now get a good estimate of linear and angular velocities which can be integrated (using $$\Delta t$$ ROS timestamps) to compute position and orientation.
-
+For estimating the depth (and relative pose) of the wall from front facing camera in absolute scale, you need odometry estimates from the bottom facing camera. Using `Kalibr`, calibrate the bottom facing camera with IMU; calibrate front facing camera with IMU and get the relative transformation (Rotation and Translation or extrinsics) between front facing camera and bottom facing camera. Now, both cameras are running a version odometry estimation. Use the extrinsic calibration to provide a metric scale for the front facing camera. Make sure your data is time syncronized before running through the `Kalibr`. You can use `TimeSynchronizer` for that. [Link](http://wiki.ros.org/message_filters#Time_Synchronizer)
+For the bottom facing camera depth estimation, you can use your results from Project 4a or any online open-source code.
+**YOU CAN ALSO USE THE HEIGHT MEASUREMENT OF THE SONAR!**
 
 <a name='rosnodes'></a>
 ### 3.1. ROS Nodes
-You need to create one or multiple ROS node(s) to run your algorithm for pose estimation. You have to publish instantaneous velocities as `geometry_msgs/Twist` and trajectory as `nav_msgs/Odometry` (accumulated instantaneous camera pose).
+You need to create one or multiple ROS node(s) to run your algorithm for each task. You have to publish trajectory for both tasks as `nav_msgs/Odometry` (accumulated instantaneous camera pose).
 
 <a name='launch'></a>
 ### 3.2. Launch File
@@ -100,7 +91,6 @@ Explain in detail your approach to complete the project, and describe any intere
 
 - Your report **MUST** be typeset in LaTeX in the IEEE Tran format provided to you in the ``Draft`` folder (Use the same draft folder from P1) and should of a conference quality paper.
 - Present the output videos for your estimated trajectory (for both cases: Helix and straight line) following along with the odometry output from PRG Husky, stereo (both left and right) frames as ``Outputs/StereoVO.mp4``.
-- Present the output videos for your estimated trajectory (for both cases: Helix and straight line) in `rviz` along with the detected features in the world frame as ``Output/StereoVO-Features.mp4``.
 
 <a name='files'></a>
 ### 4.2. File tree and naming
