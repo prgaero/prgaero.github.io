@@ -161,6 +161,7 @@ On the day of the deadline, each team will be given a 15 minute slot for demonst
 For Task 2, the instructors will place the quadrotor such that the river-bridge scene is in the front facing camera $$Z$$ direction (or infront of the PRG Husky). Note that you will NOT be able to see the bridge from the front facing camera once you take-off from ground. You need to go above the bridge to solve Task 2. If more than 50% of the PRG Husky volume is above the bridge, it will be counted as success. (else failure)
 
 You can have ANY number of trials in 15 mins for both combined. Only the best trial will be graded.
+**THE ENTIRE AREA WILL HAVE FEATURES (CARPETS)!!**
 
 <a name='hw'></a>
 ## 7. Hardware Tips
