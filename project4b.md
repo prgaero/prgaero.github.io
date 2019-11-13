@@ -137,7 +137,7 @@ TeamYourTeamNumber_p4a.zip
 <a name='allowed'></a>
 ## 6. Allowed and Disallowed functions
 
-<b> Allowed:
+<b> Allowed:</b>
 
 Any functions regarding reading, writing and displaying/plotting images and windows in `cv2`, `matplotlib`, `ROS`.
 - Basic math utilities including convolution operations in `numpy` and `math`.
@@ -151,7 +151,7 @@ Any functions regarding reading, writing and displaying/plotting images and wind
 - Any function that fits a plane.
 - Any function that solves entire structure from motion.
 
-<b> Disallowed:
+<b> Disallowed:</b>
 - NOTHING!
 
 ## 7. Live Demo
