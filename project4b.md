@@ -160,11 +160,12 @@ Any functions regarding reading, writing and displaying/plotting images and wind
 <a name='demo'></a>
 ## 7. Live Demo
 
-On the day of the deadline, each team will be given a 15 minute slot for demonstrating their code in action to the instructors. For Task 1, the instructors will place the wall (at arbitrary height) as well as the PRG Husky quadrotor as they wish (position, orientation). The instructors will make sure that atleast a major part of the wall is in the visible region as seen from the first frame (note that it is not guarenteed that the complete window will be visible in the first frame). The task is the fly above or below the window as fast as possible. You also need to show us a live visualization of your detection (corners of the window overlaid on the image) along with the 3D visualization of the window with the relative camera pose overlaid in rviz.
-
+On the day of the deadline, each team will be given a 15 minute slot for demonstrating their code in action to the instructors. 
 For Task 2, the instructors will place the quadrotor such that the river-bridge scene is in the front facing camera $$Z$$ direction (or infront of the PRG Husky). Note that you will NOT be able to see the bridge from the front facing camera once you take-off from ground. You need to go above the bridge to solve Task 2. If more than 50% of the PRG Husky volume is above the bridge, it will be counted as success. (else failure)
 
-You can have ANY number of trials in 15 mins for both combined. Only the best trial will be graded.
+For Task 1, the instructors will place the wall (at arbitrary height) as well as the PRG Husky quadrotor as they wish (position, orientation). The instructors will make sure that atleast a major part of the wall is in the visible region as seen from the first frame (note that it is not guarenteed that the complete window will be visible in the first frame). The task is the fly above or below the window as fast as possible. You also need to show us a live visualization of your detection (corners of the window overlaid on the image) along with the 3D visualization of the window with the relative camera pose overlaid in rviz. If you don't go between the two metal bars, or go above `2.5m` in altitude, it will be counted as a failure.
+
+You can have ANY number of trials in 15 mins for both combined. Only the best trial will be graded.<br>
 **THE ENTIRE AREA WILL HAVE FEATURES (CARPETS)!!**
 
 LIVE DEMO WILL BE ON CLASS TIMINGS AT IRB 0108.
