@@ -33,7 +33,7 @@ In this project, you have two tasks: <br>
 <i>(ii)</i> Detect the wall infront of your quadrotor and go through above or below the wall, depending on the height of the wall.<br>
 Let's understand the problem statement in depth.
 
-Your PRG Husky platform is equipped with a front facing RGB camera, a down facing stereo grayscale and an IMU. For the first task, you are in a space with a thin river-like band of blue sheet on the floor. Only a small region has a ladder/bridge on the top of the river. Your aim is to avoid the blue river and cross it above the bridge. But there's a catch, your bottom facing camera is grayscale. You need to detect textures of the river in order to avoid it. Or you can simply detect where the bridge is and go above it. Refer fig. 1.
+Your PRG Husky platform is equipped with a front facing RGB camera, a down facing stereo grayscale and an IMU. For the first task, you are in a space with a thin river-like band of blue sheet on the floor. Only a small region has a ladder/bridge on the top of the river. Your aim is to avoid the blue river and cross it above the bridge. But there's a catch, your bottom facing camera is grayscale. You need to detect textures of the river in order to avoid it. Or you can simply detect where the bridge is and go above it. Refer fig. 1 and 2.
 
 <div class="fig fighighlight">
   <img src="/assets/2019/p4/river-ladder.png" width="80%">
@@ -46,19 +46,19 @@ Your PRG Husky platform is equipped with a front facing RGB camera, a down facin
 <div class="fig fighighlight">
   <img src="/assets/2019/p4/river-ladder-real.jpg" width="80%">
   <div class="figcaption">
-    Figure 1: Task 1 - Sample textures of bridge and river.
+    Figure 2: Task 1 - Sample textures of bridge and river.
   </div>
   <div style="clear:both;"></div>
 </div>
 
 
-For your second task, you are given a wall of certain length and breadth which is placed at a some unknown distance infront of the PRG Husky. You are going to do some version of odometry/PnP to estimate the distance and position of the wall in some arbitrary units. To get it to metric scale, use the down-facing camera estimates which are in absolute or metric scale. Once you have estimated the position and the distance of the wall w.r.t. PRG Husky, your task is to go above or below depending on the position of the wall. Refer fig. 2 for the two possible cases that you will encounter.
+For your second task, you are given a wall of certain length and breadth which is placed at a some unknown distance infront of the PRG Husky. You are going to do some version of odometry/PnP to estimate the distance and position of the wall in some arbitrary units. To get it to metric scale, use the down-facing camera estimates which are in absolute or metric scale. Once you have estimated the position and the distance of the wall w.r.t. PRG Husky, your task is to go above or below depending on the position of the wall. Refer fig. 3 and 4 for the two possible cases that you will encounter.
 
 
 <div class="fig fighighlight">
   <img src="/assets/2019/p4/wall.png" width="80%">
   <div class="figcaption">
-    Figure 1: Task 2 - Two possible scenerios for the wall placements.
+    Figure 3: Task 2 - Two possible scenerios for the wall placements.
   </div>
   <div style="clear:both;"></div>
 </div>
@@ -66,7 +66,7 @@ For your second task, you are given a wall of certain length and breadth which i
 <div class="fig fighighlight">
   <img src="/assets/2019/p4/wall-real.jpg" width="80%">
   <div class="figcaption">
-    Figure 1: Task 2 - One of the possible wall placements that you will be using.
+    Figure 4: Task 2 - One of the possible wall placements that you will be using.
   </div>
   <div style="clear:both;"></div>
 </div>
