@@ -44,7 +44,7 @@ Your PRG Husky platform is equipped with a front facing RGB camera, a down facin
 </div>
 
 <div class="fig fighighlight">
-  <img src="/assets/2019/p4/river-ladder-real.png" width="80%">
+  <img src="/assets/2019/p4/river-ladder-real.jpg" width="80%">
   <div class="figcaption">
     Figure 1: Task 1 - Sample textures of bridge and river.
   </div>
@@ -64,7 +64,7 @@ For your second task, you are given a wall of certain length and breadth which i
 </div>
 
 <div class="fig fighighlight">
-  <img src="/assets/2019/p4/wall-real.png" width="80%">
+  <img src="/assets/2019/p4/wall-real.jpg" width="80%">
   <div class="figcaption">
     Figure 1: Task 2 - One of the possible wall placements that you will be using.
   </div>
