@@ -24,7 +24,7 @@ Table of Contents:
 
 <a name='due'></a>
 ## 1. Deadline 
-**11:59PM, Tuesday, November 12, 2019** for submission of the report and video.
+**11:59PM, Tuesday, November 21, 2019** for report/video submission.
 
 <a name='intro'></a>
 ## 2. Problem Statement
@@ -162,6 +162,8 @@ For Task 2, the instructors will place the quadrotor such that the river-bridge 
 
 You can have ANY number of trials in 15 mins for both combined. Only the best trial will be graded.
 **THE ENTIRE AREA WILL HAVE FEATURES (CARPETS)!!**
+
+LIVE DEMO WILL BE ON CLASS TIMINGS AT IRB 0108.
 
 <a name='hw'></a>
 ## 7. Hardware Tips
