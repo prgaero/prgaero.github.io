@@ -28,7 +28,14 @@ Table of Contents:
 
 <a name='intro'></a>
 ## 2. Problem Statement
-In this project, your aim is to compute the 3D camera trajectory of a stereo sensor. Imagine your stereo sensor (DUO Camera) is on a quadrotor facing downwards. You can assume that the ground that the camera sees is <b>planar</b>. You need to collect data as a ROS bag/video flying the PRG Husky platform. You can use the carpets in lab IRB 0108. Feel free to change the illumination of the room. Define the coordinates as $$(0, 0, 0)$$ as the starting pose (the first frame). 
+In this project, you have two tasks: <br>
+<i>(i)</i> You need your quadrotor to cross over the bridge while avoiding the river.<br>
+<i>(ii)</i> Detect the wall infront of your quadrotor and go through above or below the wall, depending on the height of the wall.<br>
+Let's understand the problem statement in depth.
+
+Your PRG Husky platform is equipped with a front facing RGB camera, a down facing stereo grayscale and an IMU. For the first task, you are in a space with a thin river-like band of blue sheet. Only a small region has a ladder
+
+compute the 3D camera trajectory of a stereo sensor. Imagine your stereo sensor (DUO Camera) is on a quadrotor facing downwards. You can assume that the ground that the camera sees is <b>planar</b>. You need to collect data as a ROS bag/video flying the PRG Husky platform. You can use the carpets in lab IRB 0108. Feel free to change the illumination of the room. Define the coordinates as $$(0, 0, 0)$$ as the starting pose (the first frame). 
 
 <a name='implementation'></a>
 ## 3. Implementation
