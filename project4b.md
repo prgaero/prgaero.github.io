@@ -35,7 +35,7 @@ In this project, you have two tasks: <br>
 <b>Task 2: </b> Detect the wall infront of your quadrotor and go through above or below the wall, depending on the height of the wall.<br>
 Let's understand the problem statement in depth.
 
-Your PRG Husky platform is equipped with a front facing RGB camera, a down facing stereo grayscale and an IMU. For the first task, you are in a space with a thin river-like band of blue sheet on the floor. Only a small region has a ladder/bridge on the top of the river. Your aim is to avoid the blue river and cross it above the bridge. But there's a catch, your bottom facing camera is grayscale. You need to detect textures of the river in order to avoid it. Or you can simply detect where the bridge is and go above it. Refer fig. 1 and 2.
+Your PRG Husky platform is equipped with a front facing RGB camera, a down facing stereo grayscale camera and an IMU. For the first task, you are in a space with a thin river-like band of blue sheet on the floor. Only a small region has a ladder/bridge on the top of the river. Your aim is to avoid the blue river and cross it above the bridge. But there's a catch, your bottom facing camera is grayscale. You need to detect textures/grayscale value of the river in order to avoid it. Or you can simply detect where the bridge is and go above it. Refer Figs. 1 and 2.
 
 <div class="fig fighighlight">
   <img src="/assets/2019/p4/river-ladder.png" width="60%">
@@ -54,7 +54,7 @@ Your PRG Husky platform is equipped with a front facing RGB camera, a down facin
 </div>
 
 
-For your second task, you are given a wall of certain length and breadth which is placed at a some unknown distance infront of the PRG Husky. You are going to do some version of odometry/PnP to estimate the distance and position of the wall in some arbitrary units. To get it to metric scale, use the down-facing camera estimates which are in absolute or metric scale. Once you have estimated the position and the distance of the wall w.r.t. PRG Husky, your task is to go above or below depending on the position of the wall. Refer fig. 3 and 4 for the two possible cases that you will encounter.
+For your second task, you are given a wall of unknown length and breadth which is placed at a some unknown distance infront of the PRG Husky. You are going to do some version of odometry/PnP to estimate the distance and position of the wall in some arbitrary units. Optionally, to get it to metric scale, use the down-facing camera estimates which are in absolute or metric scale. Once you have estimated the position and the distance of the wall with respect to PRG Husky, your task is to go above or below depending on the position of the wall. Refer Figs. 3 and 4 for the two possible cases that you will encounter.
 
 
 <div class="fig fighighlight">
@@ -81,9 +81,9 @@ You can collect data as a ROS bag/video from the downfacing and frontfacing came
 ## 3. Implementation
 This project it totally open! You can use any open-source code available online to solve any part of the problem. Make sure you cite them. You can also learn the textures on the floor to distinguish between the river and the bridge. A sample texture is available in the lab. 
 
-For estimating the depth (and relative pose) of the wall from front facing camera in absolute scale, you need odometry estimates from the bottom facing camera. Using `Kalibr`, calibrate the bottom facing camera with IMU; calibrate front facing camera with IMU and get the relative transformation (Rotation and Translation or extrinsics) between front facing camera and bottom facing camera. Now, both cameras are running a version odometry estimation. Use the extrinsic calibration to provide a metric scale for the front facing camera. Make sure your data is time syncronized before running through the `Kalibr`. You can use `TimeSynchronizer` for that. [Link](http://wiki.ros.org/message_filters#Time_Synchronizer)
+For estimating the metric depth (and relative pose) of the wall from front facing camera in absolute scale, you need odometry estimates from the bottom facing camera. Using `Kalibr`, calibrate the bottom facing camera with IMU; calibrate front facing camera with IMU and get the relative transformation (Rotation and Translation or extrinsics) between front facing camera and bottom facing camera. Now, both cameras are running a version odometry estimation. Use the extrinsic calibration to provide a metric scale for the front facing camera. Make sure your data is time syncronized before running through the `Kalibr`. You can use [`TimeSynchronizer`](http://wiki.ros.org/message_filters#Time_Synchronizer) for this.
 For the bottom facing camera depth estimation, you can use your results from Project 4a or any online open-source code.
-**YOU CAN ALSO USE THE HEIGHT MEASUREMENT OF THE SONAR!**
+**YOU CAN ALSO USE THE HEIGHT MEASUREMENT OF THE SONAR AND ODOMETRY FROM `bebop_autonomy`!**
 
 <a name='rosnodes'></a>
 ### 3.1. ROS Nodes
@@ -120,7 +120,7 @@ Explain in detail your approach to complete the project, and describe any intere
 <a name='files'></a>
 ### 4.2. File tree and naming
 
-Your submission on ELMS/Canvas must be a ``zip`` file, following the naming convention ``TeamYourTeamNumber_p4a.zip``. If you email ID is ``1``, then the submission file should be named ``Team1_p4a.zip``. You can have any helper functions in sub-folders as you wish, be sure to index them using relative paths and if you have command line arguments for your Wrapper codes, make sure to have default values too. Please provide detailed instructions on how to run your code in ``README.md`` file. Please **DO NOT** include data in your submission `zip` file.
+Your submission on ELMS/Canvas must be a ``zip`` file, following the naming convention ``TeamYourTeamNumber_p4b.zip``. If you email ID is ``1``, then the submission file should be named ``Team1_p4b.zip``. You can have any helper functions in sub-folders as you wish, be sure to index them using relative paths and if you have command line arguments for your Wrapper codes, make sure to have default values too. Please provide detailed instructions on how to run your code in ``README.md`` file. Please **DO NOT** include data in your submission `zip` file.
 
 ```
 TeamYourTeamNumber_p4a.zip
@@ -161,14 +161,14 @@ Any functions regarding reading, writing and displaying/plotting images and wind
 ## 7. Live Demo
 
 On the day of the deadline, each team will be given a 15 minute slot for demonstrating their code in action to the instructors. 
-For Task 2, the instructors will place the quadrotor such that the river-bridge scene is in the front facing camera $$Z$$ direction (or infront of the PRG Husky). Note that you will NOT be able to see the bridge from the front facing camera once you take-off from ground. You need to go above the bridge to solve Task 2. If more than 50% of the PRG Husky volume is above the bridge, it will be counted as success. (else failure)
+For Task 2, the instructors will place the quadrotor such that the river-bridge scene is in the front facing camera $$Z$$ direction (or infront of the PRG Husky). Note that you will NOT be able to see the bridge from the front facing camera once you take-off from ground. You need to go above the bridge to solve Task 2. If more than 50% of the PRG Husky volume is above the bridge, it will be counted as success. 
 
 For Task 1, the instructors will place the wall (at arbitrary height) as well as the PRG Husky quadrotor as they wish (position, orientation). The instructors will make sure that atleast a major part of the wall is in the visible region as seen from the first frame (note that it is not guarenteed that the complete window will be visible in the first frame). The task is the fly above or below the window as fast as possible. You also need to show us a live visualization of your detection (corners of the window overlaid on the image) along with the 3D visualization of the window with the relative camera pose overlaid in rviz. If you don't go between the two metal bars, or go above `2.5m` in altitude, it will be counted as a failure.
 
 You can have ANY number of trials in 15 mins for both combined. Only the best trial will be graded.<br>
 **THE ENTIRE AREA WILL HAVE FEATURES (CARPETS)!!**
 
-LIVE DEMO WILL BE ON CLASS TIMINGS AT IRB 0108.
+**LIVE DEMO TIMINGS WILL BE RELEASED LATER.**
 
 <a name='hw'></a>
 ## 8. Hardware Tips
