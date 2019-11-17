@@ -143,7 +143,7 @@ Doing any of these will instantly terminate your attempt.
 Taking off from the helipad gives the team 10 points and then crossing each stage of track will get the team 15 points, totalling a maxmimum of 100 points for each attempt. The team's attempt will be terminated in any of the mentioned things in [Section 3](#terminate) happen. If the number of stages between two teams are tied, then the team with the lower time comes out on top. 
 
 <a name='dday'></a>
-# 5. D-Day of the Competition
+## 5. D-Day of the Competition
 On the day of the competition, the teams will go in the order of their team number. Each team will get a maximum of five attempts and a maximum time of 2 minutes per attempt and a maximum time of 15 minutes for all five attempts. Between attempts, the team can use any amount of time (within the alloted 15 minutes of maximum time) to fix any software/hardware bugs or do changes in hardware/software (including change of batteries).
 
 The team with the highest points will win. Note that, completing the course (within the 2 minute slot per attempt) will get that team the maximum of 100 points.  
@@ -151,7 +151,7 @@ The team with the highest points will win. Note that, completing the course (wit
 
 
 <a name='implementation'></a>
-## 3. Implementation
+## 6. Implementation
 This project it totally open! You can use any open-source code available online to solve any part of the problem. Make sure you cite them. You can also learn the textures on the floor to distinguish between the river and the bridge. A sample texture is available in the lab. 
 
 For estimating the metric depth (and relative pose) of the wall from front facing camera in absolute scale, you need odometry estimates from the bottom facing camera. Using `Kalibr`, calibrate the bottom facing camera with IMU; calibrate front facing camera with IMU and get the relative transformation (Rotation and Translation or extrinsics) between front facing camera and bottom facing camera. Now, both cameras are running a version odometry estimation. Use the extrinsic calibration to provide a metric scale for the front facing camera. Make sure your data is time syncronized before running through the `Kalibr`. You can use [`TimeSynchronizer`](http://wiki.ros.org/message_filters#Time_Synchronizer) for this.
@@ -159,30 +159,30 @@ For the bottom facing camera depth estimation, you can use your results from Pro
 **YOU CAN ALSO USE THE HEIGHT MEASUREMENT OF THE SONAR AND ODOMETRY FROM `bebop_autonomy`!**
 
 <a name='rosnodes'></a>
-### 3.1. ROS Nodes
+### 6.1. ROS Nodes
 You need to create one or multiple ROS node(s) to run your algorithm for each task. You have to publish trajectory for both tasks as `nav_msgs/Odometry` (accumulated instantaneous camera pose).
 
 <a name='launch'></a>
-### 3.2. Launch File
+### 6.2. Launch File
 All the above ROS node(s) must be called using a single `launch` file.
 
 <a name='rviz'></a>
-### 3.3. Rviz visualization
+### 6.3. Rviz visualization
 You are required to plot your estimated 3D camera pose in `rviz` along with the odometry (`nav_msgs/Odometry`) from the PRG Husky using rviz tf like you did in the previous projects.
 For Task 2, you need to plot the wall in rviz along with the trajectory (and pose i.e. both position and orientation) of your quadrotor.  This visualization is similar to what you did in Project 3b (Mini Drone Race). Be sure to fix your wall in some arbitrarily chosen world frame and plot your camera’s (quadrotor’s) pose with respect to it.
 
 <a name='calib'></a>
-### 3.4 Camera Calibration
+### 6.4 Camera Calibration
 
 Camera Intrinsic and Extrinsic calibration entails with estimating the camera calibration matrix K which includes the focal length and the principal point and the distortion parameters and relative rotation and translation ($$R$$ and $$T$$) between a set of sensors. You’ll need to use the awesome calibration package developed by ETHZ Kalibr to do this. You’ll need either a checkerboard or an april grid to calibrate the camera. We found that using the April grid gave us superior results. Feel free to print one (don’t forget to turn off autoscaling or scaling of any sort before printing). Bigger april grids or checkerboard in general give more accurate results. A large april grid is located in IRB 3237 (Fig. 4) which you are free to use if you don’t want to print your own.
 
 <a name='sub'></a>
-## 4. Submission Guidelines
+## 7. Submission Guidelines
 
 <b> If your submission does not comply with the following guidelines, you'll be given ZERO credit. </b>
 
 <a name='report'></a>
-### 4.1. Report
+### 7.1. Report
 
 Explain in detail your approach to complete the project, and describe any interesting problems you encountered and/or solutions you implemented.  You **MUST** include the following details in your writeup:
 
@@ -191,7 +191,7 @@ Explain in detail your approach to complete the project, and describe any intere
 - Present the output videos for trajectory following along with the wall detection overlaid on the video, rviz visualization of 3D wall pose estimates in real-time as ``Outputs/Task2.mp4`` for Task 2.
 
 <a name='files'></a>
-### 4.2. File tree and naming
+### 7.2. File tree and naming
 
 Your submission on ELMS/Canvas must be a ``zip`` file, following the naming convention ``TeamYourTeamNumber_p4b.zip``. If you email ID is ``1``, then the submission file should be named ``Team1_p4b.zip``. You can have any helper functions in sub-folders as you wish, be sure to index them using relative paths and if you have command line arguments for your Wrapper codes, make sure to have default values too. Please provide detailed instructions on how to run your code in ``README.md`` file. Please **DO NOT** include data in your submission `zip` file.
 
