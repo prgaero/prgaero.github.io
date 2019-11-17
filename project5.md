@@ -55,12 +55,12 @@ Remember that your PRGHusky comes with a suite of sensors, a front facing RGB co
 The track contains exactly **six** stages.  Description of each stage is given next.
 
 <a name='wall'></a>
-## 2.1. Wall
+### 2.1. Wall
 
 In the first stage, you take off from the helipad and you have to navigate though a wall on the floor, i.e., you have to fly over it. Note that the wall has features on it to help depth estimation. This is the same wall we used in [project 4b](/2019/proj/p4b/). The sample photo of the wall is given in Fig. 2.
 
 <div class="fig fighighlight">
-  <img src="/assets/2019/p4b/wall-real.jpg" width="60%">
+  <img src="/assets/2019/p4/wall-real.jpg" width="60%">
   <div class="figcaption">
     Figure 2: Stage 1: Wall on the ground.
   </div>
@@ -70,7 +70,7 @@ In the first stage, you take off from the helipad and you have to navigate thoug
 
 
 <a name='window'></a>
-## 2.2. Window
+### 2.2. Window
 
 In the second stage, you have to traverse through a yellow window, this is the same window we used in [project 3a](/2019/proj/p3a/). A sample photo of the window is given in Fig. 3. Remember that the window looks different due to changes in lighting. Here, the size, shape and height of the window are known. But the pose is only known as a gaussian distribution.
 
@@ -84,7 +84,7 @@ In the second stage, you have to traverse through a yellow window, this is the s
 
 
 <a name='bridge'></a>
-## 2.3. Bridge
+### 2.3. Bridge
 
 In the third stage, you have to fly over the bridge (atleast half of the PRGHusky has to be over the bridge to count as a success), this is the same bridge we used in [project 4b](/2019/proj/p4b/). A sample photo of the bridge over the river is given in Fig. 4.
 
@@ -98,7 +98,7 @@ In the third stage, you have to fly over the bridge (atleast half of the PRGHusk
 
 
 <a name='circbullseye'></a>
-## 2.4. Circular Bullseye
+### 2.4. Circular Bullseye
 
 In the fourth stage, you have to land over a circular bullseye, this is the same bullseye target we used in [project 3b](/2019/proj/p3b/). A sample photo of the circular bullseye is given in Fig. 5. As before, please print out your own bullsye tags for testing from [here](/assets/2019/p3/CircularTag.png). Also, remember that the bullseye tag is reflective.
 
@@ -112,14 +112,14 @@ In the fourth stage, you have to land over a circular bullseye, this is the same
 
 
 <a name='wallagain'></a>
-## 2.5. Wall Again!
+### 2.5. Wall Again!
 
 In the penultimate stage, you take off from the circular bullseye and navigate through a wall again. This time the wall is up in the air, i.e., you have to fly below it. Note that the wall has features on it to help depth estimation. This is a wall similar to the one we used in [project 4b](/2019/proj/p4b/).
 
 - Add photo here
 
 <a name='finishtag'></a>
-## 2.6. Finish Tag
+### 2.6. Finish Tag
 
 For the finish line, you have to land on a square tag. please print out your own square tags for testing from [here](/assets/2019/p5/SquareTag.png). Also, remember that the square tag is reflective. 
 
@@ -129,7 +129,7 @@ Congrats on finishing the course! Wohoooooo!
 
 
 <a name='terminate'></a>
-# 3. Attempt Termination
+## 3. Attempt Termination
 Doing any of these will instantly terminate your attempt. 
 - Crossing the river at any time which is not over the bridge.
 - Failing to navigate in any of the previous stages before proceeding to the next one.
@@ -138,12 +138,14 @@ Doing any of these will instantly terminate your attempt.
 - Going over the maximum time of 2 mins per attempt.
 
 <a name='score'></a>
-# 4. Scoring Criterion
+## 4. Scoring Criterion
 Taking off from the helipad gives the team 10 points and then crossing each stage of track will get the team 15 points, totalling a maxmimum of 100 points for each attempt. The team's attempt will be terminated in any of the mentioned things in [Section 3](#terminate) happen. If the number of stages between two teams are tied, then the team with the lower time comes out on top. 
 
 <a name='dday'></a>
-# 4. D-Day of the Competition
+# 5. D-Day of the Competition
+On the day of the competition, the teams will go in the order of their team number. Each team will get a maximum of five attempts and a maximum time of 2 minutes per attempt and a maximum time of 15 minutes for all five attempts. Between attempts, the team can use any amount of time (within the alloted 15 minutes of maximum time) to fix any software/hardware bugs or do changes in hardware/software (including change of batteries).
 
+The team with the highest points will win. Note that, completing the course (within the 2 minute slot per attempt) will get that team the maximum of 100 points.  
 
 
 
