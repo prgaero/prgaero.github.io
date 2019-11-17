@@ -26,7 +26,7 @@ Table of Contents:
 
 <a name='due'></a>
 ## 1. Deadline 
-**11:59PM, Tuesday, November 21, 2019** for report/video submission.
+**11:59PM, Thursday, November 21, 2019** for report/video submission.
 
 <a name='intro'></a>
 ## 2. Problem Statement
