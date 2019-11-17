@@ -132,6 +132,7 @@ Congrats on finishing the course! Wohoooooo!
 ## 3. Attempt Termination
 Doing any of these will instantly terminate your attempt. 
 - Crossing the river at any time which is not over the bridge.
+- Flying over a height of 2.5 m. 
 - Failing to navigate in any of the previous stages before proceeding to the next one.
 - Crashing into any of the obstacles/track objects and/or the nets.
 - Landing due to battery failsafe.
