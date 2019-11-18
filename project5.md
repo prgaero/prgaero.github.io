@@ -21,6 +21,7 @@ Table of Contents:
 	- [6.1. ROS Nodes](#rosnodes)
 	- [6.2. Launch File](#launch)
 	- [6.3. Service Call](#service)
+	- [6.4. Image Resolution](#img-res)
 - [7. Submission Guidelines](#sub)
   - [4.1. Report](#report)
   - [4.2. File tree and naming](#files)
@@ -161,10 +162,11 @@ You need to create one or multiple ROS node(s) to run your algorithm for each ta
 ### 6.2. Launch File
 All the above ROS node(s) must be called using a single `launch` file.
 
-<a name='rviz'></a>
+<a name='service'></a>
 ### 6.3. Service Calls
 Running a lot of nodes might be heavy for the Up board to handle. `Service Calls` in `ROS` are recommended.
 
+<a name='img-res'></a>
 ### 6.4. Image Resolution
 Depending on your algorithm, you would want to drop down the resolution of the image to make algorithm faster. Note that resizing the images will change the intrinsic calibration $$K$$ matrix.
 
