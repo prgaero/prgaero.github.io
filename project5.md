@@ -17,11 +17,11 @@ Table of Contents:
 - [3. Attempt Termination](#terminate)
 - [4. Scoring Criterion](#score)
 - [5. D-Day of the Competition](#dday)
-- [3. Implementation](#implementation)
-	- [3.1. ROS Nodes](#rosnodes)
-	- [3.2. Launch File](#launch)
-	- [3.3. Rviz visualization](#rviz)
-	- [3.4. Camera Calibration](#calib)
+- [6. Implementation](#implementation)
+	- [6.1. ROS Nodes](#rosnodes)
+	- [6.2. Launch File](#launch)
+	- [6.3. Rviz visualization](#rviz)
+	- [6.4. Camera Calibration](#calib)
 - [4. Submission Guidelines](#sub)
   - [4.1. Report](#report)
   - [4.2. File tree and naming](#files)
@@ -148,19 +148,14 @@ On the day of the competition, the teams will go in the order of their team numb
 
 The team with the highest points will win. Note that, completing the course (within the 2 minute slot per attempt) will get that team the maximum of 100 points.  
 
-
-
 <a name='implementation'></a>
 ## 6. Implementation
-This project it totally open! You can use any open-source code available online to solve any part of the problem. Make sure you cite them. You can also learn the textures on the floor to distinguish between the river and the bridge. A sample texture is available in the lab. 
-
-For estimating the metric depth (and relative pose) of the wall from front facing camera in absolute scale, you need odometry estimates from the bottom facing camera. Using `Kalibr`, calibrate the bottom facing camera with IMU; calibrate front facing camera with IMU and get the relative transformation (Rotation and Translation or extrinsics) between front facing camera and bottom facing camera. Now, both cameras are running a version odometry estimation. Use the extrinsic calibration to provide a metric scale for the front facing camera. Make sure your data is time syncronized before running through the `Kalibr`. You can use [`TimeSynchronizer`](http://wiki.ros.org/message_filters#Time_Synchronizer) for this.
-For the bottom facing camera depth estimation, you can use your results from Project 4a or any online open-source code.
+This project is totally open! You can use any open-source code available online to solve any part of the problem. Make sure you CITE them. You are expected to use the implementations from the previous four projects but are NOT limited to it. You are NOT allowed to add new sensors to the already existing suite. Your results are limited by your imagination!
 **YOU CAN ALSO USE THE HEIGHT MEASUREMENT OF THE SONAR AND ODOMETRY FROM `bebop_autonomy`!**
 
 <a name='rosnodes'></a>
 ### 6.1. ROS Nodes
-You need to create one or multiple ROS node(s) to run your algorithm for each task. You have to publish trajectory for both tasks as `nav_msgs/Odometry` (accumulated instantaneous camera pose).
+You need to create one or multiple ROS node(s) to run your algorithm for each task. You have to publish trajectory for the entire task as `nav_msgs/Odometry` (accumulated instantaneous camera pose).
 
 <a name='launch'></a>
 ### 6.2. Launch File
@@ -169,12 +164,6 @@ All the above ROS node(s) must be called using a single `launch` file.
 <a name='rviz'></a>
 ### 6.3. Rviz visualization
 You are required to plot your estimated 3D camera pose in `rviz` along with the odometry (`nav_msgs/Odometry`) from the PRG Husky using rviz tf like you did in the previous projects.
-For Task 2, you need to plot the wall in rviz along with the trajectory (and pose i.e. both position and orientation) of your quadrotor.  This visualization is similar to what you did in Project 3b (Mini Drone Race). Be sure to fix your wall in some arbitrarily chosen world frame and plot your camera’s (quadrotor’s) pose with respect to it.
-
-<a name='calib'></a>
-### 6.4 Camera Calibration
-
-Camera Intrinsic and Extrinsic calibration entails with estimating the camera calibration matrix K which includes the focal length and the principal point and the distortion parameters and relative rotation and translation ($$R$$ and $$T$$) between a set of sensors. You’ll need to use the awesome calibration package developed by ETHZ Kalibr to do this. You’ll need either a checkerboard or an april grid to calibrate the camera. We found that using the April grid gave us superior results. Feel free to print one (don’t forget to turn off autoscaling or scaling of any sort before printing). Bigger april grids or checkerboard in general give more accurate results. A large april grid is located in IRB 3237 (Fig. 4) which you are free to use if you don’t want to print your own.
 
 <a name='sub'></a>
 ## 7. Submission Guidelines
@@ -187,8 +176,7 @@ Camera Intrinsic and Extrinsic calibration entails with estimating the camera ca
 Explain in detail your approach to complete the project, and describe any interesting problems you encountered and/or solutions you implemented.  You **MUST** include the following details in your writeup:
 
 - Your report **MUST** be typeset in LaTeX in the IEEE Tran format provided to you in the ``Draft`` folder (Use the same draft folder from P1) and should of a conference quality paper.
-- Present the output videos for your estimated trajectory while going above the bridge and stereo (both left and right) frames as ``Outputs/Task1.mp4``.
-- Present the output videos for trajectory following along with the wall detection overlaid on the video, rviz visualization of 3D wall pose estimates in real-time as ``Outputs/Task2.mp4`` for Task 2.
+- You need to submit an `mp4` presentation video and presentation `pdf` file explaining your algorithm, working, obstacles, how you overcame them and future scope. This is due at 11:59:59 pm on Dec 16, 2019.
 
 <a name='files'></a>
 ### 7.2. File tree and naming
@@ -200,18 +188,12 @@ TeamYourTeamNumber_p4a.zip
 │   README.md
 |   Your Code files 
 |   ├── Any subfolders you want along with files 
-|   Outputs
-|   ├── Task1.mp4
-|   └── Task2.mp4
+|   Presentation.mp4
 └── Report.pdf
 ```
 
-<a name='debug'></a>
-## 5. Debugging Tips
-- To verify if your extrinsic calibration is correct, measure the translation between the sensors using a standard ruler. If it is far from calibrated translation, you definitely have done something wrong with your calibration. 
-
 <a name='allowed'></a>
-## 6. Allowed and Disallowed functions
+## 8. Allowed and Disallowed functions
 
 <b> Allowed:</b>
 
@@ -228,17 +210,15 @@ Any functions regarding reading, writing and displaying/plotting images and wind
 - Any function that solves entire structure from motion.
 
 <b> Disallowed:</b>
-- NOTHING!
+- **ABSOLUTELY NOTHING!**
 
 <a name='demo'></a>
-## 7. Live Demo
+## 9. Live Demo
 
 On the day of the deadline, each team will be given a 15 minute slot for demonstrating their code in action to the instructors. 
-For Task 2, the instructors will place the quadrotor such that the river-bridge scene is in the front facing camera $$Z$$ direction (or infront of the PRG Husky). Note that you will NOT be able to see the bridge from the front facing camera once you take-off from ground. You need to go above the bridge to solve Task 2. If more than 50% of the PRG Husky volume is above the bridge, it will be counted as success. 
+The instructors will place the quadrotor on the helipad and you'll be given position estimates of the obstacles with a known covariance. *If you don't go between the two metal bars, or go above `2.5m` in altitude, the .*
 
-For Task 1, the instructors will place the wall (at arbitrary height) as well as the PRG Husky quadrotor as they wish (position, orientation). The instructors will make sure that atleast a major part of the wall is in the visible region as seen from the first frame (note that it is not guarenteed that the complete window will be visible in the first frame). The task is the fly above or below the window as fast as possible. You also need to show us a live visualization of your detection (corners of the window overlaid on the image) along with the 3D visualization of the window with the relative camera pose overlaid in rviz. If you don't go between the two metal bars, or go above `2.5m` in altitude, it will be counted as a failure.
-
-You can have ANY number of trials in 15 mins for both combined. Only the best trial will be graded.<br>
+You can ONLY have 5 trials in 15 mins, each trial being maximum of 2 mins long. Only the best trial will be graded.<br>
 **THE ENTIRE AREA WILL HAVE FEATURES (CARPETS)!!**
 
 **LIVE DEMO TIMINGS WILL BE RELEASED LATER.**
