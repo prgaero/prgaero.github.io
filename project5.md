@@ -150,8 +150,7 @@ The team with the highest points will win. Note that, completing the course (wit
 
 <a name='implementation'></a>
 ## 6. Implementation
-This project is totally open! You can use any open-source code available online to solve any part of the problem. Make sure you CITE them. You are expected to use the implementations from the previous four projects but are NOT limited to it. *You are NOT allowed to modify the PRGHusky platform.* This includes adding/subtracting any sensors. Your results are limited by your imagination!
-YOU CAN ALSO USE THE HEIGHT MEASUREMENT OF THE SONAR AND ODOMETRY FROM `bebop_autonomy`!
+This project is totally open! You can use any open-source code available online to solve any part of the problem. Make sure you CITE them. You are expected to use the implementations from the previous four projects but are NOT limited to it. **You are NOT allowed to modify the PRGHusky platform.** This includes adding/subtracting any sensors. Your results are ONLY limited by your imagination and creativity!
 
 <a name='rosnodes'></a>
 ### 6.1. ROS Nodes
