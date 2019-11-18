@@ -20,9 +20,8 @@ Table of Contents:
 - [6. Implementation](#implementation)
 	- [6.1. ROS Nodes](#rosnodes)
 	- [6.2. Launch File](#launch)
-	- [6.3. Rviz visualization](#rviz)
-	- [6.4. Camera Calibration](#calib)
-- [4. Submission Guidelines](#sub)
+	- [6.3. Service Call](#service)
+- [7. Submission Guidelines](#sub)
   - [4.1. Report](#report)
   - [4.2. File tree and naming](#files)
 - [5. Debugging Tips](#debug)
@@ -144,9 +143,11 @@ Taking off from the helipad gives the team 10 points and then crossing each stag
 
 <a name='dday'></a>
 ## 5. D-Day of the Competition
-On the day of the competition, the teams will go in the order of their team number. Each team will get a maximum of five attempts and a maximum time of 2 minutes per attempt and a maximum time of 15 minutes for all five attempts. Between attempts, the team can use any amount of time (within the alloted 15 minutes of maximum time) to fix any software/hardware bugs or do changes in hardware/software (including change of batteries).
+On the day of the competition, the teams will go in the order of their team number. Each team will a maximum time of 2 minutes per attempt and a maximum time of 15 minutes for all attempts. Between attempts, the team can use any amount of time (within the alloted 15 minutes of maximum time) to fix any software/hardware bugs or do changes in hardware/software (including change of batteries). Only the best trial will be graded.
 
 The team with the highest points will win. Note that, completing the course (within the 2 minute slot per attempt) will get that team the maximum of 100 points.  
+
+The instructors will place the quadrotor on the helipad and you'll be given position estimates of the obstacles with a known covariance before the demo. We'll post it on Piazza.
 
 <a name='implementation'></a>
 ## 6. Implementation
@@ -161,8 +162,7 @@ You need to create one or multiple ROS node(s) to run your algorithm for each ta
 All the above ROS node(s) must be called using a single `launch` file.
 
 <a name='rviz'></a>
-### 6.3. Rviz visualization
-You are required to plot your estimated 3D camera pose in `rviz` along with the odometry (`nav_msgs/Odometry`) from the PRG Husky using rviz tf like you did in the previous projects.
+### 6.3. Service Calls
 
 <a name='sub'></a>
 ## 7. Submission Guidelines
@@ -175,15 +175,15 @@ You are required to plot your estimated 3D camera pose in `rviz` along with the 
 Explain in detail your approach to complete the project, and describe any interesting problems you encountered and/or solutions you implemented.  You **MUST** include the following details in your writeup:
 
 - Your report **MUST** be typeset in LaTeX in the IEEE Tran format provided to you in the ``Draft`` folder (Use the same draft folder from P1) and should of a conference quality paper.
-- You need to submit an `mp4` presentation video and presentation `pdf` file explaining your algorithm, working, obstacles, how you overcame them and future scope. This is due at 11:59:59 pm on Dec 16, 2019.
+- You need to submit an `mp4` presentation video and presentation `pdf` file explaining your algorithm, implmentation-level details, how you overcame them and future scope. This is due at 11:59:59 pm on Dec 16, 2019.
 
 <a name='files'></a>
 ### 7.2. File tree and naming
 
-Your submission on ELMS/Canvas must be a ``zip`` file, following the naming convention ``TeamYourTeamNumber_p4b.zip``. If you email ID is ``1``, then the submission file should be named ``Team1_p4b.zip``. You can have any helper functions in sub-folders as you wish, be sure to index them using relative paths and if you have command line arguments for your Wrapper codes, make sure to have default values too. Please provide detailed instructions on how to run your code in ``README.md`` file. Please **DO NOT** include data in your submission `zip` file.
+Your submission on ELMS/Canvas must be a ``zip`` file, following the naming convention ``TeamYourTeamNumber_p5.zip``. If you email ID is ``1``, then the submission file should be named ``Team1_p5.zip``. You can have any helper functions in sub-folders as you wish, be sure to index them using relative paths and if you have command line arguments for your Wrapper codes, make sure to have default values too. Please provide detailed instructions on how to run your code in ``README.md`` file. Please **DO NOT** include data in your submission `zip` file.
 
 ```
-TeamYourTeamNumber_p4a.zip
+TeamYourTeamNumber_p5.zip
 │   README.md
 |   Your Code files 
 |   ├── Any subfolders you want along with files 
@@ -195,43 +195,10 @@ TeamYourTeamNumber_p4a.zip
 ## 8. Allowed and Disallowed functions
 
 <b> Allowed:</b>
-
-Any functions regarding reading, writing and displaying/plotting images and windows in `cv2`, `matplotlib`, `ROS`.
-- Basic math utilities including convolution operations in `numpy` and `math`.
-- Any functions for pretty plots.
-- ``bebop_autonomy`` packages for controlling the PRGHusky.
-- Any function that computes features/corners.
-- Any function that matches feature correspondences.
-- Any function that performs KLT or any other feature tracker.
-- Any function that computes sparse or dense optical flow.
-- Any function that computes RANSAC. Although, you can use any least square solver.
-- Any function that fits a plane.
-- Any function that solves entire structure from motion.
+- **ANYTHING IN THE WORLD!**
 
 <b> Disallowed:</b>
 - **ABSOLUTELY NOTHING!**
-
-<a name='demo'></a>
-## 9. Live Demo
-
-On the day of the deadline, each team will be given a 15 minute slot for demonstrating their code in action to the instructors. 
-The instructors will place the quadrotor on the helipad and you'll be given position estimates of the obstacles with a known covariance. *If you don't go between the two metal bars, or go above `2.5m` in altitude, the .*
-
-You can ONLY have 5 trials in 15 mins, each trial being maximum of 2 mins long. Only the best trial will be graded.<br>
-**THE ENTIRE AREA WILL HAVE FEATURES (CARPETS)!!**
-
-**LIVE DEMO TIMINGS WILL BE RELEASED LATER.**
-
-<a name='hw'></a>
-## 8. Hardware Tips
-
-<a name='duo'></a>
-### 8.1. Duo3D Camera Driver
-Follow the steps from [this repo](https://github.com/NitinJSanket/Duo3D-Setup) to install the Duo3D camera driver.
-
-<a name='calibration'></a>
-### 8.2. Camera Calibration
-The Duo3D camera comes calibrated out of the factory and gives only the calibrated images. You can also use the [Kalibr](https://github.com/ethz-asl/kalibr/wiki/camera-imu-calibration) package from ETH-Z to re-calibrate the duo cameras if needed.
 
 <a name='coll'></a>
 ## 9. Collaboration Policy
