@@ -163,6 +163,10 @@ All the above ROS node(s) must be called using a single `launch` file.
 
 <a name='rviz'></a>
 ### 6.3. Service Calls
+Running a lot of nodes might be heavy for the Up board to handle. `Service Calls` in `ROS` are recommended.
+
+### 6.4. Image Resolution
+Depending on your algorithm, you would want to drop down the resolution of the image to make algorithm faster. Note that resizing the images will change the intrinsic calibration $$K$$ matrix.
 
 <a name='sub'></a>
 ## 7. Submission Guidelines
