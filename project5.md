@@ -37,7 +37,8 @@ Table of Contents:
 
 <a name='due'></a>
 ## 1. Deadline 
-**11:59PM, Monday, December 16, 2019** for report submission. 
+**11:59PM, Monday, December 16, 2019** for report and video submission. 
+
 **YOU ARE NOT ALLOWED TO USE ANY LATE DAYS FOR THIS PROJECT!**
 
 <a name='intro'></a>
