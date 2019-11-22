@@ -61,8 +61,12 @@ In the first stage, you take off from the helipad and you have to navigate thoug
 <div class="fig fighighlight">
   <img src="/assets/2019/p4/wall-real.jpg" width="60%">
   <div class="figcaption">
-    Figure 2: Stage 1: Wall on the ground.
+    Figure 2a: Stage 1: Wall on the ground.
   </div>
+  <img src="/assets/2019/p5/WallUp.jpg" width="60%">
+   <div class="figcaption">
+    Figure 2b: Stage 2: Wall on the top.
+   </div>
   <div style="clear:both;"></div>
 </div>
 
@@ -88,7 +92,7 @@ In the second stage, you have to traverse through a yellow window, this is the s
 In the third stage, you have to fly over the bridge (atleast half of the PRGHusky has to be over the bridge to count as a success), this is the same bridge we used in [project 4b](/2019/proj/p4b/). A sample photo of the bridge over the river is given in Fig. 4.
 
 <div class="fig fighighlight">
-  <img src="/assets/2019/p4/river-ladder-real.jpg" width="100%">
+  <img src="/assets/2019/p5/RiverLadder.jpg" width="100%">
   <div class="figcaption">
     Figure 4: Stage 3: Bridge over the river.
   </div>
