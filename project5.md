@@ -87,7 +87,7 @@ In the second stage, you have to traverse through a yellow window, this is the s
 In the third stage, you have to fly over the bridge (atleast half of the PRGHusky has to be over the bridge to count as a success), this is the same bridge we used in [project 4b](/2019/proj/p4b/). A sample photo of the bridge over the river is given in Fig. 4.
 
 <div class="fig fighighlight">
-  <img src="/assets/2019/p5/RiverLadder.jpeg" width="100%">
+  <img src="/assets/2019/p5/RiverBridge.jpeg" width="100%">
   <div class="figcaption">
     Figure 4: Stage 3: Bridge over the river.
   </div>
@@ -127,7 +127,15 @@ In the penultimate stage, you take off from the circular bullseye and navigate t
 
 For the finish line, you have to land on a square tag. please print out your own square tags for testing from [here](/assets/2019/p5/SquareTag.png). Also, remember that the square tag is reflective. 
 
-- Add photo here
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p5/SquareTag.png" width="60%">
+   <div class="figcaption">
+    Figure 6: Stage 6: Square Tag.
+   </div>
+<div style="clear:both;"></div>
+</div>
+
 
 Congrats on finishing the course! Wohoooooo!
 
