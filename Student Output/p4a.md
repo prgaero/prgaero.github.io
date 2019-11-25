@@ -46,11 +46,6 @@ permalink: /2019fall/proj/p4a-results/
 <img src="/Reports/p4a/lumbaravi.jpg" height="170"></a>
 <br><br>
 
-<b><b><text>sudo rm -rf *</text></b><br>
-</b><a href="/Reports/p4a/rehmnicholas.pdf"> 
-<img src="/Reports/p4a/rehmnicholas.jpg" height="170"></a>
-<br><br>
-
 <b><b>DDMC</b><br>
 </b><a href="/Reports/p4a/dorbalavishnu.pdf"> 
 <img src="/Reports/p4a/dorbalavishnu.jpg" height="170"></a>
