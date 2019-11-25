@@ -129,7 +129,7 @@ For the finish line, you have to land on a square tag. please print out your own
 
 
 <div class="fig fighighlight">
-  <img src="/assets/2019/p5/SquareTag.png" width="60%">
+  <img src="/assets/2019/p5/SquareTagReal.jpeg" width="60%">
    <div class="figcaption">
     Figure 6: Stage 6: Square Tag.
    </div>
