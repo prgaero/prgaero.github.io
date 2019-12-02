@@ -9,8 +9,8 @@ permalink: /2019fall/proj/p4b-results/
 <!-- Gold -->
 <p style="background-color:#f4c842; padding:5px">
 <b><b>Noob Quaternion</b><br>
-</b><a href="/Reports/p4a/aroraprateek.pdf">
-<img src="/Reports/p4a/aroraprateek.jpg" height="170"></a><br>
+</b><a href="/Reports/p4b/aroraprateek.pdf">
+<img src="/Reports/p4b/aroraprateek.jpg" height="170"></a><br>
 <b>(Gold Submission)<br>
 <br><br>
 
@@ -27,27 +27,27 @@ permalink: /2019fall/proj/p4b-results/
 <font color="black">
 
 <b><b><text>sudo rm -rf *</text></b><br>
-</b><a href="/Reports/p4a/rehmnicholas.pdf"> 
-<img src="/Reports/p4a/rehmnicholas.jpg" height="170"></a>
+</b><a href="/Reports/p4b/rehmnicholas.pdf"> 
+<img src="/Reports/p4b/rehmnicholas.jpg" height="170"></a>
 <br><br>
 
 <b><b>Bouncing Rainbow Zebras</b><br>
-</b><a href="/Reports/p4a/holumerik.pdf"> 
-<img src="/Reports/p4a/holumerik.jpg" height="170"></a>
+</b><a href="/Reports/p4b/holumerik.pdf"> 
+<img src="/Reports/p4b/holumerik.jpg" height="170"></a>
 <br><br>
 
 
 <b><b>Quadminator</b><br>
-</b><a href="/Reports/p4a/carrilloestefany.pdf"> 
-<img src="/Reports/p4a/carrilloestefany.jpg" height="170"></a>
+</b><a href="/Reports/p4b/carrilloestefany.pdf"> 
+<img src="/Reports/p4b/carrilloestefany.jpg" height="170"></a>
 <br><br>
 
 <b><b>Autonomous Flying Pigs</b><br>
-</b><a href="/Reports/p4a/lumbaravi.pdf"> 
-<img src="/Reports/p4a/lumbaravi.jpg" height="170"></a>
+</b><a href="/Reports/p4b/lumbaravi.pdf"> 
+<img src="/Reports/p4b/lumbaravi.jpg" height="170"></a>
 <br><br>
 
 <b><b>QDMC</b><br>
-</b><a href="/Reports/p4a/kurtiaktimothy.pdf"> 
-<img src="/Reports/p4a/kurtiaktimothy.jpg" height="170"></a>
+</b><a href="/Reports/p4b/kurtiaktimothy.pdf"> 
+<img src="/Reports/p4b/kurtiaktimothy.jpg" height="170"></a>
 <br><br>
