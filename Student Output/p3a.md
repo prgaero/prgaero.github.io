@@ -44,7 +44,7 @@ permalink: /2019fall/proj/p3a-results/
 <img src="/Reports/p3a/aroraprateek.jpg" height="170"></a>
 <br><br>
 
-<b><b>DDMC</b><br>
+<b><b>QDMC</b><br>
 </b><a href="/Reports/p3a/kurtiaktimothy.pdf"> 
 <img src="/Reports/p3a/kurtiaktimothy.jpg" height="170"></a>
 <br><br>

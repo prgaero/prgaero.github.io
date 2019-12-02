@@ -46,7 +46,7 @@ permalink: /2019fall/proj/p4a-results/
 <img src="/Reports/p4a/lumbaravi.jpg" height="170"></a>
 <br><br>
 
-<b><b>DDMC</b><br>
+<b><b>QDMC</b><br>
 </b><a href="/Reports/p4a/dorbalavishnu.pdf"> 
 <img src="/Reports/p4a/dorbalavishnu.jpg" height="170"></a>
 <br><br>
