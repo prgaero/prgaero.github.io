@@ -170,11 +170,11 @@ A sample photo of the real track is shown in Fig. 7.
 </div>
 
 
-Exactly 2 hours before the demo, each team can go and measure the distances in the track. Noone will be allowed to enter the track 1 hour before the demo. The instructors will displace each obstacle randomly with a maxmimum disturbance of 60 cm in both X and Y directions (Z pointing up). 
+Exactly 2 hours before the demo, each team can go and measure the distances in the track. No one will be allowed to enter the track 1 hour before the demo. The instructors will displace each obstacle randomly with a maximum disturbance of 60 cm in both X and Y directions (Z pointing up) and maximum orientation displacement of +/- 10 degrees. 
 
 The team with the highest points will win. Note that, completing the course (within the 2 minute slot per attempt) will get that team the maximum of 100 points.  
 
-The teams can place place the quadrotor on the helipad in any desired orientation. Also, if a team wants to improve their live-demo score, they can request for an additional slot after all the teams have finished their demo with a penalty of 20% of the total project 5 grade. 
+The teams can place the quadrotor on the helipad in any desired orientation. Also, if a team wants to improve their live-demo score, they can request for an additional slot after all the teams have finished their demo with a penalty of 20 points of the total project 5 grade. 
 
 
 <a name='implementation'></a>
