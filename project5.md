@@ -162,7 +162,7 @@ A sample photo of the real track is shown in Fig. 7.
 
 
 <div class="fig fighighlight">
-  <img src="/assets/2019/p5/TrackPhoto.jpg" width="60%">
+  <img src="/assets/2019/p5/TrackPhoto.jpg" width="100%">
    <div class="figcaption">
     Figure 7: The Real Track.
    </div>
