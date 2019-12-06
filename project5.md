@@ -158,9 +158,24 @@ Taking off from the helipad gives the team 10 points and then crossing each stag
 ## 5. D-Day of the Competition
 On the day of the competition, the teams will go in the order of their team number. Each team will have a maximum time of 2 minutes per attempt and a maximum time of 15 minutes for all attempts combined. Between attempts, the team can use any amount of time (within the alloted 15 minutes of maximum time) to fix any software/hardware bugs or do changes in hardware/software (including change of batteries). Only the best trial will be graded.
 
+A sample photo of the real track is shown in Fig. 7.
+
+
+<div class="fig fighighlight">
+  <img src="/assets/2019/p5/TrackPhoto.jpg" width="60%">
+   <div class="figcaption">
+    Figure 7: The Real Track.
+   </div>
+<div style="clear:both;"></div>
+</div>
+
+
+Exactly 2 hours before the demo, each team can go and measure the distances in the track. Noone will be allowed to enter the track 1 hour before the demo. The instructors will displace each obstacle randomly with a maxmimum disturbance of 60 cm in both X and Y directions (Z pointing up). 
+
 The team with the highest points will win. Note that, completing the course (within the 2 minute slot per attempt) will get that team the maximum of 100 points.  
 
-The instructors will place the quadrotor on the helipad and you'll be given position estimates of the obstacles with a known covariance before the demo. These covariances will be posted on Piazza.
+The teams can place place the quadrotor on the helipad in any desired orientation.
+
 
 <a name='implementation'></a>
 ## 6. Implementation
