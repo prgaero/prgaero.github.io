@@ -174,7 +174,7 @@ Exactly 2 hours before the demo, each team can go and measure the distances in t
 
 The team with the highest points will win. Note that, completing the course (within the 2 minute slot per attempt) will get that team the maximum of 100 points.  
 
-The teams can place place the quadrotor on the helipad in any desired orientation.
+The teams can place place the quadrotor on the helipad in any desired orientation. Also, if a team wants to improve their live-demo score, they can request for an additional slot after all the teams have finished their demo with a penalty of 20% of the total project 5 grade. 
 
 
 <a name='implementation'></a>
